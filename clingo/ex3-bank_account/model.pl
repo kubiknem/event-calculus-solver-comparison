@@ -126,6 +126,7 @@ initiallyP(minimumBalance(account1, 5)).
 initiallyP(minimumBalance(account2, 5)).
 initiallyP(serviceFee(account1, 1)).    
 initiallyP(serviceFee(account2, 1)).    
+initiallyN(F) :- not initiallyP(F), fluent(F).
 
 %-------------------------------------------------------------------------------
 % narrative 

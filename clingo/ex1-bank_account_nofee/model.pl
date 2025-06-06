@@ -82,6 +82,7 @@ initiallyP(balance(account2, 10)).
 
 happens(transfer(account1, account2, 2), 1).
 happens(transfer(account1, account2, 4), 2).
+initiallyN(F) :- not initiallyP(F), fluent(F).
 
 % --> conclude that
 %   the balance of account1 will be 4 at time 3
