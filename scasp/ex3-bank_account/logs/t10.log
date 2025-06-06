@@ -1,0 +1,14 @@
+$ echo "max_time(10)." > ./maxtime.tmp ; scasp -s0 --ec ../axioms/bec_scasp.pl ./model.pl ./maxtime.tmp --timeout=3000 --timeout=3000
+
+
+% QUERY:?- T1 #< 4,happens(chargeServiceFee(account1),T1),holdsAt(balance(account1,B1),4),happens(monthlyReset(account1),5),T2 #> T1,happens(chargeServiceFee(account1),T2),holdsAt(balance(account1,B2),7).
+
+timeout
+
+
+  real      0:03.67
+  real [s]  3.67
+  user [s]  3.52
+  sys  [s]  0.11
+  mem  [KB] 34432
+  avgm [KB] 0

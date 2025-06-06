@@ -1,0 +1,11 @@
+$ echo test
+
+
+test
+
+  real      0:00.00
+  real [s]  0.00
+  user [s]  0.00
+  sys  [s]  0.00
+  mem  [KB] 1664
+  avgm [KB] 0

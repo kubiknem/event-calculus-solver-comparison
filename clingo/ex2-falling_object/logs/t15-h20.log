@@ -1,0 +1,85 @@
+$ clingo -c maxtime=15 -c paramHeight=20 -n 0 ../axioms/bec_clingo.pl ./model.pl | ../utils/format-output/format-output-rework | ../utils/remove_grounding.sh
+
+
+
+==========
+Answer: 1
+
+0
+height(apple,20)
+
+1
+height(apple,20)
+happens(drop(nathan,apple),1)
+
+2
+-height(apple,20)
++falling(apple)
++height(apple,18)
+
+3
+-height(apple,18)
++height(apple,16)
+falling(apple)
+
+4
+-height(apple,16)
++height(apple,14)
+falling(apple)
+
+5
+-height(apple,14)
++height(apple,12)
+falling(apple)
+
+6
+-height(apple,12)
++height(apple,10)
+falling(apple)
+
+7
+-height(apple,10)
++height(apple,8)
+falling(apple)
+
+8
+-height(apple,8)
++height(apple,6)
+falling(apple)
+
+9
+-height(apple,6)
++height(apple,4)
+falling(apple)
+
+10
+-height(apple,4)
++height(apple,2)
+falling(apple)
+
+11
+-height(apple,2)
++height(apple,0)
+falling(apple)
+happens(hitGround(apple),11)
+
+12
+-falling(apple)
+height(apple,0)
+
+13
+height(apple,0)
+
+14
+height(apple,0)
+
+15
+height(apple,0)
+P ... predicate grounding skipped ...
+
+  real      0:00.18
+  real [s]  0.18
+  user [s]  0.11
+  sys  [s]  0.04
+  mem  [KB] 12416
+  avgm [KB] 0

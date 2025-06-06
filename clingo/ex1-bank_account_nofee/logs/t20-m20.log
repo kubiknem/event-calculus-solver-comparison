@@ -1,0 +1,116 @@
+$ clingo -c maxtime=20 -c maxmoney=20 -n 0 ../axioms/bec_clingo.pl ./model.pl | ../utils/format-output/format-output-rework | ../utils/remove_grounding.sh
+
+
+../axioms/bec_clingo.pl:17:5-31: info: atom does not occur in any rule head:
+  releases(Event,Fluent,T)
+
+../axioms/bec_clingo.pl:30:5-31: info: atom does not occur in any rule head:
+  releases(Event,Fluent,T)
+
+../axioms/bec_clingo.pl:39:5-41: info: atom does not occur in any rule head:
+  trajectory(Fluent1,T1,Fluent2,T2)
+
+../axioms/bec_clingo.pl:53:5-23: info: atom does not occur in any rule head:
+  initiallyN(Fluent)
+
+
+==========
+Answer: 1
+
+0
+balance(account2,10)
+balance(account1,10)
+
+1
+balance(account2,10)
+balance(account1,10)
+happens(transfer(account1,account2,2),1)
+
+2
+-balance(account2,10)
+-balance(account1,10)
++balance(account2,12)
++balance(account1,8)
+happens(transfer(account1,account2,4),2)
+
+3
+-balance(account2,12)
+-balance(account1,8)
++balance(account2,16)
++balance(account1,4)
+
+4
+balance(account2,16)
+balance(account1,4)
+
+5
+balance(account2,16)
+balance(account1,4)
+
+6
+balance(account2,16)
+balance(account1,4)
+
+7
+balance(account2,16)
+balance(account1,4)
+
+8
+balance(account2,16)
+balance(account1,4)
+
+9
+balance(account2,16)
+balance(account1,4)
+
+10
+balance(account2,16)
+balance(account1,4)
+
+11
+balance(account2,16)
+balance(account1,4)
+
+12
+balance(account2,16)
+balance(account1,4)
+
+13
+balance(account2,16)
+balance(account1,4)
+
+14
+balance(account2,16)
+balance(account1,4)
+
+15
+balance(account2,16)
+balance(account1,4)
+
+16
+balance(account2,16)
+balance(account1,4)
+
+17
+balance(account2,16)
+balance(account1,4)
+
+18
+balance(account2,16)
+balance(account1,4)
+
+19
+balance(account2,16)
+balance(account1,4)
+
+20
+balance(account2,16)
+balance(account1,4)
+P ... predicate grounding skipped ...
+
+  real      0:03.74
+  real [s]  3.74
+  user [s]  3.53
+  sys  [s]  0.22
+  mem  [KB] 76368
+  avgm [KB] 0
