@@ -31,9 +31,9 @@ height(apple,0)
 height(apple,0)
 P ... predicate grounding skipped ...
 
-  real      0:00.09
-  real [s]  0.09
-  user [s]  0.02
+  real      0:00.10
+  real [s]  0.10
+  user [s]  0.04
   sys  [s]  0.03
-  mem  [KB] 9216
+  mem  [KB] 8960
   avgm [KB] 0

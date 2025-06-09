@@ -427,9 +427,9 @@ height(apple,0)
 height(apple,0)
 P ... predicate grounding skipped ...
 
-  real      1:12.54
-  real [s]  72.54
-  user [s]  70.13
-  sys  [s]  3.34
-  mem  [KB] 1229068
+  real      2:39.75
+  real [s]  159.75
+  user [s]  154.22
+  sys  [s]  7.52
+  mem  [KB] 2662260
   avgm [KB] 0

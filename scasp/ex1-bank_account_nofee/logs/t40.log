@@ -3,7 +3,7 @@ $ echo "max_time(40)." > ./maxtime.tmp ; scasp -s0 --ec ../axioms/bec_scasp.pl .
 
 % QUERY:?- holdsAt(balance(account1,X),3).
 
-	ANSWER:	1 (in 82.555 ms)
+	ANSWER:	1 (in 86.176 ms)
 
 MODEL:
 { holdsAt(balance(account1,4),3),  happens(transfer(account1,account2,4),2),  initiates(transfer(account1,account2,4),balance(account1,4),2),  holdsAt(balance(account2,12),2),  happens(transfer(account1,account2,2),1),  initiates(transfer(account1,account2,2),balance(account2,12),1),  holdsAt(balance(account2,10),1),  initiallyP(balance(account2,10)),  not_stoppedIn(0,balance(account2,10),1),  holdsAt(balance(account1,10),1),  initiallyP(balance(account1,10)),  not_stoppedIn(0,balance(account1,10),1),  not_stoppedIn(1,balance(account2,12),2),  holdsAt(balance(account1,8),2),  initiates(transfer(account1,account2,2),balance(account1,8),1),  not_stoppedIn(1,balance(account1,8),2),  not_stoppedIn(2,balance(account1,4),3) }
@@ -11,9 +11,9 @@ BINDINGS:
 X = 4
 
 
-  real      0:00.75
-  real [s]  0.75
-  user [s]  0.60
-  sys  [s]  0.07
-  mem  [KB] 33280
+  real      0:01.02
+  real [s]  1.02
+  user [s]  0.80
+  sys  [s]  0.12
+  mem  [KB] 33024
   avgm [KB] 0

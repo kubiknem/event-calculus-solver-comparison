@@ -10,9 +10,6 @@ $ clingo -c maxtime=40 -c maxmoney=20 -n 0 ../axioms/bec_clingo.pl ./model.pl | 
 ../axioms/bec_clingo.pl:39:5-41: info: atom does not occur in any rule head:
   trajectory(Fluent1,T1,Fluent2,T2)
 
-../axioms/bec_clingo.pl:53:5-23: info: atom does not occur in any rule head:
-  initiallyN(Fluent)
-
 
 ==========
 Answer: 1
@@ -188,9 +185,9 @@ balance(account2,16)
 balance(account1,4)
 P ... predicate grounding skipped ...
 
-  real      0:07.21
-  real [s]  7.21
-  user [s]  6.87
-  sys  [s]  0.38
-  mem  [KB] 142328
+  real      0:08.61
+  real [s]  8.61
+  user [s]  8.18
+  sys  [s]  0.47
+  mem  [KB] 130268
   avgm [KB] 0

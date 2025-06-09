@@ -212,9 +212,9 @@ minimumBalance(account2,5)
 minimumBalance(account1,5)
 P ... predicate grounding skipped ...
 
-  real      0:04.57
-  real [s]  4.57
-  user [s]  4.23
-  sys  [s]  0.31
-  mem  [KB] 109920
+  real      0:05.39
+  real [s]  5.39
+  user [s]  4.99
+  sys  [s]  0.44
+  mem  [KB] 96896
   avgm [KB] 0

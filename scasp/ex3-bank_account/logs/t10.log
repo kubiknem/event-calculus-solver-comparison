@@ -6,9 +6,9 @@ $ echo "max_time(10)." > ./maxtime.tmp ; scasp -s0 --ec ../axioms/bec_scasp.pl .
 timeout
 
 
-  real      0:03.67
-  real [s]  3.67
-  user [s]  3.52
-  sys  [s]  0.11
-  mem  [KB] 34432
+  real      0:03.82
+  real [s]  3.82
+  user [s]  3.67
+  sys  [s]  0.10
+  mem  [KB] 34304
   avgm [KB] 0
