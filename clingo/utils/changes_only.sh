@@ -2,4 +2,5 @@
 
 ROOTDIR="$(dirname "$(realpath "$0")")"
 
-cat | $ROOTDIR/remove_grounding.sh | grep "^[+-].*$\|^[0-9]*$\|^happens.*$\|^==========$\|^Answer:.*$"
+# expects the output of "format-output-reworked 1"
+cat |  grep "^[+-].*$\|^[0-9]*$\|^happens.*$\|^Models.*$\|^Calls.*$\|^Time.*$\|^CPU Time.*$\|^==========$\|^Answer:.*$"

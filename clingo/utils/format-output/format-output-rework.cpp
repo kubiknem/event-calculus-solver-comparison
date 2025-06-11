@@ -6,9 +6,9 @@
   *Turn output from the answer set solvers 
    to a more readable format.
 
-  *Reworked by Ondrej Vasicek 2023.08.31
+  *Reworked by Ondrej Vasicek 2023.08.31, 2025.06.11
     - uses std::vector for "infinite" sized arrays (number of predicates, etc.)
-    - 
+    - added an option to skip the dump of all grounded predicates "P ..."
 
 */
 
@@ -45,6 +45,7 @@ vector<string> predicates(NUM_PREDICATES);
 int numOfPre=0;
 int maxTimepoint=0;
 //int org_maxTimepoint=0;
+int skipOtherGroundedPredicates=0;
 vector<string> minus2(NUMBER);
 int minusIndex2=0;
 int count3=0;
@@ -54,6 +55,9 @@ int count3=0;
 int main(int argc, char *argv[])
 {
   //org_maxTimepoint=atoi(argv[argc-1]);
+  if (argc > 1)
+    skipOtherGroundedPredicates=atoi(argv[argc-1]);
+
   string line(""),token("");
   int as=0; // Number of Answer Sets
 
@@ -62,12 +66,12 @@ int main(int argc, char *argv[])
     head=NULL; 
     maxTimepoint=0;
     getline(cin,line);
-
+    
     if(line.find("Answer:",0)==0)
     {
       getline(cin,line);
       token=split(line," ");
-
+      
       while(token.compare("")!=0) 
       {
         if(token.compare("Answer")==0 || // For cmodels
@@ -77,10 +81,10 @@ int main(int argc, char *argv[])
         else                            
           // Make a linked list that contains the answer set.
           insertNode(token); 
-
+      
         token=split(line," ");
       }
-
+      
       /*
       if(org_maxTimepoint < maxTimepoint)
       {
@@ -91,13 +95,23 @@ int main(int argc, char *argv[])
       
       cout << endl << "==========\n" << "Answer: " << ++as << endl;
       displayList();
- 
+      
       cout << "P" << endl;
-      for(int v=0; v<numOfPre; v++)
-      	cout << predicates[v] << endl;  // Print out predicates explicitly defined
-                                        // on the domain description.
+      if(!skipOtherGroundedPredicates){
+        for(int v=0; v<numOfPre; v++)
+          cout << predicates[v] << endl;  // Print out predicates explicitly defined
+                                          // on the domain description.
+      } else {
+        cout << " ... predicate grounding skipped ..." << endl << endl;
+      }
       freshPredicates();  
     }
+    else if(line.find("Models",0)==0 ||
+            line.find("Calls",0)==0 ||
+            line.find("Time",0)==0 ||
+            line.find("CPU Time",0)==0)
+      cout << line << endl;
+
   } 
 
   if(!as)

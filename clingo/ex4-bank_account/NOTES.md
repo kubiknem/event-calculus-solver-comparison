@@ -1,2 +1,0 @@
-Discrete variables. 
-Tricky in continuous time -- requires special techniques or remodeling to avoid zeno-like behavior (infinitely fast response / event occurrence infinitely close to a non-inclusive bound)

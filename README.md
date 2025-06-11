@@ -1,5 +1,5 @@
 This is a repo for comparing the capabilities and limitations of ASP solvers on Event Calculus.
-There are examples for clingo and s(CASP) including execution logs for different domain sizes.
+There are examples for Clingo and s(CASP) including execution logs for different domain sizes.
 
 
 ## How to
@@ -14,3 +14,10 @@ There are examples for clingo and s(CASP) including execution logs for different
 - add a hybrid clingo implementation -- clingo[LP]?
 - add more examples (rest of ICLP25 paper and any other ones)
 - ? better benchmarking (currently just very basic one run, no averaging, no timeouts, ...)
+
+
+## Notes about the examples
+- ex1-light_on_off -- The most basic event calculus example. Included as a way to test the implementation of the axioms.
+- ex2-bank_account_no_fee -- Discrete fluents and changes. Slightly simplified version of ex4.
+- ex3-falling_object -- Basic example of continuous change (trajectory + continuous fluent).
+- ex4-bank_account_no_fee -- Discrete fluents and changes, but tricky when reasoning in continuous time. Requires special techniques or remodeling to avoid zeno-like behavior (infinitely fast response / event occurrence infinitely close to a non-inclusive bound).
