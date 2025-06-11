@@ -1,8 +1,7 @@
-time(0..maxtime).
-{holdsAt(F,T)} :- fluent(F), time(T).
-
 %% BASIC EVENT CALCULUS (BEC) THEORY
 
+time(0..maxtime).
+{holdsAt(F,T)} :- fluent(F), time(T).
 
 %% BEC1 - StoppedIn(t1,f,t2)
 stoppedIn(T1, Fluent, T2) :-
@@ -10,7 +9,6 @@ stoppedIn(T1, Fluent, T2) :-
     terminates(Event, Fluent, T),
     happens(Event, T),
     event(Event), fluent(Fluent), time(T), time(T1), time(T2).
-
 
 stoppedIn(T1, Fluent, T2) :-
     T1 < T, T < T2,
@@ -33,7 +31,7 @@ startedIn(T1, Fluent, T2) :-
 
 %% BEC3 - HoldsAt(f,t)
 holdsAt(Fluent2, T2) :-
-    T2 > 0, T1 < T2,
+    T1 < T2,
     initiates(Event, Fluent1, T1),
     happens(Event, T1),
     trajectory(Fluent1, T1, Fluent2, T2),
@@ -42,14 +40,12 @@ holdsAt(Fluent2, T2) :-
     
 %% BEC4 - HoldsAt(f,t)
 holdsAt(Fluent, T) :-
-    0 <= T,
     initiallyP(Fluent),
     not stoppedIn(0, Fluent, T),
     fluent(Fluent), time(T).
 
 %% BEC5 - not HoldsAt(f,t)
 :- holdsAt(Fluent, T),
-    0 <= T,
     initiallyN(Fluent),
     not startedIn(0, Fluent, T),
     fluent(Fluent), time(T).

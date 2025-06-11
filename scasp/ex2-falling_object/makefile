@@ -1,11 +1,11 @@
-TIME=/usr/bin/time -f "\n  real      %E\n  real [s]  %e\n  user [s]  %U\n  sys  [s]  %S\n  mem  [KB] %M\n  avgm [KB] %K" sh -c
+TIME=/usr/bin/time -f "\n  real      %E\n  real [s]  %e\n  user [s]  %U\n  sys  [s]  %S\n  mem  [KB] %M\n  avgm [KB] %K"
 
 #-----------------------------------------------------------------------------------------------------------------------
 # base
 
 CMD=echo \"max_time($$MAXTIME).\ninitHeight($$HEIGHT).\" > ./maxtime_height.tmp ; scasp -s0 --ec ../axioms/bec_scasp.pl ./model.pl ./maxtime_height.tmp ../utils/cache.pl
 run:
-	MAXTIME=15; HEIGHT=20; ${TIME} "${CMD}"
+	MAXTIME=15; HEIGHT=20; ${TIME} ${CMD}
 	@rm -f ./maxtime_height*.tmp
 
 
@@ -14,8 +14,8 @@ run:
 
 # demonstration of "missing the ground" --> works fine in scasp (half step)
 run-miss_ground:
-	MAXTIME=5; HEIGHT=4; ${TIME} "${CMD}"		# this is fine
-	MAXTIME=4; HEIGHT=3; ${TIME} "${CMD}"		# this is fine too in scasp
+	MAXTIME=5; HEIGHT=4; ${TIME} ${CMD}		# this is fine
+	MAXTIME=4; HEIGHT=3; ${TIME} ${CMD}		# this is fine too in scasp
 
 #-----------------------------------------------------------------------------------------------------------------------
 # log the execution

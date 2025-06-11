@@ -1,11 +1,11 @@
-TIME=/usr/bin/time -f "\n  real      %E\n  real [s]  %e\n  user [s]  %U\n  sys  [s]  %S\n  mem  [KB] %M\n  avgm [KB] %K" sh -c
+TIME=/usr/bin/time -f "\n  real      %E\n  real [s]  %e\n  user [s]  %U\n  sys  [s]  %S\n  mem  [KB] %M\n  avgm [KB] %K"
 
 #-----------------------------------------------------------------------------------------------------------------------
 # base
 
 CMD=echo \"max_time($$MAXTIME).\" > ./maxtime.tmp ; scasp -s0 --ec ../axioms/bec_scasp.pl ./model.pl ./maxtime.tmp ../utils/cache.pl
 run:
-	MAXTIME=10; ${TIME} "${CMD}"
+	MAXTIME=10; ${TIME} ${CMD}
 	@rm -f ./maxtime*.tmp
 
 
