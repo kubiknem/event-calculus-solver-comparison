@@ -1,10 +1,9 @@
-$ echo "max_time(165).
-initHeight(320)." > ./maxtime_height.tmp ; scasp -s0 --ec ../axioms/bec_scasp.pl ./model.pl ./maxtime_height.tmp ../utils/cache.pl
+$ scasp -s0 --ec ../axioms/bec_scasp.pl ./model.pl ./maxtime_height.tmp ../utils/cache.pl
 
 
 % QUERY:?- happens(hitGround(apple),T).
 
-	ANSWER:	1 (in 24.435 ms)
+	ANSWER:	1 (in 17.898 ms)
 
 MODEL:
 { happens(hitGround(apple),161),  happens(drop(nathan,apple),1),  initiates(drop(nathan,apple),falling(apple),1),  trajectory(falling(apple),1,height(apple,0),161),  holdsAt(height(apple,320),1),  initiallyP(height(apple,320)),  not_stoppedIn(0,height(apple,320),1),  not_stoppedIn(1,falling(apple),161) }
@@ -12,9 +11,10 @@ BINDINGS:
 T = 161
 
 
-  real      0:00.77
-  real [s]  0.77
-  user [s]  0.59
-  sys  [s]  0.11
+
+  real      0:00.67
+  real [s]  0.67
+  user [s]  0.54
+  sys  [s]  0.05
   mem  [KB] 33408
   avgm [KB] 0

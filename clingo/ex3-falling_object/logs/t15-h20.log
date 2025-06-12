@@ -1,4 +1,4 @@
-$ clingo -c maxtime=15 -c paramHeight=20 -n 0 ../axioms/bec_clingo.pl ./model.pl | ../utils/format-output/format-output-rework | ../utils/remove_grounding.sh
+$ clingo -c maxtime=15 -c paramHeight=20 -n 0 ../axioms/bec_clingo.pl ./model.pl | ../utils/format-output/format-output-rework 1
 
 
 
@@ -75,11 +75,19 @@ height(apple,0)
 
 15
 height(apple,0)
-P ... predicate grounding skipped ...
+P
+ ... predicate grounding skipped ...
 
-  real      0:00.31
-  real [s]  0.31
-  user [s]  0.23
-  sys  [s]  0.07
-  mem  [KB] 16256
+Models       : 1
+Calls        : 1
+Time         : 0.149s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.141s
+
+Command exited with non-zero status 30
+
+  real      0:00.16
+  real [s]  0.16
+  user [s]  0.13
+  sys  [s]  0.01
+  mem  [KB] 16204
   avgm [KB] 0

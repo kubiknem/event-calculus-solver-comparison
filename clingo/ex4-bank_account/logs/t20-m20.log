@@ -1,14 +1,5 @@
-$ clingo -c maxtime=20 -c maxmoney=20 -n 0 ../axioms/bec_clingo.pl ./model.pl | ../utils/format-output/format-output-rework | ../utils/remove_grounding.sh
+$ clingo -c maxtime=20 -c maxmoney=20 -n 0 ../axioms/bec_clingo.pl ./model.pl | ../utils/format-output/format-output-rework 1
 
-
-../axioms/bec_clingo.pl:17:5-31: info: atom does not occur in any rule head:
-  releases(Event,Fluent,T)
-
-../axioms/bec_clingo.pl:30:5-31: info: atom does not occur in any rule head:
-  releases(Event,Fluent,T)
-
-../axioms/bec_clingo.pl:39:5-41: info: atom does not occur in any rule head:
-  trajectory(Fluent1,T1,Fluent2,T2)
 
 
 ==========
@@ -210,11 +201,28 @@ serviceFee(account2,1)
 serviceFee(account1,1)
 minimumBalance(account2,5)
 minimumBalance(account1,5)
-P ... predicate grounding skipped ...
+P
+ ... predicate grounding skipped ...
 
-  real      0:05.39
-  real [s]  5.39
-  user [s]  4.99
-  sys  [s]  0.44
-  mem  [KB] 96896
+Models       : 1
+Calls        : 1
+Time         : 3.590s (Solving: 0.01s 1st Model: 0.01s Unsat: 0.00s)
+CPU Time     : 3.578s
+
+../axioms/bec_clingo.pl:15:5-31: info: atom does not occur in any rule head:
+  releases(Event,Fluent,T)
+
+../axioms/bec_clingo.pl:28:5-31: info: atom does not occur in any rule head:
+  releases(Event,Fluent,T)
+
+../axioms/bec_clingo.pl:37:5-41: info: atom does not occur in any rule head:
+  trajectory(Fluent1,T1,Fluent2,T2)
+
+Command exited with non-zero status 30
+
+  real      0:03.66
+  real [s]  3.66
+  user [s]  3.51
+  sys  [s]  0.13
+  mem  [KB] 96952
   avgm [KB] 0
