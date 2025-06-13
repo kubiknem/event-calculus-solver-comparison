@@ -9,6 +9,8 @@
   *Reworked by Ondrej Vasicek 2023.08.31, 2025.06.11
     - uses std::vector for "infinite" sized arrays (number of predicates, etc.)
     - added an option to skip the dump of all grounded predicates "P ..."
+    - reworked printing to avoid issues with timepoints which have no true predicates
+      (the issues might have been caused by my modifications in the first place...)
 
 */
 
@@ -44,8 +46,8 @@ ListNode *head=NULL;
 vector<string> predicates(NUM_PREDICATES);
 int numOfPre=0;
 int maxTimepoint=0;
-//int org_maxTimepoint=0;
-int skipOtherGroundedPredicates=0;
+int timeDomainMax=0;
+int argOutputBrevityLevel=0;
 vector<string> minus2(NUMBER);
 int minusIndex2=0;
 int count3=0;
@@ -54,9 +56,11 @@ int count3=0;
 
 int main(int argc, char *argv[])
 {
-  //org_maxTimepoint=atoi(argv[argc-1]);
   if (argc > 1)
-    skipOtherGroundedPredicates=atoi(argv[argc-1]);
+    argOutputBrevityLevel=atoi(argv[argc-1]);
+    // 0 -- no output reduction
+    // 1 -- no dump of all grounded predicates at the end
+    // 2 -- 1 + only show changes in holdsAt
 
   string line(""),token("");
   int as=0; // Number of Answer Sets
@@ -65,6 +69,7 @@ int main(int argc, char *argv[])
   {
     head=NULL; 
     maxTimepoint=0;
+    timeDomainMax=0;
     getline(cin,line);
     
     if(line.find("Answer:",0)==0)
@@ -85,19 +90,11 @@ int main(int argc, char *argv[])
         token=split(line," ");
       }
       
-      /*
-      if(org_maxTimepoint < maxTimepoint)
-      {
-        cout << endl << "Check out the argument value of format-output!!!!" << endl << endl;
-        exit(EXIT_FAILURE);
-      }
-      */    
-      
       cout << endl << "==========\n" << "Answer: " << ++as << endl;
       displayList();
       
       cout << "P" << endl;
-      if(!skipOtherGroundedPredicates){
+      if(argOutputBrevityLevel == 0){
         for(int v=0; v<numOfPre; v++)
           cout << predicates[v] << endl;  // Print out predicates explicitly defined
                                           // on the domain description.
@@ -134,9 +131,17 @@ void insertNode(string atom)
   int indexOfHoldsAt=atom.find("holdsAt",0);
   int indexOfHappens=atom.find("happens",0);
   int indexOfHappens3=atom.find("happens3",0);
+  
+  int indexOfTime=atom.find("time",0);
 
   if(indexOfHoldsAt!=0 && indexOfHappens!=0 && indexOfHappens3!=0) // For the case of the predicates that are explicitly defined on the domain description.
   {
+    if(indexOfTime == 0) {
+      tp=stringToInteger(atom.substr(5,atom.length()-5-1));
+      if(tp>timeDomainMax)
+        timeDomainMax=tp;
+    }
+
     if(numOfPre >= predicates.size())
       predicates.resize(numOfPre + ALLOC_CHUNK);
     predicates[numOfPre++]=atom;
@@ -258,19 +263,24 @@ void displayList()
       for(int c=0; c<currentIndex; c++)
 	      cout << current[c] << endl;
       start=0;
+      tp++;
+      t++;
     }
 
-    if(tp<maxTimepoint)
+    if(tp<=maxTimepoint)
     {
       nodePtr2=nodePtr;
-      t=nodePtr->timepoint;
 
-      while(nodePtr && nodePtr->timepoint==t)
+      if(tp==nodePtr->timepoint)
       {
-        if(nextIndex >= next.size())
+        t=nodePtr->timepoint;
+        while(nodePtr && nodePtr->timepoint==t)
+        {
+          if(nextIndex >= next.size())
           next.resize(nextIndex + ALLOC_CHUNK);
-        next[nextIndex++]=nodePtr->atm;
-        nodePtr=nodePtr->next; 
+          next[nextIndex++]=nodePtr->atm;
+          nodePtr=nodePtr->next; 
+        }
       }
 
       // Add minus to atoms to be false at the next timepoint.
@@ -280,10 +290,13 @@ void displayList()
         if(target.find("happens",0)==0)
           continue;
 
-        for(int j=0; j<nextIndex; j++)
+        if(tp==t)
         {
-          if(target.compare(next[j])==0)
-            {found=true; break;}
+          for(int j=0; j<nextIndex; j++)
+          {
+            if(target.compare(next[j])==0)
+              {found=true; break;}
+          }
         }
 
         if(!found)
@@ -297,31 +310,36 @@ void displayList()
         found=false;
       }
 
-      // Add plus to atoms to be true at the next timepoint.
-      for(int m=0; m<nextIndex; m++)
+      
+      if(tp==t)
       {
-        target=next[m];
-        if(target.find("happens",0)==0)
-          continue;
-
-        for(int n=0; n<currentIndex; n++)
+        // Add plus to atoms to be true at the next timepoint.
+        for(int m=0; m<nextIndex; m++)
         {
-          if(target.compare(current[n])==0)
-            {found=true; break;}
+          target=next[m];
+          if(target.find("happens",0)==0)
+            continue;
+
+          for(int n=0; n<currentIndex; n++)
+          {
+            if(target.compare(current[n])==0)
+              {found=true; break;}
+          }
+
+          if(!found)
+          {
+            target="+"+target;
+            if(plusIndex >= plus.size())
+              plus.resize(plusIndex + ALLOC_CHUNK);
+            plus[plusIndex++]=target;
+          } 
+
+          found=false;
         }
-
-        if(!found)
-        {
-          target="+"+target;
-          if(plusIndex >= plus.size())
-            plus.resize(plusIndex + ALLOC_CHUNK);
-          plus[plusIndex++]=target;
-        } 
-
-        found=false;
       }
 
-      cout << endl << t << endl;   // #1. Print out Timepoint.
+      cout << endl << tp << endl;   // #1. Print out Timepoint.
+      
       for(int a=0; a<minusIndex; a++)
       {
         cout << minus[a] << endl;  // #2. Print out fluents that are made false. 
@@ -359,8 +377,9 @@ void displayList()
           }
           else
           {  
-            cout << next[d] << endl; // #4.Print out fluents whose truth value has not
-                                    // changed with respect to the previous timepoint.
+            if(argOutputBrevityLevel < 2)
+              cout << next[d] << endl; // #4.Print out fluents whose truth value has not
+                                      // changed with respect to the previous timepoint.
             if(tp==maxTimepoint-1)
               if(!existFluent(next[d]))
               {
@@ -391,19 +410,20 @@ void displayList()
     nodePtr=nodePtr2;
   }
 
-/*
-  if(maxTimepoint!=org_maxTimepoint)
+  if(maxTimepoint!=timeDomainMax)
   {
-    cout << endl << org_maxTimepoint << endl;
+    cout << endl << maxTimepoint+1 << endl;
     for(int k=0; k<minusIndex2; k++)
     {
       cout << "-" << minus2[k] << endl;
       minus2[k]="";
     }
     minusIndex2=0;
+    for(int tp=maxTimepoint+2; tp<=timeDomainMax; tp++)
+    {
+      cout << tp << endl;
+    }
   }
-*/
-
 }
 
 int existFluent(string f)
