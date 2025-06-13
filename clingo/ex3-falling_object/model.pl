@@ -2,7 +2,7 @@
 % from T.Mueller, 2014 - Commonsense reasoning - an event calculus based approach
 % based on page 121, section 7.1.3
 %
-% Demonstrates continuous change using trajectory
+% An object is dropped, falls down via a constant speed, and then stops falling when it hits the floor.
 
 
 %-------------------------------------------------------------------------------

@@ -2,6 +2,8 @@
 % from T.Mueller, 2014 - Commonsense reasoning - an event calculus based approach
 % based on page 70, section 4.2
 
+% There are multiple bank accounts and money can be transferred between them. If the balance is below a specified minimum, then a monthly fee is charged.
+
 #show happens/2, not_happens/2.
 #show holdsAt/2, not_holdsAt/2.
 #show initiallyP/1, initiallyN/1.

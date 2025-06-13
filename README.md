@@ -31,5 +31,5 @@ There are examples for Clingo and s(CASP) including execution logs for different
    
    
 4) ex4-bank_account_no_fee
-   - Discrete fluents and changes, but tricky when reasoning in continuous time.
+   - Discrete fluents and changes with a triggered event. Preventing repeated trigger becomes tricky when reasoning in continuous time.
    - Requires special techniques or remodeling to avoid zeno-like behavior (infinitely fast response / event occurrence infinitely close to a non-inclusive bound) in continuous time.

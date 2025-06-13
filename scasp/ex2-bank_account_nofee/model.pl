@@ -1,6 +1,9 @@
 % Bank account example
 % from T.Mueller, 2014 - Commonsense reasoning - an event calculus based approach
 % based on page 70, section 4.2
+% - modified by removing the service fee
+
+% There are multiple bank accounts and money can be transferred between them.
 
 #show happens/2, not_happens/2.
 #show holdsAt/2, not_holdsAt/2.
