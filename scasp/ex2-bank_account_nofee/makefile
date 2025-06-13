@@ -3,11 +3,11 @@ TIME=/usr/bin/time -f "\n  real      %E\n  real [s]  %e\n  user [s]  %U\n  sys  
 #-----------------------------------------------------------------------------------------------------------------------
 # base
 
-SETUP=echo "max_time($$MAXTIME)." > ./maxtime.tmp
-CMD=scasp -s0 --ec ../axioms/bec_scasp.pl ./model.pl ./maxtime.tmp ../utils/cache.pl
+SETUP=echo "max_time($$MAXTIME)." > ./.maxtime.tmp
+CMD=scasp -s0 --ec ../axioms/bec_scasp.pl ./model.pl ./.maxtime.tmp ../utils/cache.pl
 run:
 	MAXTIME=10; ${SETUP}; ${TIME} ${CMD}
-	@rm -f ./maxtime*.tmp
+	@rm -f ./.maxtime*.tmp
 
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -25,4 +25,4 @@ log:
 	MAXTIME=160; ${SETUP}; ../../scripts/maketrace.sh "${CMD}" ./logs/t$$MAXTIME.log
 	MAXTIME=320; ${SETUP}; ../../scripts/maketrace.sh "${CMD}" ./logs/t$$MAXTIME.log
 	MAXTIME=640; ${SETUP}; ../../scripts/maketrace.sh "${CMD}" ./logs/t$$MAXTIME.log
-	@rm -f ./maxtime*.tmp
+	@rm -f ./.maxtime.tmp

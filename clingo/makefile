@@ -9,3 +9,6 @@ log-all-parallel:
 	$(MAKE) -C ex2* log &
 	$(MAKE) -C ex3* log &
 	$(MAKE) -C ex4* log
+
+build-format_output:
+	$(MAKE) -C ./utils/format-output/

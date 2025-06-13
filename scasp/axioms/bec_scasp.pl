@@ -414,14 +414,12 @@ all_entirely_outside_of_interval([], _, _).
 
 
 % prove that E did not happen at T
-not_happens(E, T) :- %%% increment_happens_start_time(INC_START_T), T .>=. INC_START_T,
+not_happens(E, T) :-
     not_happensInInc(E, T, T).
 
 
 % prove that E did not happen in a time interval (including the edges)
-not_happensInInc(E, T1, T2) :-     % TODO check the inequalities
-    %T1 .>. 0,
-    %T1 .<. T2,
+not_happensInInc(E, T1, T2) :-
     findall(T, not_happensInIncFindall(E, T, T1, T2), List),
     outsideInc(List, T1, T2).
 

@@ -10,7 +10,7 @@ AXIOMS=../axioms/bec_clingo.pl
 
 CMD=clingo -c maxtime=$$MAXTIME -c maxmoney=$$MAXMONEY -n 0 ${AXIOMS} ./model.pl
 run:
-	MAXTIME=10; MAXMONEY=20; ${TIME} ${CMD} | ../utils/format-output/format-output-rework 1 | ../utils/changes_only.sh
+	MAXTIME=10; MAXMONEY=20; ${TIME} ${CMD} 2> .tmp987654321.tmp | ../utils/format-output/format-output-rework 2; cat .tmp987654321.tmp 1>&2; rm -f .tmp987654321.tmp
 
 
 #-----------------------------------------------------------------------------------------------------------------------

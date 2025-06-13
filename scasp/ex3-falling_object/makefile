@@ -3,11 +3,11 @@ TIME=/usr/bin/time -f "\n  real      %E\n  real [s]  %e\n  user [s]  %U\n  sys  
 #-----------------------------------------------------------------------------------------------------------------------
 # base
 
-SETUP=echo "max_time($$MAXTIME).\ninitHeight($$HEIGHT)." > ./maxtime_height.tmp
-CMD=scasp -s0 --ec ../axioms/bec_scasp.pl ./model.pl ./maxtime_height.tmp ../utils/cache.pl
+SETUP=echo "max_time($$MAXTIME).\ninitHeight($$HEIGHT)." > ./.maxtime_height.tmp
+CMD=scasp -s0 --ec ../axioms/bec_scasp.pl ./model.pl ./.maxtime_height.tmp ../utils/cache.pl
 run:
 	MAXTIME=15; HEIGHT=20; ${SETUP}; ${TIME} ${CMD}
-	@rm -f ./maxtime_height*.tmp
+	@rm -f ./.maxtime_height.tmp
 
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -31,4 +31,4 @@ log:
 	MAXTIME=5;   HEIGHT=4;   ${SETUP}; ../../scripts/maketrace.sh "${CMD}" ./logs/miss_ground-ok-t$$MAXTIME-h$$HEIGHT.log
 	MAXTIME=4;   HEIGHT=3;   ${SETUP}; ../../scripts/maketrace.sh "${CMD}" ./logs/miss_ground-miss-t$$MAXTIME-h$$HEIGHT.log
 	
-	@rm -f ./maxtime_height*.tmp
+	@rm -f ./.maxtime_height.tmp

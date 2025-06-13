@@ -10,7 +10,7 @@ AXIOMS=../axioms/bec_clingo.pl
 
 CMD=clingo -c maxtime=$$MAXTIME -c paramHeight=$$HEIGHT -n 0 ${AXIOMS} ./model.pl
 run:
-	MAXTIME=15; HEIGHT=20; ${TIME} ${CMD} | ../utils/format-output/format-output-rework 1 | ../utils/changes_only.sh
+	MAXTIME=15; HEIGHT=20; ${TIME} ${CMD} 2> .tmp987654321.tmp | ../utils/format-output/format-output-rework 2; cat .tmp987654321.tmp 1>&2; rm -f .tmp987654321.tmp
 
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -18,8 +18,8 @@ run:
 
 # demonstration of "missing the ground"
 run-miss_ground:
-	MAXTIME=5; HEIGHT=4; ${TIME} ${CMD} | ../utils/format-output/format-output-rework 1 | ../utils/changes_only.sh		# this is fine
-	MAXTIME=4; HEIGHT=3; ${TIME} ${CMD} | ../utils/format-output/format-output-rework 1 | ../utils/changes_only.sh		# this misses due to 3 not being divisible by 2
+	MAXTIME=5; HEIGHT=4; ${TIME} ${CMD} | ../utils/format-output/format-output-rework 2		# this is fine
+	MAXTIME=4; HEIGHT=3; ${TIME} ${CMD} | ../utils/format-output/format-output-rework 2		# this misses due to 3 not being divisible by 2
 
 #-----------------------------------------------------------------------------------------------------------------------
 # log the execution
