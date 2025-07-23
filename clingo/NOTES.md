@@ -47,7 +47,7 @@ These new files are derived from the original clingcon files:
 * the theory atoms in the body are replaced by new normal atoms, and
 * additional rules are introduced to map the new normal atoms to the original theory atoms.
 
-Additional, to make use of rational numbers, 
+Additionally, to make use of rational numbers, 
 in `ex4-bank_account/hybrid_model_lpx.lp`, 
 I replaced the fact `epsilon(1).` by `epsilon("1.1").`. 
 
