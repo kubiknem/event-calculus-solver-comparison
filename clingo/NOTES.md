@@ -52,10 +52,10 @@ in `ex4-bank_account/hybrid_model_lpx.lp`,
 I replaced the fact `epsilon(1).` by `epsilon("1.1").`. 
 
 Clingo-lpx commands:
-* clingo-lpx --strict           ex1-light_on_off/hybrid_model.lp axioms/hybrid_clingo_lpx.lp -c maxstep=2 
-* clingo-lpx --strict ex2-bank_account_nofee/hybrid_model_lpx.lp axioms/hybrid_clingo_lpx.lp -c maxstep=2
-* clingo-lpx --strict     ex3-falling_object/hybrid_model_lpx.lp axioms/hybrid_clingo_lpx.lp -c maxstep=2    
-* clingo-lpx --strict       ex4-bank_account/hybrid_model_lpx.lp axioms/hybrid_clingo_lpx.lp -c maxstep=6
+* `clingo-lpx --strict           ex1-light_on_off/hybrid_model.lp axioms/hybrid_clingo_lpx.lp -c maxstep=2` 
+* `clingo-lpx --strict ex2-bank_account_nofee/hybrid_model_lpx.lp axioms/hybrid_clingo_lpx.lp -c maxstep=2`
+* `clingo-lpx --strict     ex3-falling_object/hybrid_model_lpx.lp axioms/hybrid_clingo_lpx.lp -c maxstep=2`    
+* `clingo-lpx --strict       ex4-bank_account/hybrid_model_lpx.lp axioms/hybrid_clingo_lpx.lp -c maxstep=6`
 
 We can also run the clingo-lpx encodings with clingcon. 
 Just replace `clingo-lpx --strict` by `clingcon` in the clingo-lpx commands. 
