@@ -45,10 +45,10 @@ holds(falling(O), true, S) :-
 % [triggered event]
 % an object hits the ground when its falling and its height becomes zero
 %*
-happens(hitGround(O), T) :-
-    holdsAt(falling(O), T),
-    holdsAt(height(O,0), T),
-    object(O), time(T).
+%happens(hitGround(O), T) :-
+%    holdsAt(falling(O), T),
+%    holdsAt(height(O,0), T),
+%    object(O), time(T).
 *%
 
 happens_state(hitGround(O), S) :-
@@ -67,17 +67,17 @@ happens_state(hitGround(O), S) :-
 % [effect]
 % if an object hits the ground, then it will stop falling
 %*
-terminates(hitGround(O), falling(O), T) :-
-    object(O), time(T).
+%terminates(hitGround(O), falling(O), T) :-
+%    object(O), time(T).
 *%
 holds(falling(O), false, S) :- happens_state(hitGround(O), S).
 
 % [effect + CLoI]
 % if an object hits the ground then its height will no longer be released from CLoI
 %*
-initiates(hitGround(O), height(O, H), T) :-
-    holdsAt(height(O, H), T),
-    object(O), fHeight(H), time(T).
+%initiates(hitGround(O), height(O, H), T) :-
+%    holdsAt(height(O, H), T),
+%    object(O), fHeight(H), time(T).
 *%
 
 % [state constraint]
@@ -87,10 +87,10 @@ initiates(hitGround(O), height(O, H), T) :-
 
 % motion of an object from the moment it is dropped to the moment it hits the ground
 %*
-trajectory(falling(O), T1, height(O,H - (G)*(T2-T1)), T2) :-
-    T1 < T2,
-    holdsAt(height(O,H), T1),
-    fGravity(G), object(O), fHeight(H), time(T1), time(T2).
+%trajectory(falling(O), T1, height(O,H - (G)*(T2-T1)), T2) :-
+%    T1 < T2,
+%    holdsAt(height(O,H), T1),
+%    fGravity(G), object(O), fHeight(H), time(T1), time(T2).
 *%
 
 &sum{ (height(O),S-1); -G*time(S); G*time(S-1) } = (height(O),S) :-
