@@ -1,0 +1,25 @@
+$ clingo-lpx --strict -n0 ./model-lpx.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=2
+
+
+clingo-lpx version 1.3.0
+Reading from ./model-lpx.lp ...
+Solving...
+Answer: 1 (Time: 0.019s)
+
+Assignment:
+time(0)=0 time(1)=1 time(2)=2 (balance(account1),0)=10 (balance(account1),1)=8 (balance(account1),2)=4 (balance(account2),0)=10 (balance(account2),1)=12 (balance(account2),2)=16
+SATISFIABLE
+
+Models       : 1
+Calls        : 1
+Time         : 0.020s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.008s
+
+Command exited with non-zero status 30
+
+  real      0:00.03
+  real [s]  0.03
+  user [s]  0.00
+  sys  [s]  0.00
+  mem  [KB] 8192
+  avgm [KB] 0

@@ -32,7 +32,7 @@ initiallyN(light_on).
 % narrative 
 %-------------------------------------------------------------------------------
 
-happens(turn_light_on,      10).
+happens(turn_light_on,      10/3).
 happens(turn_light_off,     20).
 
 % conclude that the light is on between 10 and 20

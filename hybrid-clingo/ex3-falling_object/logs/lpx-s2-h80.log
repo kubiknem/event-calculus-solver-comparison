@@ -1,0 +1,25 @@
+$ clingo-lpx --strict -n0 ./model-lpx.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=2 -c paramHeight=80
+
+
+clingo-lpx version 1.3.0
+Reading from ./model-lpx.lp ...
+Solving...
+Answer: 1 (Time: 0.018s)
+holdsAt(falling(apple),1)
+Assignment:
+time(0)=0 time(1)=1 time(2)=41 (height(apple),0)=80 (height(apple),1)=80 (height(apple),2)=0
+SATISFIABLE
+
+Models       : 1
+Calls        : 1
+Time         : 0.018s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.007s
+
+Command exited with non-zero status 30
+
+  real      0:00.02
+  real [s]  0.02
+  user [s]  0.00
+  sys  [s]  0.00
+  mem  [KB] 8064
+  avgm [KB] 0

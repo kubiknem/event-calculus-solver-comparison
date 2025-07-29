@@ -11,8 +11,8 @@ There are examples for Clingo and s(CASP) including execution logs for different
 
 
 ## TODO
-- add a hybrid clingo implementation -- clingo[LP]?
 - add more examples (rest of ICLP25 paper and any other ones)
+- comparison between hybrid-clingo and scasp (maybe examples with growing number of events/steps?)
 - ? better benchmarking (currently just very basic one run, no averaging, no timeouts, ...)
 
 
