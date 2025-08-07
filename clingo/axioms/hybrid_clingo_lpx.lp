@@ -1,20 +1,20 @@
-% step(S): S is a step, ranges from 1 to maxstep
-%          step 0 is handled separately
-step(1..maxstep).
+% step(S): S is a step, ranges from 1 to maxstep                                                                               
+%          step 0 is handled separately                                                                                        
+step(1..maxstep).                                                                                                              
 
-% time(S): the time of step S (and time(0) = 0)
-&sum{ time(0) } = 0.
-&sum{ time(S) } >  time(S-1) :- step(S).
+% time(S): the time of step S (and time(0) = 0)                                                                                
+&sum{ time(0) } = 0.                                                                                                           
+&sum{ time(S) } >  time(S-1) :- step(S).                                                                                       
 
-% map((E,T), S): Event E happening at time point T is mapped to state S
-  map((E,0), 0)                 :- happens(E, T), T = 0.
-{ map((E,T), S) : step(S) } = 1 :- happens(E, T), T > 0.
+% map(T, S): Map time point T to state S                                                                                       
+  map(0, 0)                 :- happens(_, T), T = 0.                                                                           
+{ map(T, S) : step(S) } = 1 :- happens(_, T), T > 0.                                                                           
 
-% if (E,T) is mapped to S, then S is at time T
-&sum{ time(S) } = T :- map((E,T), S).
+% if T is mapped to S, then S is at time T                                                                                     
+&sum{ time(S) } = T :- map(T, S).                                                                                              
 
-% happens_state(E, S): event S happens at state S
-happens_state(E, S) :-  happens(E, T), map((E,T), S).
+% happens_state(E, S): event S happens at state S                                                                              
+happens_state(E, S) :-  happens(E, T), map(T, S).                            
 
 %
 % initial state
