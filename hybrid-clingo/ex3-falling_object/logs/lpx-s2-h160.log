@@ -4,22 +4,22 @@ $ clingo-lpx --strict -n0 ./model-lpx.lp ../axioms/bec_steps-clingo_lpx.lp -c ma
 clingo-lpx version 1.3.0
 Reading from ./model-lpx.lp ...
 Solving...
-Answer: 1 (Time: 0.017s)
-holdsAt(falling(apple),1)
+Answer: 1 (Time: 0.021s)
+happens(drop(nathan,apple),10) happensAtStep(hitGround(apple),2) holdsAt((height(apple),valueAtStep(height(apple),1)),(0,"< T =<",10)) holdsAtStep(falling(apple),2) -holdsAt(falling(apple),(0,"< T =<",10))
 Assignment:
-time(0)=0 time(1)=1 time(2)=81 (height(apple),0)=160 (height(apple),1)=160 (height(apple),2)=0
+timeAtStep(0)=0 timeAtStep(1)=10 timeAtStep(2)=90 valueAtStep(height(apple),0)=160 valueAtStep(height(apple),1)=160 valueAtStep(height(apple),2)=0 valueAtStep(height(apple),3)=0
 SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.018s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.007s
+Time         : 0.022s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.010s
 
 Command exited with non-zero status 30
 
-  real      0:00.02
-  real [s]  0.02
-  user [s]  0.00
+  real      0:00.03
+  real [s]  0.03
+  user [s]  0.01
   sys  [s]  0.00
-  mem  [KB] 8064
+  mem  [KB] 8448
   avgm [KB] 0

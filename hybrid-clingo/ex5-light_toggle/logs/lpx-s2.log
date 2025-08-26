@@ -4,22 +4,22 @@ $ clingo-lpx --strict -n0 ./model.lp ../axioms/bec_steps-clingo_lpx.lp -c maxste
 clingo-lpx version 1.3.0
 Reading from ./model.lp ...
 Solving...
-Answer: 1 (Time: 0.026s)
-happens(turn_light_off,20) happens(turn_light_on,10) holdsAt(light_on,(10,"< T =<",20)) -holdsAt(light_on,("T >",20)) -holdsAt(light_on,(0,"< T =<",10))
+Answer: 1 (Time: 0.020s)
+happens(toggle_light,10) happens(toggle_light,20) holdsAt(light_on,(10,"< T =<",20)) -holdsAt(light_on,("T >",20)) -holdsAt(light_on,(0,"< T =<",10))
 Assignment:
 timeAtStep(0)=0 timeAtStep(1)=10 timeAtStep(2)=20
 SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.027s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.009s
+Time         : 0.020s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.007s
 
 Command exited with non-zero status 30
 
-  real      0:00.06
-  real [s]  0.06
+  real      0:00.03
+  real [s]  0.03
   user [s]  0.00
-  sys  [s]  0.01
+  sys  [s]  0.00
   mem  [KB] 8192
   avgm [KB] 0

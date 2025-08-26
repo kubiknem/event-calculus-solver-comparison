@@ -32,11 +32,7 @@ fGravity(2).
 % [effect]
 % if an agent drops an object, then the object will start falling and its height
 % will be released from CLoI
-
-% initiates(drop(A,O), falling(O), T) :- 
-%     agent(A), object(O), step(T).
-holds(falling(O), true, S) :- 
-    happens_state(drop(A,O), S).
+initiatesAtStep(drop(A,O), falling(O), S) :- agent(A), object(O), step(S).
 
 % [effect + CLoI]
 % releases(drop(A,O), height(O,H), T) :-
@@ -44,50 +40,84 @@ holds(falling(O), true, S) :-
 
 % [triggered event]
 % an object hits the ground when its falling and its height becomes zero
-%*
-%happens(hitGround(O), T) :-
-%    holdsAt(falling(O), T),
-%    holdsAt(height(O,0), T),
-%    object(O), time(T).
-*%
-
-happens_state(hitGround(O), S) :-
-    holds(falling(O), true, S-1),
+happensAtStep(hitGround(O), S) :-
+    holdsAtStep(falling(O), S),
     % &sum{ (height(O), S) } = 0,
-    normal_atom((height(O), S), eq, 0), 
-    step(S). 
+    normal_atom(valueAtStep(height(O), S), eq, 0), 
+    step(S).
+
+
+% TODO the floating step needs to be bound to something -- either the object hits the ground or it is caught by someone
+% it is impossible for the object to fall forever if it was dropped at some earlier time (without intervening drops in between)
+:- happensAtStep(drop(_,O), S1), not eventually_stopped_falling(O,S1).
+eventually_stopped_falling(O,S1) :- not interleaving_drop(O,S1,S2), -holdsAtStep(falling(O), S2), step(S1), S1 < S2.
+interleaving_drop(O,S1,S2) :- step(S1), step(S2), S3 < S2, S3 > S1, happens(drop(_,O),S3).
+
+    % TODO older alternatives
+    %% can just add another event and increase step count by one
+    %% maxstep=3 !
+    %happens(end, 30).
+
+    %% it is impossible for the object to not hit the ground
+    %:- not happensAtStep(hitGround(O), _), object(O).
+
+    %% it is impossible for the object to not hit the ground if it was dropped
+    %:- happensAtStep(drop(_,O), _), not happensAtStep(hitGround(O), _), object(O).
+
+    %% it is impossible for the object to not hit the ground if it was dropped at some earlier time
+    %:- happensAtStep(drop(_,O), S1), not eventually_stopped_falling(O,S1).
+    %eventually_stopped_falling(O,S1) :- happensAtStep(hitGround(O), S2), step(S1), S1 < S2.
+
+    %% it is impossible for the object to not hit the ground or be caught if it was dropped at some earlier time
+    %:- happensAtStep(drop(_,O), S1), not eventually_stopped_falling(O,S1).
+    %eventually_stopped_falling(O,S1) :- happensAtStep(hitGround(O), S2), step(S1), S1 < S2.
+    %eventually_stopped_falling(O,S1) :- happensAtStep(catch(_, O), S2), step(S1), S1 < S2.
     
-comparison((height(O), S), 0) :- 
-    object(O), step(S). 
+    %% it is impossible for the object to fall forever if it was dropped at some earlier time
+    %:- happensAtStep(drop(_,O), S1), not eventually_stopped_falling(O,S1).
+    %eventually_stopped_falling(O,S1) :- -holdsAtStep(falling(O), S2), step(S1), S1 < S2.
+
 
 % capture when height(O) = 0
-:- holds(falling(O), true, S-1),
-   % &sum { (height(O), S-1) } < 0, &sum { (height(O), S) } > 0,
-   normal_atom((height(O), S-1), lt, 0), normal_atom((height(O), S), gt, 0), 
-   step(S).
-:- holds(falling(O), true, S-1),
+:- holdsAtStep(falling(O), S+1),
    % &sum { (height(O), S-1) } > 0, &sum { (height(O), S) } < 0,
-   normal_atom((height(O), S-1), gt, 0), normal_atom((height(O), S), lt, 0), 
+   normal_atom(valueAtStep(height(O), S), gt, 0), normal_atom(valueAtStep(height(O), S+1), lt, 0), 
    step(S).
     
-comparison((height(O),S-1), 0) :- object(O), step(S). 
-comparison((height(O),S  ), 0) :- object(O), step(S). 
+comparison(valueAtStep(height(O),S+1), 0) :- object(O), step(S). 
+comparison(valueAtStep(height(O),S  ), 0) :- object(O), step(S). 
+
 
 % [effect]
 % if an object hits the ground, then it will stop falling
-%*
-%terminates(hitGround(O), falling(O), T) :-
-%    object(O), time(T).
-*%
-holds(falling(O), false, S) :- happens_state(hitGround(O), S).
+terminatesAtStep(hitGround(O), falling(O), S) :- object(O), step(S).
 
 % [effect + CLoI]
 % if an object hits the ground then its height will no longer be released from CLoI
-%*
-%initiates(hitGround(O), height(O, H), T) :-
-%    holdsAt(height(O, H), T),
-%    object(O), fHeight(H), time(T).
-*%
+&sum{ valueAtStep(height(O),S) } = valueAtStep(height(O),S+1) :- 
+    happensAtStep(hitGround(O), S),
+    step(S).
+
+defined(valueAtStep(height(O),S+1)) :- 
+    happensAtStep(hitGround(O), S),
+    step(S).
+
+
+
+
+
+
+
+% TODO % terminatesAtStep(catch(A, O), falling(O), S) :- agent(A), object(O), step(S).
+% TODO % 
+% TODO % &sum{ valueAtStep(height(O),S) } = valueAtStep(height(O),S+1) :- 
+% TODO %     happensAtStep(catch(A, O), S),
+% TODO %     agent(A), step(S).
+% TODO % 
+% TODO % defined(valueAtStep(height(O),S+1)) :- 
+% TODO %     happensAtStep(catch(A, O), S),
+% TODO %     agent(A), step(S).
+
 
 % [state constraint]
 % an object only has one unique height at a time
@@ -102,13 +132,13 @@ holds(falling(O), false, S) :- happens_state(hitGround(O), S).
 %    fGravity(G), object(O), fHeight(H), time(T1), time(T2).
 *%
 
-&sum{ (height(O),S-1); -G*time(S); G*time(S-1) } = (height(O),S) :-
-    holds(falling(O), true, S-1), 
-    fGravity(G), step(S).
+&sum{ valueAtStep(height(O),S); G*timeAtStep(S); -G*timeAtStep(S+1) } = valueAtStep(height(O),S+1) :-
+    holdsAtStep(falling(O), S+1),
+    fGravity(G), step(S),
+    S < maxstep. % TODO not sure why this is needed
 
-defined((height(O),S)) :-
-    holds(falling(O), true, S-1), 
-    fGravity(G), step(S).
+defined(valueAtStep(height(O),S)) :-
+    holdsAtStep(falling(O), S), step(S).
 
 %-------------------------------------------------------------------------------
 % narrative 
@@ -118,11 +148,15 @@ defined((height(O),S)) :-
 initiallyF(height(apple), H) :- initHeight(H).  % apples height initially is something
 initiallyN(F) :- not initiallyP(F), fluent(F).  % apple is initially not falling
 
-happens(drop(nathan,apple), 1).                 % nathan drop the apple at time 1
+happens(drop(nathan,apple), 10).                 % nathan drop the apple at time 1
+%% happens(catch(nathan,apple), 15).
 
 % --> conclude that the apple will hit the ground at time (initHeight/2) + 1
-&sum{ (height(O),S) }  = 0 :- object(O), S=maxstep.
+
+
+% TODO not sure what these are for --- probably a way to cheat the event trigger?
+%&sum{ valueAtStep(height(O),S) }  = 0 :- object(O), S=maxstep.
 % &sum{ (height(O),S) } != 0 :- object(O), S=0..maxstep-1. % comparison != is not allowed in clingo-lpx
-comparison((height(O),S), 0) :- object(O), S=0..maxstep-1.
-                             :- object(O), S=0..maxstep-1, normal_atom((height(O),S), eq, 0). 
+% comparison(valueAtStep(height(O),S), 0) :- object(O), S=0..maxstep-1.
+% :- object(O), S=0..maxstep-1, normal_atom(valueAtStep(height(O),S), eq, 0). 
 

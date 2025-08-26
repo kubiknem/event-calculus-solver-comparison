@@ -1,0 +1,20 @@
+$ scasp -s0 --ec ../axioms/bec_scasp.pl ./model.pl ./.maxtime.tmp 
+
+
+% QUERY:?- holdsAt(light_on,T).
+
+	ANSWER:	1 (in 9.806 ms)
+
+MODEL:
+{ holdsAt(light_on,T | {T #> 10,T #=< 20}),  happens(toggle_light,10),  initiates(toggle_light,light_on,10),  not_holdsAt(light_on,10),  initiallyN(light_on),  not_startedIn(0,light_on,10),  not_stoppedIn(10,light_on,T | {T #> 10,T #=< 20}),  happens(toggle_light,20),  terminates(toggle_light,light_on,20),  holdsAt(light_on,20),  not_stoppedIn(10,light_on,20) }
+BINDINGS: 
+T #> 10,T #=< 20
+
+
+
+  real      0:00.50
+  real [s]  0.50
+  user [s]  0.38
+  sys  [s]  0.06
+  mem  [KB] 30336
+  avgm [KB] 0

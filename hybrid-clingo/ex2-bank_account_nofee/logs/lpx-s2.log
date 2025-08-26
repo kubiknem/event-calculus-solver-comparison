@@ -4,22 +4,22 @@ $ clingo-lpx --strict -n0 ./model-lpx.lp ../axioms/bec_steps-clingo_lpx.lp -c ma
 clingo-lpx version 1.3.0
 Reading from ./model-lpx.lp ...
 Solving...
-Answer: 1 (Time: 0.019s)
-
+Answer: 1 (Time: 0.020s)
+happens(transfer(account1,account2,2),10) happens(transfer(account1,account2,4),20) holdsAt((balance(account1),valueAtStep(balance(account1),1)),(0,"< T =<",10)) holdsAt((balance(account1),valueAtStep(balance(account1),2)),(10,"< T =<",20)) holdsAt((balance(account1),valueAtStep(balance(account1),3)),("T >",20)) holdsAt((balance(account2),valueAtStep(balance(account2),1)),(0,"< T =<",10)) holdsAt((balance(account2),valueAtStep(balance(account2),2)),(10,"< T =<",20)) holdsAt((balance(account2),valueAtStep(balance(account2),3)),("T >",20))
 Assignment:
-time(0)=0 time(1)=1 time(2)=2 (balance(account1),0)=10 (balance(account1),1)=8 (balance(account1),2)=4 (balance(account2),0)=10 (balance(account2),1)=12 (balance(account2),2)=16
+timeAtStep(0)=0 timeAtStep(1)=10 timeAtStep(2)=20 valueAtStep(balance(account1),0)=10 valueAtStep(balance(account1),1)=10 valueAtStep(balance(account1),2)=8 valueAtStep(balance(account1),3)=4 valueAtStep(balance(account2),0)=10 valueAtStep(balance(account2),1)=10 valueAtStep(balance(account2),2)=12 valueAtStep(balance(account2),3)=16
 SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.020s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.008s
+Time         : 0.021s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.009s
 
 Command exited with non-zero status 30
 
   real      0:00.03
   real [s]  0.03
-  user [s]  0.00
+  user [s]  0.01
   sys  [s]  0.00
-  mem  [KB] 8192
+  mem  [KB] 8448
   avgm [KB] 0

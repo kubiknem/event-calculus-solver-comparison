@@ -1,0 +1,120 @@
+$ clingo -c maxtime=60 -n 0 ../axioms/bec_clingo.pl ./model.pl | ../utils/format-output/format-output-rework 1
+
+
+
+==========
+Answer: 1
+
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+happens(toggle_light,10)
+
+11
++light_on
+
+12
+light_on
+
+13
+light_on
+
+14
+light_on
+
+15
+light_on
+
+16
+light_on
+
+17
+light_on
+
+18
+light_on
+
+19
+light_on
+
+20
+light_on
+happens(toggle_light,20)
+
+21
+-light_on
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+P
+ ... predicate grounding skipped ...
+
+Models       : 1
+Calls        : 1
+Time         : 0.022s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.010s
+
+../axioms/bec_clingo.pl:15:5-31: info: atom does not occur in any rule head:
+  releases(Event,Fluent,T)
+
+../axioms/bec_clingo.pl:28:5-31: info: atom does not occur in any rule head:
+  releases(Event,Fluent,T)
+
+../axioms/bec_clingo.pl:37:5-41: info: atom does not occur in any rule head:
+  trajectory(Fluent1,T1,Fluent2,T2)
+
+../axioms/bec_clingo.pl:43:5-23: info: atom does not occur in any rule head:
+  initiallyP(Fluent)
+
+Command exited with non-zero status 30
+
+  real      0:00.03
+  real [s]  0.03
+  user [s]  0.00
+  sys  [s]  0.00
+  mem  [KB] 9216
+  avgm [KB] 0

@@ -14,9 +14,11 @@ fluent(light_on).
 % effects 
 %-------------------------------------------------------------------------------
 
-initiatesAtStep(turn_light_on,  light_on, S) :- step(S).
+% initiates(turn_light_on,  light_on, T) :- time(T).
+holds(light_on, true, S) :- happens_state(turn_light_on, S).
 
-terminatesAtStep(turn_light_off, light_on, S) :- step(S).
+% terminates(turn_light_off, light_on, T) :- time(T).
+holds(light_on, false, S) :- happens_state(turn_light_off, S).
 
 
 %-------------------------------------------------------------------------------

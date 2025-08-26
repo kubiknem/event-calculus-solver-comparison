@@ -1,11 +1,11 @@
-% light can be turned on and off
+% light can be turned on and off using a single toggle event whose effect is 
+% context dependent
 
 %-------------------------------------------------------------------------------
 % sorts
 %-------------------------------------------------------------------------------
 
-% event(turn_light_on).
-% event(turn_light_off).
+% event(toggle_light).
 
 fluent(light_on).
 
@@ -14,9 +14,11 @@ fluent(light_on).
 % effects 
 %-------------------------------------------------------------------------------
 
-initiatesAtStep(turn_light_on,  light_on, S) :- step(S).
+% initiates(turn_light_on,  light_on, T) :- time(T).
+initiatesAtStep(toggle_light,  light_on, S) :- -holdsAtStep(light_on, S).
 
-terminatesAtStep(turn_light_off, light_on, S) :- step(S).
+% terminates(turn_light_off, light_on, T) :- time(T).
+terminatesAtStep(toggle_light, light_on, S) :- holdsAtStep(light_on, S).
 
 
 %-------------------------------------------------------------------------------
@@ -30,7 +32,7 @@ initiallyN(light_on).
 % narrative 
 %-------------------------------------------------------------------------------
 
-happens(turn_light_on,      10).
-happens(turn_light_off,     20).
+happens(toggle_light,      10).
+happens(toggle_light,      20).
 
 % conclude that the light is on between 10 and 20
