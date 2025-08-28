@@ -1,0 +1,21 @@
+$ oscasp -s0 --ec ../axioms/bec_scasp.pl ./model.pl ./.maxtime_height.tmp ../utils/cache.pl
+
+
+% QUERY:?- happens(hitGround(apple),T).
+
+	ANSWER:	1 (in 11.674 ms)
+
+MODEL:
+{ happens(hitGround(apple),30),  happens(drop(nathan,apple),10),  initiates(drop(nathan,apple),falling(apple),10),  trajectory(falling(apple),10,height(apple,0),30),  holdsAt(height(apple,40),10),  initiallyP(height(apple,40)),  not_stoppedIn(0,height(apple,40),10),  not_stoppedIn(10,falling(apple),30) }
+BINDINGS: 
+T = 30
+
+
+
+
+  real      0:00.90
+  real [s]  0.90
+  user [s]  0.45
+  sys  [s]  0.08
+  mem  [KB] 30464
+  avgm [KB] 0

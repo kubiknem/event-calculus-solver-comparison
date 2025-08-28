@@ -6,7 +6,7 @@ TIME=/usr/bin/time -f "\n  real      %E\n  real [s]  %e\n  user [s]  %U\n  sys  
 SETUP=echo "max_time($$MAXTIME)." > ./.maxtime.tmp
 
 # non-terminating due to zeno-like behavior --> there fundamentally is no solution in continuous time
-CMD=scasp -s0 --ec ../axioms/bec_scasp.pl ./model.pl ./.maxtime.tmp --zeno_halt # --tree
+CMD=oscasp -s0 --ec ../axioms/bec_scasp.pl ./model.pl ./.maxtime.tmp --zeno_halt # --tree
 run-non_term:
 	MAXTIME=10; ${SETUP}; ${TIME} ${CMD}
 	@rm -f ./.maxtime*.tmp
@@ -16,13 +16,13 @@ run-non_term:
 # alternatives (fixes / improvements)
 
 # fixed by remodeling to a immediate reaction (instead of infinitely fast)
-CMD_FIXIMMEDIATE=scasp -s0 --ec ../axioms/bec_scasp.pl ./fix-immediate.pl ./.maxtime.tmp ../utils/cache.pl # --tree
+CMD_FIXIMMEDIATE=oscasp -s0 --ec ../axioms/bec_scasp.pl ./fix-immediate.pl ./.maxtime.tmp ../utils/cache.pl # --tree
 run-fixed_immediate:
 	MAXTIME=10; ${SETUP}; ${TIME} ${CMD_FIXIMMEDIATE}
 	@rm -f ./.maxtime*.tmp
 	
 # fixed by inserting an epsilon (reaction with a delay instead of infinitely fast)
-CMD_FIXEPSILON=scasp -s0 --ec -r ../axioms/bec_scasp.pl ./fix-epsilon.pl ./.maxtime.tmp ../utils/cache.pl # --tree
+CMD_FIXEPSILON=oscasp -s0 --ec -r ../axioms/bec_scasp.pl ./fix-epsilon.pl ./.maxtime.tmp ../utils/cache.pl # --tree
 run-fixed_epsilon:
 	MAXTIME=10; ${SETUP}; ${TIME} ${CMD_FIXEPSILON}
 	@rm -f ./.maxtime*.tmp
@@ -34,16 +34,10 @@ run-fixed_epsilon:
 log:
 	MAXTIME=10;  ${SETUP}; ../../scripts/maketrace.sh "${CMD}" ./logs/t$$MAXTIME.log
 	
-	MAXTIME=10;  ${SETUP}; ../../scripts/maketrace.sh "${CMD_FIXIMMEDIATE}" ./logs/fix_immediate-t$$MAXTIME.log
-	MAXTIME=20;  ${SETUP}; ../../scripts/maketrace.sh "${CMD_FIXIMMEDIATE}" ./logs/fix_immediate-t$$MAXTIME.log
-	MAXTIME=40;  ${SETUP}; ../../scripts/maketrace.sh "${CMD_FIXIMMEDIATE}" ./logs/fix_immediate-t$$MAXTIME.log
 	MAXTIME=80;  ${SETUP}; ../../scripts/maketrace.sh "${CMD_FIXIMMEDIATE}" ./logs/fix_immediate-t$$MAXTIME.log
 	MAXTIME=160; ${SETUP}; ../../scripts/maketrace.sh "${CMD_FIXIMMEDIATE}" ./logs/fix_immediate-t$$MAXTIME.log
 	MAXTIME=320; ${SETUP}; ../../scripts/maketrace.sh "${CMD_FIXIMMEDIATE}" ./logs/fix_immediate-t$$MAXTIME.log
 
-	MAXTIME=10;  ${SETUP}; ../../scripts/maketrace.sh "${CMD_FIXEPSILON}" ./logs/fix_epsilon-t$$MAXTIME.log
-	MAXTIME=20;  ${SETUP}; ../../scripts/maketrace.sh "${CMD_FIXEPSILON}" ./logs/fix_epsilon-t$$MAXTIME.log
-	MAXTIME=40;  ${SETUP}; ../../scripts/maketrace.sh "${CMD_FIXEPSILON}" ./logs/fix_epsilon-t$$MAXTIME.log
 	MAXTIME=80;  ${SETUP}; ../../scripts/maketrace.sh "${CMD_FIXEPSILON}" ./logs/fix_epsilon-t$$MAXTIME.log
 	MAXTIME=160; ${SETUP}; ../../scripts/maketrace.sh "${CMD_FIXEPSILON}" ./logs/fix_epsilon-t$$MAXTIME.log
 	MAXTIME=320; ${SETUP}; ../../scripts/maketrace.sh "${CMD_FIXEPSILON}" ./logs/fix_epsilon-t$$MAXTIME.log

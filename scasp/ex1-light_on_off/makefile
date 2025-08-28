@@ -4,7 +4,7 @@ TIME=/usr/bin/time -f "\n  real      %E\n  real [s]  %e\n  user [s]  %U\n  sys  
 # base
 
 SETUP=echo "max_time($$MAXTIME)." > ./.maxtime.tmp
-CMD=scasp -s0 --ec ../axioms/bec_scasp.pl ./model.pl ./.maxtime.tmp #../utils/cache.pl
+CMD=oscasp -s0 --ec ../axioms/bec_scasp.pl ./model.pl ./.maxtime.tmp #../utils/cache.pl
 run:
 	MAXTIME=30; ${SETUP}; ${TIME} ${CMD}
 	@rm -f ./.maxtime*.tmp

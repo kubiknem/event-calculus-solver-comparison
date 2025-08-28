@@ -72,8 +72,8 @@ trajectory(falling(O), T1, height(O,SUM), T2) :-
 initiallyP(height(apple, H)) :- initHeight(H).  % apples height initially is something
 initiallyN(F) :- not initiallyP(F).             % apple is initially not falling
 
-happens(drop(nathan,apple), 1).                 % nathan drop the apple at time 1
+happens(drop(nathan,apple), 10).                 % nathan drop the apple at time 10
 
 
-% --> conclude that the apple will hit the ground at time (initHeight/2) + 1
+% --> conclude that the apple will hit the ground at time (initHeight/2) + 10
 ?- happens(hitGround(apple), T).

@@ -1,23 +1,24 @@
-$ scasp -s0 --ec ../axioms/bec_scasp.pl ./fix-immediate.pl ./maxtime.tmp ../utils/cache.pl
+$ oscasp -s0 --ec ../axioms/bec_scasp.pl ./fix-immediate.pl ./.maxtime.tmp ../utils/cache.pl 
 
 
-% QUERY:?- T1 #< 4,happens(chargeServiceFee(account1),T1),holdsAt(balance(account1,B1),4),happens(monthlyReset(account1),5),T2 #> T1,happens(chargeServiceFee(account1),T2),holdsAt(balance(account1,B2),7).
+% QUERY:?- T1 #< 40,happens(chargeServiceFee(account1),T1),holdsAt(balance(account1,B1),40),happens(monthlyReset(account1),50),T2 #> T1,happens(chargeServiceFee(account1),T2),holdsAt(balance(account1,B2),70).
 
-	ANSWER:	1 (in 1524.267 ms)
+	ANSWER:	1 (in 1325.795 ms)
 
 MODEL:
-{ happens(chargeServiceFee(account1),2),  happens(transfer(account1,account2,4),2),  holdsAt(minimumBalance(account1,5),2),  initiallyP(minimumBalance(account1,5)),  not_stoppedIn(0,minimumBalance(account1,5),2),  not_holdsAt(serviceFeeCharged(account1),2),  initiallyN(serviceFeeCharged(account1)),  not_startedIn(0,serviceFeeCharged(account1),2),  holdsAt(balance(account1,8),2),  happens(transfer(account1,account2,2),1),  initiates(transfer(account1,account2,2),balance(account1,8),1),  not_happens(chargeServiceFee(account1),1),  holdsAt(balance(account2,10),1),  initiallyP(balance(account2,10)),  not_stoppedIn(0,balance(account2,10),1),  holdsAt(balance(account1,10),1),  initiallyP(balance(account1,10)),  not_stoppedIn(0,balance(account1,10),1),  not_stoppedIn(1,balance(account1,8),2),  holdsAt(balance(account1,3),4),  initiates(chargeServiceFee(account1),balance(account1,3),2),  holdsAt(serviceFee(account1,1),2),  initiallyP(serviceFee(account1,1)),  not_stoppedIn(0,serviceFee(account1,1),2),  not_stoppedIn(2,balance(account1,3),4),  happens(monthlyReset(account1),5),  happens(chargeServiceFee(account1),5),  holdsAt(minimumBalance(account1,5),5),  not_stoppedIn(0,minimumBalance(account1,5),5),  terminates(monthlyReset(account1),serviceFeeCharged(account1),5),  holdsAt(balance(account1,3),5),  not_stoppedIn(2,balance(account1,3),5),  holdsAt(balance(account1,2),7),  initiates(chargeServiceFee(account1),balance(account1,2),5),  holdsAt(serviceFee(account1,1),5),  not_stoppedIn(0,serviceFee(account1,1),5),  not_stoppedIn(5,balance(account1,2),7) }
+{ happens(chargeServiceFee(account1),20),  happens(transfer(account1,account2,4),20),  holdsAt(minimumBalance(account1,5),20),  initiallyP(minimumBalance(account1,5)),  not_stoppedIn(0,minimumBalance(account1,5),20),  not_holdsAt(serviceFeeCharged(account1),20),  initiallyN(serviceFeeCharged(account1)),  not_startedIn(0,serviceFeeCharged(account1),20),  holdsAt(balance(account1,8),20),  happens(transfer(account1,account2,2),10),  initiates(transfer(account1,account2,2),balance(account1,8),10),  not_happens(chargeServiceFee(account1),10),  holdsAt(balance(account2,10),10),  initiallyP(balance(account2,10)),  not_stoppedIn(0,balance(account2,10),10),  holdsAt(balance(account1,10),10),  initiallyP(balance(account1,10)),  not_stoppedIn(0,balance(account1,10),10),  not_stoppedIn(10,balance(account1,8),20),  holdsAt(balance(account1,3),40),  initiates(chargeServiceFee(account1),balance(account1,3),20),  holdsAt(serviceFee(account1,1),20),  initiallyP(serviceFee(account1,1)),  not_stoppedIn(0,serviceFee(account1,1),20),  not_stoppedIn(20,balance(account1,3),40),  happens(monthlyReset(account1),50),  happens(chargeServiceFee(account1),50),  holdsAt(minimumBalance(account1,5),50),  not_stoppedIn(0,minimumBalance(account1,5),50),  terminates(monthlyReset(account1),serviceFeeCharged(account1),50),  holdsAt(balance(account1,3),50),  not_stoppedIn(20,balance(account1,3),50),  holdsAt(balance(account1,2),70),  initiates(chargeServiceFee(account1),balance(account1,2),50),  holdsAt(serviceFee(account1,1),50),  not_stoppedIn(0,serviceFee(account1,1),50),  not_stoppedIn(50,balance(account1,2),70) }
 BINDINGS: 
-T1 = 2 
+T1 = 20 
 B1 = 3 
-T2 = 5 
+T2 = 50 
 B2 = 2
 
 
 
-  real      0:02.53
-  real [s]  2.53
-  user [s]  2.33
-  sys  [s]  0.09
-  mem  [KB] 33408
+
+  real      0:02.72
+  real [s]  2.72
+  user [s]  2.15
+  sys  [s]  0.12
+  mem  [KB] 31232
   avgm [KB] 0

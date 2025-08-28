@@ -10,6 +10,10 @@ There are examples for Clingo and s(CASP) including execution logs for different
 - each example also includes execution logs that show the result, runtime, and memory use
 
 
+## TODO / QUESTIONS for clingo-lpx
+- Any way to map interpreted values into the answer using #show? (Place things from "Assignment:" directly into "Answer:" in the output)
+- Any way to say steps with `[+-*]e` are not allowed? -- might help with the triggered events problem
+
 ## TODO
 - add more examples (rest of ICLP25 paper and any other ones)
 - comparison between hybrid-clingo and scasp (maybe examples with growing number of events/steps?)
@@ -26,6 +30,8 @@ There are examples for Clingo and s(CASP) including execution logs for different
 3) ex3-falling_object
    - Basic example of continuous change (trajectory + continuous fluent). Included to show inaccuracy issues caused by discretization.
    - Grounding size is a problem.
-5) ex4-bank_account
+4) ex4-bank_account
    - Discrete fluents and changes with a triggered event. Preventing repeated trigger becomes tricky when reasoning in continuous time.
    - Requires special techniques or remodeling to avoid zeno-like behavior (infinitely fast response / event occurrence infinitely close to a non-inclusive bound) in continuous time.
+5) ex5-light_toggle
+   - Very similar to ex1. Uses context dependent event effects via initiates/terminates with a body.

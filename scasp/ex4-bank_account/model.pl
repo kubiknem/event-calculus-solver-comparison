@@ -17,7 +17,7 @@
 %-------------------------------------------------------------------------------
 
 %% max_time(PARAMETER).     %% added on execution via an external file
-endOfMonth(5).
+endOfMonth(50).
 
 account(account1).
 account(account2).
@@ -125,17 +125,17 @@ initiallyN(F) :- not initiallyP(F).
 % narrative 
 %-------------------------------------------------------------------------------
 
-happens(transfer(account1, account2, 2), 1).
-happens(transfer(account1, account2, 4), 2).
+happens(transfer(account1, account2, 2), 10).
+happens(transfer(account1, account2, 4), 20).
 
 % --> conclude that
-%   a service fee is charged to account1 "in response to transfer at time 2" due to the balance being 4
-%   the balance of account1 will be 3 at time 4
-%   the service fee flag is reset at time 5
-%   a service fee is again charged to account1 "in response to reset at time 5"
-%   the balance of account1 will be 2 at time 7
-?-  T1 .<. 4, happens(chargeServiceFee(account1), T1),
-    holdsAt(balance(account1, B1), 4),
-    happens(monthlyReset(account1), 5),
+%   a service fee is charged to account1 "in response to transfer at time 20" due to the balance being 4
+%   the balance of account1 will be 3 at time 40
+%   the service fee flag is reset at time 50
+%   a service fee is again charged to account1 "in response to reset at time 50"
+%   the balance of account1 will be 2 after 
+?-  T1 .<. 40, happens(chargeServiceFee(account1), T1),
+    holdsAt(balance(account1, B1), 40),
+    happens(monthlyReset(account1), 50),
     T2 .>. T1, happens(chargeServiceFee(account1), T2),
-    holdsAt(balance(account1, B2), 7).
+    holdsAt(balance(account1, B2), 70).

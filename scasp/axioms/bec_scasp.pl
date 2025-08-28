@@ -183,199 +183,20 @@ not_startedIn(T1, Fluent, T2) :-
 
 % configurable rule that can handle all three types of fluent interruptions (to avoid duplicit code)
 % Type_TermInitRel = initiates / terminates / releases
-%
-% also tries to better deal with different types of calls in regards to T1 and T2
-%   1) if both T1 and T2 are points (not intervals), then everything is easy
-%   2) if one is an interval and the other a point, then there cannot be any changes to the inner bound -- event more inner than the bound means failure (not moving of the bound!) other events mean adjusting the outer bound
-%   3) if both are intervals without an intersection, then its similar to the previous one (events in between the intervals mean fail and should not adjust the inner bounds, other events adjust the outer bounds)
-%   4) if both are intervals with an intersection, then everything gets complicated and no tricks are possible 
 not_interrupted(Type_TermInitRel, Fluent, T1, T2) :- 
     findall(E, findall_can_interrupts(Type_TermInitRel, E, Fluent, T1, T2), EventList),
-    not_interrupted_N(Type_TermInitRel, Fluent, EventList, T1, T2).
+    not_interrupted(Type_TermInitRel, Fluent, EventList, T1, T2).
 
 findall_can_interrupts(Type_TermInitRel, E, F, T1, T2) :-
     T .>. T1, T .<. T2,
     can_interrupts(Type_TermInitRel, E, F, T).
-    
-not_interrupted_N(Type_TermInitRel, Fluent, EventList, T1, T2) :- not_interrupted_1(Type_TermInitRel, Fluent, EventList, T1, T2).
-not_interrupted_N(Type_TermInitRel, Fluent, EventList, T1, T2) :- not_interrupted_2a(Type_TermInitRel, Fluent, EventList, T1, T2).
-not_interrupted_N(Type_TermInitRel, Fluent, EventList, T1, T2) :- not_interrupted_2b(Type_TermInitRel, Fluent, EventList, T1, T2).
-not_interrupted_N(Type_TermInitRel, Fluent, EventList, T1, T2) :- not_interrupted_3(Type_TermInitRel, Fluent, EventList, T1, T2).
-not_interrupted_N(Type_TermInitRel, Fluent, EventList, T1, T2) :- not_interrupted_4(Type_TermInitRel, Fluent, EventList, T1, T2).
-
-
-% version 1
-not_interrupted_1(Type_TermInitRel, Fluent, EventList, T1, T2) :-
-    inf(T1, T1inf), sup(T1, T1sup), is_not_interval(T1inf, T1sup),
-    inf(T2, T2inf), sup(T2, T2sup), is_not_interval(T2inf, T2sup),
-    not_interrupted_1_fail(Type_TermInitRel, Fluent, EventList, T1, T2).
-not_interrupted_1_fail(Type_TermInitRel, Fluent, [H|Tail], T1, T2) :-
-    findall(T, interrupt_1_fail(Type_TermInitRel, H, Fluent, T, T1, T2),List),
-    all_entirely_outside_of_interval(List, T1, T2),
-    not_interrupted_1_fail(Type_TermInitRel, Fluent, Tail, T1, T2).
-not_interrupted_1_fail(Type_TermInitRel, _, [], _, _).
-interrupt_1_fail(Type_TermInitRel, E, F, T, T1, T2) :-  % finding any T means we should fail
-    T .>. T1,
-    T .<. T2,
-    happens(E, T),
-    interrupts(Type_TermInitRel, E, F, T).
-
-
-% version 2a
-not_interrupted_2a(Type_TermInitRel, Fluent, EventList, T1, T2) :-
-    inf(T1, T1inf), sup(T1, T1sup), is_interval(T1inf, T1sup),
-    inf(T2, T2inf), sup(T2, T2sup), is_not_interval(T2inf, T2sup),
-    not_interrupted_2a_fail(Type_TermInitRel, Fluent, EventList, T1, T2),
-    not_interrupted_2a_adjust_eq(Type_TermInitRel, Fluent, EventList, T1, T2),
-    not_interrupted_2a_adjust_gt(Type_TermInitRel, Fluent, EventList, T1, T2).
-not_interrupted_2a_fail(Type_TermInitRel, Fluent, [H|Tail], T1, T2) :-
-    findall(T, interrupt_2a_fail(Type_TermInitRel, H, Fluent, T, T1, T2),List),
-    all_entirely_outside_of_interval(List, T1, T2),
-    not_interrupted_2a_fail(Type_TermInitRel, Fluent, Tail, T1, T2).
-not_interrupted_2a_fail(Type_TermInitRel, _, [], _, _).
-not_interrupted_2a_adjust_eq(Type_TermInitRel, Fluent, [H|Tail], T1, T2) :-
-    findall(T, interrupt_2a_adjust_eq(Type_TermInitRel, H, Fluent, T, T1, T2),List),
-    all_entirely_outside_of_interval(List, T1, T2),
-    not_interrupted_2a_adjust_eq(Type_TermInitRel, Fluent, Tail, T1, T2).
-not_interrupted_2a_adjust_eq(Type_TermInitRel, _, [], _, _).
-not_interrupted_2a_adjust_gt(Type_TermInitRel, Fluent, [H|Tail], T1, T2) :-
-    findall(T, interrupt_2a_adjust_gt(Type_TermInitRel, H, Fluent, T, T1, T2),List),
-    all_entirely_outside_of_interval(List, T1, T2),
-    not_interrupted_2a_adjust_gt(Type_TermInitRel, Fluent, Tail, T1, T2).
-not_interrupted_2a_adjust_gt(Type_TermInitRel, _, [], _, _).
-interrupt_2a_fail(Type_TermInitRel, E, F, T, T1, T2) :-    % finding a T smaller than upper bound of T1 means we should fail
-    T .<. T2,
-    sup(T1,T1sup), T .>. T1sup,
-    happens(E, T),
-    interrupts(Type_TermInitRel, E, F, T).
-interrupt_2a_adjust_eq(Type_TermInitRel, E, F, T, T1, T2) :- % checking for a T exactly equal to the upper bound of T1 helps with finding maximum T's (instead of just chekcing .=<.)
-    T .<. T2,
-    sup(T1,T1sup), T .=. T1sup,
-    happens(E, T),
-    interrupts(Type_TermInitRel, E, F, T).
-interrupt_2a_adjust_gt(Type_TermInitRel, E, F, T, T1, T2) :-   % finding a T smaller than upper bound of T1 means we should adjust the lower bound of T1
-    T .<. T2,
-    sup(T1,T1sup), T .<. T1sup,
-    inf(T1,T1inf), T .>. T1inf,   % always has to be bigger than the inf
-    happens(E, T),
-    interrupts(Type_TermInitRel, E, F, T).
-
-
-% version 2b
-not_interrupted_2b(Type_TermInitRel, Fluent, EventList, T1, T2) :-
-    inf(T1, T1inf), sup(T1, T1sup), is_not_interval(T1inf, T1sup),
-    inf(T2, T2inf), sup(T2, T2sup), is_interval(T2inf, T2sup),
-    not_interrupted_2b_fail(Type_TermInitRel, Fluent, EventList, T1, T2),
-    not_interrupted_2b_adjust_eq(Type_TermInitRel, Fluent, EventList, T1, T2),
-    not_interrupted_2b_adjust_gt(Type_TermInitRel, Fluent, EventList, T1, T2).
-not_interrupted_2b_fail(Type_TermInitRel, Fluent, [H|Tail], T1, T2) :-
-    findall(T, interrupt_2b_fail(Type_TermInitRel, H, Fluent, T, T1, T2),List),
-    all_entirely_outside_of_interval(List, T1, T2),
-    not_interrupted_2b_fail(Type_TermInitRel, Fluent, Tail, T1, T2).
-not_interrupted_2b_fail(Type_TermInitRel, _, [], _, _).
-not_interrupted_2b_adjust_eq(Type_TermInitRel, Fluent, [H|Tail], T1, T2) :-
-    findall(T, interrupt_2b_adjust_eq(Type_TermInitRel, H, Fluent, T, T1, T2),List),
-    all_entirely_outside_of_interval(List, T1, T2),
-    not_interrupted_2b_adjust_eq(Type_TermInitRel, Fluent, Tail, T1, T2).
-not_interrupted_2b_adjust_eq(Type_TermInitRel, _, [], _, _).
-not_interrupted_2b_adjust_gt(Type_TermInitRel, Fluent, [H|Tail], T1, T2) :-
-    findall(T, interrupt_2b_adjust_gt(Type_TermInitRel, H, Fluent, T, T1, T2),List),
-    all_entirely_outside_of_interval(List, T1, T2),
-    not_interrupted_2b_adjust_gt(Type_TermInitRel, Fluent, Tail, T1, T2).
-not_interrupted_2b_adjust_gt(Type_TermInitRel, _, [], _, _).
-interrupt_2b_fail(Type_TermInitRel, E, F, T, T1, T2) :-    % finding a T smaller than lower bound of T2 means we should fail
-    T .>. T1,
-    inf(T2,T2inf), T .<. T2inf,
-    happens(E, T),
-    interrupts(Type_TermInitRel, E, F, T).
-interrupt_2b_adjust_eq(Type_TermInitRel, E, F, T, T1, T2) :- % checking for a T exactly equal to the lower bound of T2 helps with finding minimum T's (instead of just chekcing .>=.)
-    T .>. T1,
-    inf(T2,T2inf), T .=. T2inf,
-    happens(E, T),
-    interrupts(Type_TermInitRel, E, F, T).
-interrupt_2b_adjust_gt(Type_TermInitRel, E, F, T, T1, T2) :-   % finding a T bigger than lower bound of T2 means we should adjust the upper bound of T2
-    T .>. T1,
-    inf(T2,T2inf), T .>. T2inf,
-    sup(T2,T2sup), T .<. T2sup,   % always has to be smaller than the sup
-    happens(E, T),
-    interrupts(Type_TermInitRel, E, F, T).
-
-
-% version 3
-not_interrupted_3(Type_TermInitRel, Fluent, EventList, T1, T2) :-
-    inf(T1, T1inf), sup(T1, T1sup), is_interval(T1inf, T1sup),
-    inf(T2, T2inf), sup(T2, T2sup), is_interval(T2inf, T2sup),
-    no_intersection(T1inf, T1sup, T2inf, T2sup),
-    not_interrupted_3_fail(Type_TermInitRel, Fluent, EventList, T1, T2),
-    not_interrupted_3_adjust_eq_a(Type_TermInitRel, Fluent, EventList, T1, T2),
-    not_interrupted_3_adjust_eq_b(Type_TermInitRel, Fluent, EventList, T1, T2),
-    not_interrupted_3_adjust_gt(Type_TermInitRel, Fluent, EventList, T1, T2).
-not_interrupted_3_fail(Type_TermInitRel, Fluent, [H|Tail], T1, T2) :-
-    findall(T, interrupt_3_fail(Type_TermInitRel, H, Fluent, T, T1, T2),List),
-    all_entirely_outside_of_interval(List, T1, T2),
-    not_interrupted_3_fail(Type_TermInitRel, Fluent, Tail, T1, T2).
-not_interrupted_3_fail(Type_TermInitRel, _, [], _, _).
-not_interrupted_3_adjust_eq_a(Type_TermInitRel, Fluent, [H|Tail], T1, T2) :-
-    findall(T, interrupt_3_adjust_eq_a(Type_TermInitRel, H, Fluent, T, T1, T2),List),
-    all_entirely_outside_of_interval(List, T1, T2),
-    not_interrupted_3_adjust_eq_a(Type_TermInitRel, Fluent, Tail, T1, T2).
-not_interrupted_3_adjust_eq_a(Type_TermInitRel, _, [], _, _).
-not_interrupted_3_adjust_eq_b(Type_TermInitRel, Fluent, [H|Tail], T1, T2) :-
-    findall(T, interrupt_3_adjust_eq_b(Type_TermInitRel, H, Fluent, T, T1, T2),List),
-    all_entirely_outside_of_interval(List, T1, T2),
-    not_interrupted_3_adjust_eq_b(Type_TermInitRel, Fluent, Tail, T1, T2).
-not_interrupted_3_adjust_eq_b(Type_TermInitRel, _, [], _, _).
-not_interrupted_3_adjust_gt_a(Type_TermInitRel, Fluent, [H|Tail], T1, T2) :-
-    findall(T, interrupt_3_adjust_gt_a(Type_TermInitRel, H, Fluent, T, T1, T2),List),
-    all_entirely_outside_of_interval(List, T1, T2),
-    not_interrupted_3_adjust_gt_a(Type_TermInitRel, Fluent, Tail, T1, T2).
-not_interrupted_3_adjust_gt_a(Type_TermInitRel, _, [], _, _).
-not_interrupted_3_adjust_gt_b(Type_TermInitRel, Fluent, [H|Tail], T1, T2) :-
-    findall(T, interrupt_3_adjust_gt_b(Type_TermInitRel, H, Fluent, T, T1, T2),List),
-    all_entirely_outside_of_interval(List, T1, T2),
-    not_interrupted_3_adjust_gt_b(Type_TermInitRel, Fluent, Tail, T1, T2).
-not_interrupted_3_adjust_gt_b(Type_TermInitRel, _, [], _, _).
-interrupt_3_fail(Type_TermInitRel, E, F, T, T1, T2) :-    % finding a T bigger than the upper bound of T1 and smaller than lower bound of T2 means we should fail
-    sup(T1,T1sup), T .>. T1sup,
-    inf(T2,T2inf), T .<. T2inf,
-    happens(E, T),
-    interrupts(Type_TermInitRel, E, F, T).
-interrupt_3_adjust_eq_a(Type_TermInitRel, E, F, T, T1, T2) :- % checking for a T exactly equal to the upper bound of T1 helps with finding maximum T's (instead of just chekcing .=<.)
-    T .<. T2,
-    sup(T1,T1sup), T .=. T1sup,
-    happens(E, T),
-    interrupts(Type_TermInitRel, E, F, T).
-interrupt_3_adjust_eq_b(Type_TermInitRel, E, F, T, T1, T2) :- % checking for a T exactly equal to the lower bound of T2 helps with finding minimum T's (instead of just chekcing .>=.)
-    T .>. T1,
-    inf(T2,T2inf), T .=. T2inf,
-    happens(E, T),
-    interrupts(Type_TermInitRel, E, F, T).
-interrupt_3_adjust_gt_a(Type_TermInitRel, E, F, T, T1, T2) :-   % finding a T smaller than upper bound of T1 means we should adjust the lower bound of T1
-    T .<. T2,
-    sup(T1,T1sup), T .<. T1sup,
-    inf(T1,T1inf), T .>. T1inf,   % always has to be bigger than the inf
-    happens(E, T),
-    interrupts(Type_TermInitRel, E, F, T).
-interrupt_3_adjust_gt_b(Type_TermInitRel, E, F, T, T1, T2) :-   % finding a T bigger than lower bound of T2 means we should adjust the upper bound of T2
-    T .>. T1,
-    inf(T2,T2inf), T .>. T2inf,
-    sup(T2,T2sup), T .<. T2sup,   % always has to be smaller than the sup
-    happens(E, T),
-    interrupts(Type_TermInitRel, E, F, T).
-
-
-% version 4
-not_interrupted_4(Type_TermInitRel, Fluent, EventList, T1, T2) :-
-    inf(T1, T1inf), sup(T1, T1sup), is_interval(T1inf, T1sup),
-    inf(T2, T2inf), sup(T2, T2sup), is_interval(T2inf, T2sup),
-    have_intersection(T1inf, T1sup, T2inf, T2sup),
-    not_interrupted_4_adjust(Type_TermInitRel, Fluent, EventList, T1, T2).
-not_interrupted_4_adjust(Type_TermInitRel, Fluent, [H|Tail], T1, T2) :-
-    findall(T, interrupt_4_adjust(Type_TermInitRel, H, Fluent, T, T1, T2),List),
-    all_entirely_outside_of_interval(List, T1, T2),
-    not_interrupted_4_adjust(Type_TermInitRel, Fluent, Tail, T1, T2).
-not_interrupted_4_adjust(Type_TermInitRel, _, [], _, _).
-interrupt_4_adjust(Type_TermInitRel, E, F, T, T1, T2) :-
+ 
+not_interrupted(Type_TermInitRel, Fluent, [H|Tail], T1, T2) :-
+    findall(T, interrupt_adjust(Type_TermInitRel, H, Fluent, T, T1, T2),List),
+    all_outside_of_interval(List, T1, T2),
+    not_interrupted(Type_TermInitRel, Fluent, Tail, T1, T2).
+not_interrupted(Type_TermInitRel, _, [], _, _).
+interrupt_adjust(Type_TermInitRel, E, F, T, T1, T2) :-
     T .>. T1,
     T .<. T2,
     happens(E, T),
@@ -386,47 +207,78 @@ interrupt_4_adjust(Type_TermInitRel, E, F, T, T1, T2) :-
 can_interrupts(initiates, E, Fluent, T) :- can_initiates(E, Fluent, T).
 can_interrupts(terminates, E, Fluent, T) :- can_terminates(E, Fluent, T).
 can_interrupts(releases, E, Fluent, T) :- can_releases(E, Fluent, T).
+can_interrupts(happens, E, E, T).  % TODO reusing this infrastructure for not_happensIn/...
 
 interrupts(initiates, E, F, T) :- initiates(E, F, T).
 interrupts(terminates, E, F, T) :- terminates(E, F, T).
 interrupts(releases, E, F, T) :- releases(E, F, T).
+interrupts(happens, E, E, T).
 
-% succeds if the variable is a non-infinite interval (needs to have both bounds) 
-is_interval(Xinf, Xsup) :- Xinf .<>. Xsup.
 
-% succeds if the variable is a single point (not an interval)
-is_not_interval(Xinf, Xsup) :- Xinf .=. Xsup.
+%% succeds if the variable is a non-infinite interval (needs to have both bounds) 
+%%is_interval(X) :- infT(X, Xinf), supT(X, Xsup), Xinf .<>. Xsup.   % TODO issues with "proved(X)" remembering the wrong things
+%is_interval(Xinf, Xsup) :- Xinf .<>. Xsup.
+%
+%% succeds if the variable is a single point (not an interval)
+%%is_not_interval(X) :- infT(X, Xinf), supT(X, Xsup), Xinf .=. Xsup.   % TODO issues with "proved(X)" remembering the wrong things
+%is_not_interval(Xinf, Xsup) :- Xinf .=. Xsup.
 
-% succeds if X and Y have an intersection as intervals (overlap)
-have_intersection(Xinf, Xsup, Yinf, Ysup) :- Xinf .=<. Yinf, Xsup .=<. Yinf.
-have_intersection(Xinf, Xsup, Yinf, Ysup) :- Yinf .=<. Xinf, Ysup .=<. Xinf.
-
-% succeds if X and Y have no intersection as intervals (no overlap)
-no_intersection(Xinf, Xsup, Yinf, Ysup) :- Xsup .<. Yinf.
-no_intersection(Xinf, Xsup, Yinf, Ysup) :- Ysup .<. Xinf.
 
 % check that all intervals/values of T's do not permit any values inside of the (T1, T2) interval (which can both also be intervals...)
-all_entirely_outside_of_interval([H|T], T1, T2) :- sup(H, Hsup), Hsup .=<. T1, all_entirely_outside_of_interval(T, T1, T2).
-all_entirely_outside_of_interval([H|T], T1, T2) :- inf(H, Hinf), Hinf .>=. T2, all_entirely_outside_of_interval(T, T1, T2).
-all_entirely_outside_of_interval([], _, _).
+% TODO this might be doable in the interrupt_fail/interrupt_fail_adjust_* inside of findalls, but theres some subtelty to it due to interval reasoning... TODO 
+all_outside_of_interval([H|T], T1, T2) :- H .=<. T1, all_outside_of_interval(T, T1, T2).
+all_outside_of_interval([H|T], T1, T2) :- H .>=. T2, all_outside_of_interval(T, T1, T2).
+all_outside_of_interval([], _, _).
 
 
+infT(X, Xinf) :- inf(X, Xinf, _, 0).
+supT(X, Xsup) :- max_time(Lim), sup(X, Xsup, _, Lim).
+infT(X, Xinf, InEx) :- inf(X, Xinf, InEx, 0).
+supT(X, Xsup, InEx) :- max_time(Lim), sup(X, Xsup, InEx, Lim).
 
+
+% prove that E did not happen in a time interval (excluding the edges)
+not_happensIn(E, T1, T2) :- %%% increment_happens_start_time(INC_START_T), T1 .>=. INC_START_T, T2 .>. INC_START_T,
+    %T1 .>. 0,
+    %T1 .<. T2,
+    T1 .=<. T2,
+    not_interrupted(happens, E, T1, T2).
 
 % prove that E did not happen at T
 not_happens(E, T) :-
-    not_happensInInc(E, T, T).
+    ground(T),
+    %infT(T, Tinf), supT(T, Tsup), is_not_interval(Tinf, Tsup),
+    findall(T, happens(E, T), List),
+    List = [].
 
 
-% prove that E did not happen in a time interval (including the edges)
-not_happensInInc(E, T1, T2) :-
-    findall(T, not_happensInIncFindall(E, T, T1, T2), List),
-    outsideInc(List, T1, T2).
+not_happens(E, T1) :- %%%
+    not_ground(T1),
+    infT(T1, T1inf, InfInEx), supT(T1, T1sup, SupInEx),
+    findall(T, findall_not_happens(E, T, T1inf, InfInEx, T1sup, SupInEx), List),    % TODO the first match could fail the whole thing to be more efficient (or maybe want the lowest T?)
+    split_into_intervals(T1inf, InfInEx, List, T1sup, SupInEx, ResT1),  % RES gives multiple answers (backtrackable)
+    ResT1 .=. T1.
+findall_not_happens(E, T, T1, in, T2, in) :-  % finding any T means we should fail
+    T .>=. T1,
+    T .=<. T2,
+    happens(E, T).
+findall_not_happens(E, T, T1, in, T2, ex) :-  % finding any T means we should fail
+    T .>=. T1,
+    T .<. T2,
+    happens(E, T).
+findall_not_happens(E, T, T1, ex, T2, in) :-  % finding any T means we should fail
+    T .>. T1,
+    T .=<. T2,
+    happens(E, T).
+findall_not_happens(E, T, T1, ex, T2, ex) :-  % finding any T means we should fail
+    T .>. T1,
+    T .<. T2,
+    happens(E, T).
 
-    not_happensInIncFindall(E, T, T1, T2) :- 
-        T .>=. T1, T .=<. T2,
-        happens(E, T).
-
-    outsideInc([H|T], T1, T2) :- sup(H, Hsup), Hsup .<. T1, outsideInc(T, T1, T2).
-    outsideInc([H|T], T1, T2) :- inf(H, Hinf), Hinf .>. T2, outsideInc(T, T1, T2).
-    outsideInc([], _, _).
+split_into_intervals(T1inf, in, [], T1sup, in, ResT1) :- ResT1 .>=. T1inf, ResT1 .=<. T1sup.
+split_into_intervals(T1inf, ex, [], T1sup, in, ResT1) :- ResT1 .>. T1inf, ResT1 .=<. T1sup.
+split_into_intervals(T1inf, in, [], T1sup, ex, ResT1) :- ResT1 .>=. T1inf, ResT1 .<. T1sup.
+split_into_intervals(T1inf, ex, [], T1sup, ex, ResT1) :- ResT1 .>. T1inf, ResT1 .<. T1sup.
+split_into_intervals(T1inf, in, [H|T], _, _, ResT1) :- ResT1 .>=. T1inf, ResT1 .<. H.
+split_into_intervals(T1inf, ex, [H|T], _, _, ResT1) :- ResT1 .>. T1inf, ResT1 .<. H.
+split_into_intervals(_, _, [H|T], T1sup, SupInEx, ResT1) :- split_into_intervals(H, ex, T, T1sup, SupInEx, ResT1).

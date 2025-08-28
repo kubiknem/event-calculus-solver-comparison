@@ -1,17 +1,17 @@
-$ scasp -s0 --ec ../axioms/bec_scasp.pl ./model.pl ./maxtime.tmp --zeno_halt 
+$ oscasp -s0 --ec ../axioms/bec_scasp.pl ./model.pl ./.maxtime.tmp --zeno_halt 
 
 
-% QUERY:?- T1 #< 4,happens(chargeServiceFee(account1),T1),holdsAt(balance(account1,B1),4),happens(monthlyReset(account1),5),T2 #> T1,happens(chargeServiceFee(account1),T2),holdsAt(balance(account1,B2),7).
+% QUERY:?- T1 #< 40,happens(chargeServiceFee(account1),T1),holdsAt(balance(account1,B1),40),happens(monthlyReset(account1),50),T2 #> T1,happens(chargeServiceFee(account1),T2),holdsAt(balance(account1,B2),70).
 
 WARNING: Detected a zeno descending chain on happens/2. Terminating execution.
-	happens(chargeServiceFee(account1), {_496183~[_496183 > 0, _496183 < 4]} )
-	happens(chargeServiceFee(account1), {_506013~[_506013 > 0, _506013 < 4]} )
+	happens(chargeServiceFee(account1), {_65793~[_65793 > 0, _65793 < 10]} )
+	happens(chargeServiceFee(account1), {_71379~[_71379 > 0, _71379 < 10]} )
 
 
 
-  real      0:00.70
-  real [s]  0.70
-  user [s]  0.57
-  sys  [s]  0.08
-  mem  [KB] 33536
+  real      0:01.00
+  real [s]  1.00
+  user [s]  0.53
+  sys  [s]  0.09
+  mem  [KB] 30208
   avgm [KB] 0

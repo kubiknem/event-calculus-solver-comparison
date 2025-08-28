@@ -1,20 +1,21 @@
-$ scasp -s0 --ec ../axioms/bec_scasp.pl ./model.pl ./maxtime.tmp ../utils/cache.pl
+$ oscasp -s0 --ec ../axioms/bec_scasp.pl ./model.pl ./.maxtime.tmp ../utils/cache.pl
 
 
-% QUERY:?- holdsAt(balance(account1,X),3).
+% QUERY:?- holdsAt(balance(account1,X),30).
 
-	ANSWER:	1 (in 85.187 ms)
+	ANSWER:	1 (in 63.435 ms)
 
 MODEL:
-{ holdsAt(balance(account1,4),3),  happens(transfer(account1,account2,4),2),  initiates(transfer(account1,account2,4),balance(account1,4),2),  holdsAt(balance(account2,12),2),  happens(transfer(account1,account2,2),1),  initiates(transfer(account1,account2,2),balance(account2,12),1),  holdsAt(balance(account2,10),1),  initiallyP(balance(account2,10)),  not_stoppedIn(0,balance(account2,10),1),  holdsAt(balance(account1,10),1),  initiallyP(balance(account1,10)),  not_stoppedIn(0,balance(account1,10),1),  not_stoppedIn(1,balance(account2,12),2),  holdsAt(balance(account1,8),2),  initiates(transfer(account1,account2,2),balance(account1,8),1),  not_stoppedIn(1,balance(account1,8),2),  not_stoppedIn(2,balance(account1,4),3) }
+{ holdsAt(balance(account1,4),30),  happens(transfer(account1,account2,4),20),  initiates(transfer(account1,account2,4),balance(account1,4),20),  holdsAt(balance(account2,12),20),  happens(transfer(account1,account2,2),10),  initiates(transfer(account1,account2,2),balance(account2,12),10),  holdsAt(balance(account2,10),10),  initiallyP(balance(account2,10)),  not_stoppedIn(0,balance(account2,10),10),  holdsAt(balance(account1,10),10),  initiallyP(balance(account1,10)),  not_stoppedIn(0,balance(account1,10),10),  not_stoppedIn(10,balance(account2,12),20),  holdsAt(balance(account1,8),20),  initiates(transfer(account1,account2,2),balance(account1,8),10),  not_stoppedIn(10,balance(account1,8),20),  not_stoppedIn(20,balance(account1,4),30) }
 BINDINGS: 
 X = 4
 
 
 
-  real      0:00.78
-  real [s]  0.78
-  user [s]  0.62
-  sys  [s]  0.07
-  mem  [KB] 33280
+
+  real      0:00.94
+  real [s]  0.94
+  user [s]  0.48
+  sys  [s]  0.09
+  mem  [KB] 30720
   avgm [KB] 0

@@ -84,9 +84,9 @@ initiallyN(F) :- not initiallyP(F).
 % narrative 
 %-------------------------------------------------------------------------------
 
-happens(transfer(account1, account2, 2), 1).
-happens(transfer(account1, account2, 4), 2).
+happens(transfer(account1, account2, 2), 10).
+happens(transfer(account1, account2, 4), 20).
 
 % --> conclude that
-%   the balance of account1 will be 4 at time 3
-?- holdsAt(balance(account1, X), 3).    % 4
+%   the balance of account1 will be 4 at time 30
+?- holdsAt(balance(account1, X), 30).    % 4
