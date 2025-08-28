@@ -11,8 +11,9 @@ There are examples for Clingo and s(CASP) including execution logs for different
 
 
 ## TODO / QUESTIONS for clingo-lpx
-- Any way to map interpreted values into the answer using #show? (Place things from "Assignment:" directly into "Answer:" in the output)
-- Any way to say steps with `[+-*]e` are not allowed? -- might help with the triggered events problem
+- Still need to add trajectories
+- ? Any way to map interpreted values into the answer using #show? (Place things from "Assignment:" directly into "Answer:" in the output)
+- ? Any way to say steps with `[+-*]e` are not allowed? -- might help with the triggered events problem
 
 ## TODO
 - add more examples (rest of ICLP25 paper and any other ones)
