@@ -14,3 +14,6 @@ log-all-parallel:
 
 activate-clingo-lpx-env:
 	conda activate clingo-lpx
+
+build-format_output:
+	$(MAKE) -C ./utils/format-output/

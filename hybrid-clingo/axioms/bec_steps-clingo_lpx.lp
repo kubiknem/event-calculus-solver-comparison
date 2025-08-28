@@ -28,6 +28,8 @@ step(0..maxstep).
 % mapping "happens at time" to "happens at step"
 happensAtStep(E, S) :-  happens(E, T), map(T, S).                            
 
+% no events can happen at step 0
+:- happensAtStep(_, 0).
 
 %-------------------------------------------------------------------------------
 % discrete fluents -- without a interpreted value (fully grounded)
@@ -115,10 +117,10 @@ normal_atom(A, geq, B) :- normal_atom(A, gt, B).
 %-------------------------------------------------------------------------------
 
 % helper predicate to visualize fluent values between steps
-holdsBetweenSteps(F, S, S+1) :- holdsAtStep(F, S+1).
--holdsBetweenSteps(F, S, S+1) :- -holdsAtStep(F, S+1).
+holdsBetweenSteps(F, S, S+1) :- holdsAtStep(F, S+1), step(S).
+-holdsBetweenSteps(F, S, S+1) :- -holdsAtStep(F, S+1), step(S).
 
-definedBetweenSteps(F, S, S+1) :- defined(valueAtStep(F, S+1)).
+definedBetweenSteps(F, S, S+1) :- defined(valueAtStep(F, S+1)), step(S).
 
 
 %-------------------------------------------------------------------------------
@@ -126,36 +128,56 @@ definedBetweenSteps(F, S, S+1) :- defined(valueAtStep(F, S+1)).
 %-------------------------------------------------------------------------------
 
 % NOTE: using show to translate steps to times using map/2
+
 #show.
-%#show  happens(E, T) : happensAtStep(E, S), map(T, S).
+
+% show all events that come as facts in the narrative
 #show  happens(E, T) : happens(E, T).
-%#show  holdsAt(F,T) : holdsAtStep(F, S), map(T, S).
-%#show  -holdsAt(F,T) : -holdsAtStep(F, S), map(T, S).
-#show holdsAt(F, (T1, "< T =<", T2)) : holdsBetweenSteps(F, S, S+1), map(T1, S), map(T2, S+1).
+% triggered events do not have a mapping of step to time
+#show  happens(F,timeAtStep(S)) : happensAtStep(F,S), not map(_, S), step(S).
+
+% discrete fluents have values between steps
+#show  holdsAt(F, (T1, "< T =<", T2)) :  holdsBetweenSteps(F, S, S+1), map(T1, S), map(T2, S+1).
 #show -holdsAt(F, (T1, "< T =<", T2)) : -holdsBetweenSteps(F, S, S+1), map(T1, S), map(T2, S+1).
-#show holdsAt(F, ("T >", T1)) : holdsBetweenSteps(F, maxstep, S), map(T1, maxstep).
+% any of the steps might be free floating (triggered events)
+#show  holdsAt(F, (timeAtStep(S), "< T =<", T2)) :  holdsBetweenSteps(F, S, S+1), not map(_, S), map(T2, S+1), step(S+1).
+#show -holdsAt(F, (timeAtStep(S), "< T =<", T2)) : -holdsBetweenSteps(F, S, S+1), not map(_, S), map(T2, S+1), step(S+1).
+#show  holdsAt(F, (T1, "< T =<", timeAtStep(S+1))) :  holdsBetweenSteps(F, S, S+1), map(T1, S), not map(_, S+1), step(S+1).
+#show -holdsAt(F, (T1, "< T =<", timeAtStep(S+1))) : -holdsBetweenSteps(F, S, S+1), map(T1, S), not map(_, S+1), step(S+1).
+#show  holdsAt(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  holdsBetweenSteps(F, S, S+1), not map(_, S), not map(_, S+1), step(S+1).
+#show -holdsAt(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) : -holdsBetweenSteps(F, S, S+1), not map(_, S), not map(_, S+1), step(S+1).
+% discrete fluents have a value into infinity after the last step
+#show  holdsAt(F, ("T >", T1)) :  holdsBetweenSteps(F, maxstep, _), map(T1, maxstep).
 #show -holdsAt(F, ("T >", T1)) : -holdsBetweenSteps(F, maxstep, S), map(T1, maxstep).
+% the last step might be free floating (triggered events)
+#show  holdsAt(F, ("T >", timeAtStep(maxstep))) :  holdsBetweenSteps(F, maxstep, _), not map(_, maxstep).
+#show -holdsAt(F, ("T >", timeAtStep(maxstep))) : -holdsBetweenSteps(F, maxstep, _), not map(_, maxstep).
 
-% to advise that this fluent has a value in the "assignment:" section of the solution
-%#show  holdsAt(F, valueAtStep(F,S), T) : defined((F,S)), map(T, S).
+
 % TODO any way to replace 'valueAtStep(F,S)' with its interpreted value? So that it is visible in the answer directly
-#show holdsAt((F, valueAtStep(F,S)), (T1, "< T =<", T2)) : definedBetweenSteps(F, S-1, S), map(T1, S-1), map(T2, S).
+% functional fluents have values between steps
+#show holdsAt((F, valueAtStep(F,S+1)), (T1, "< T =<", T2)) : definedBetweenSteps(F, S, S+1), map(T1, S), map(T2, S+1).
+% any of the steps might be free floating (triggered events)
+#show holdsAt((F, valueAtStep(F,S+1)), (timeAtStep(S), "< T =<", T2)) : definedBetweenSteps(F, S, S+1), not map(_, S), map(T2, S+1), step(S+1).
+#show holdsAt((F, valueAtStep(F,S+1)), (T1, "< T =<", timeAtStep(S+1))) : definedBetweenSteps(F, S, S+1), map(T1, S), not map(_, S+1), step(S+1).
+#show holdsAt((F, valueAtStep(F,S+1)), (timeAtStep(S), "< T =<", timeAtStep(S+1))) : definedBetweenSteps(F, S, S+1), not map(_, S), not map(_, S+1), step(S+1).
+% functional fluents have a value into infinity after the last step
 #show holdsAt((F, valueAtStep(F,S)), ("T >", T1)) : definedBetweenSteps(F, maxstep, S), map(T1, maxstep).
+% the last step might be free floating (triggered events)
+#show holdsAt((F, valueAtStep(F,S)), ("T >", timeAtStep(maxstep))) : definedBetweenSteps(F, maxstep, S), not map(_, maxstep).
 
 
-% TODO triggered events at new timepoints do not have a mapping
-#show  happensAtStep(F,S) : happensAtStep(F,S), not map(_, S).
-#show  holdsAtStep(F,S) : holdsAtStep(F,S), not map(_, S).
-
-%#show  happensAtStep(F,S) : happensAtStep(F,S).
-%#show  holdsAtStep(F,S) : holdsAtStep(F,S).
+% show all for debug
+% #show  happensAtStep(F,S) : happensAtStep(F,S).
+% #show  holdsAtStep(F,S) : holdsAtStep(F,S).
+% #show  -holdsAtStep(F,S) : -holdsAtStep(F,S).
+% #show  defined(valueAtStep(F, S)) : defined(valueAtStep(F, S)).
 
 
 %-------------------------------------------------------------------------------
 % Defined
 %-------------------------------------------------------------------------------
 
-% TODO what does this do?
 % define #const maxstep
 #defined happens/2.
 #defined initiallyP/1.

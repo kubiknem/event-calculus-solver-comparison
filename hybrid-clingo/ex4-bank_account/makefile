@@ -9,7 +9,7 @@ run-clingcon:
 	MAXSTEP=6; ${TIME} ${CON_CMD}
 
 run-lpx:
-	MAXSTEP=6; ${TIME} ${LPX_CMD}
+	MAXSTEP=5; ${TIME} ${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh
 
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -23,4 +23,4 @@ run-lpx:
 log:
 	MAXSTEP=6;  ../../scripts/maketrace.sh "${CON_CMD}" ./logs/con-s$$MAXSTEP.log ; exit 0
 	
-	MAXSTEP=6;  ../../scripts/maketrace.sh "${LPX_CMD}" ./logs/lpx-s$$MAXSTEP.log ; exit 0
+	MAXSTEP=5;  ../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx-s$$MAXSTEP.log ; exit 0

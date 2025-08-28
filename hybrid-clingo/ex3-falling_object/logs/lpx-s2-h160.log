@@ -1,25 +1,31 @@
-$ clingo-lpx --strict -n0 ./model-lpx.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=2 -c paramHeight=160
+$ clingo-lpx --strict -n0 ./model-lpx.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=2 -c paramHeight=160 | ../utils/replace_assignments.sh | ../utils/make-readable.sh
 
 
 clingo-lpx version 1.3.0
 Reading from ./model-lpx.lp ...
 Solving...
-Answer: 1 (Time: 0.021s)
-happens(drop(nathan,apple),10) happensAtStep(hitGround(apple),2) holdsAt((height(apple),valueAtStep(height(apple),1)),(0,"< T =<",10)) holdsAtStep(falling(apple),2) -holdsAt(falling(apple),(0,"< T =<",10))
-Assignment:
-timeAtStep(0)=0 timeAtStep(1)=10 timeAtStep(2)=90 valueAtStep(height(apple),0)=160 valueAtStep(height(apple),1)=160 valueAtStep(height(apple),2)=0 valueAtStep(height(apple),3)=0
+Answer: 1
+(Time: 0.025s)
+happens(hitGround(apple),90)
+happens(drop(nathan,apple),10)
+holdsAt(falling(apple),(10,"< T =<",90))
+holdsAt((height(apple),160),(0,"< T =<",10))
+holdsAt((height(apple),0),(10,"< T =<",90))
+holdsAt((height(apple),0),("T >",90))
+-holdsAt(falling(apple),("T >",90))
+-holdsAt(falling(apple),(0,"< T =<",10))
 SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.022s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.010s
+Time         : 0.025s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.011s
 
 Command exited with non-zero status 30
 
   real      0:00.03
   real [s]  0.03
-  user [s]  0.01
+  user [s]  0.00
   sys  [s]  0.00
-  mem  [KB] 8448
+  mem  [KB] 8320
   avgm [KB] 0
