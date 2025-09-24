@@ -5,6 +5,35 @@
 %   (F,S) = V: functional fluent F at step S has value V
 
 
+% OVERVIEW OF HOW IT WORKS:
+%   there is a fixed number of discrete steps (grounded)
+%   these is an equal number of interpreted timepoints (non-ground)
+%   timepoints are mapped to steps via event occurrences
+%      event occurrences in the narrative are specified using happens(E,T)
+%      each T in happens(E,T) gets mapped to a step S in a ordered way (step S has a lower time than step S+1)
+%      when S is mapped to T then the interpreted timepoint of S will be equal to T (forces the value of the interpreted timepoint)
+%
+%   all event calculus predicates operate (almost) as normal on the discrete steps
+%
+%   things get a bit complicated for triggered events [% TODO this is the hardest part of the encoding / the potential limitation]
+%      we can specify more steps than there are events in the narrative
+%      this results in free-floating steps that have no mapping
+%      a trigger rule then can imply that an event occurs at some state and imply its interpreted timepoint
+%      the free-floating step should then get mapped to this triggered event occurrence
+%      such a step will not have a mapping to a ground timepoint, but will have an interpreted timepoint
+%
+%   fluents are divided into discrete (grounded) and functional (interpreted / non-ground)
+%   discrete fluents are straight forward
+%      operate (almost?) the same as normal
+%      have ground values at ground steps
+%   functional fluents are more complicated [% TODO this will likely get overhauled]
+%      the general idea is the same as with discrete (being set by events, having inertia, ...)
+%      have interpreted values (non-ground) associated with them
+%      instead of saying holdsAtStep(F, S) we say defined(valueAtStep(F, S))
+%      valueAtStep(F, S) is the name of the symbol that will then be interpreted later
+%      these symbols then need to be compared to each other 
+
+
 %-------------------------------------------------------------------------------
 % mapping time to steps
 %-------------------------------------------------------------------------------
@@ -79,8 +108,6 @@ defined(valueAtStep(F,S+1)) :- normal_atom(valueAtStep(F,S+1), eq, valueAtStep(F
 :- not defined(valueAtStep(F,S)), fluentF(F), step(S).
 :- not defined(valueAtStep(F,maxstep+1)), fluentF(F).
 
-comparison(valueAtStep(F,S+1), valueAtStep(F,S)) :- fluentF(F), step(S).
-
 %
 % Note: 
 %   1. The last constraint requires that all fluents F are defined at all steps S
@@ -89,6 +116,10 @@ comparison(valueAtStep(F,S+1), valueAtStep(F,S)) :- fluentF(F), step(S).
 %   From 1 and 2, the fluents either persist, or are the effect of some event. 
 %   This solves the frame problem in this setting.
 %
+
+% TODO I think this generates a comparison(A,B) for each interpreted value of fluents at adjacent steps
+% TODO and the choice rule for normal_atom below then says that each comparison leads to exactly one interpreted result of the comparison
+comparison(valueAtStep(F,S+1), valueAtStep(F,S)) :- fluentF(F), step(S).
 
 % theory_atom(A,COMPARISON,B)
 { normal_atom(A, (lt;eq;gt), B) } = 1 :- comparison(A, B).
@@ -101,6 +132,7 @@ normal_atom(A, leq, B) :- normal_atom(A, lt, B).
 normal_atom(A, leq, B) :- normal_atom(A, eq, B).
 normal_atom(A, geq, B) :- normal_atom(A, eq, B).
 normal_atom(A, geq, B) :- normal_atom(A, gt, B).
+
 
 % TODO add trajectories and release
 %% DBEC1 - StoppedIn(t1,f,t2)
@@ -127,7 +159,7 @@ definedBetweenSteps(F, S, S+1) :- defined(valueAtStep(F, S+1)), step(S).
 % Show
 %-------------------------------------------------------------------------------
 
-% NOTE: using show to translate steps to times using map/2
+% NOTE: using #show to translate steps to times using map/2
 
 #show.
 

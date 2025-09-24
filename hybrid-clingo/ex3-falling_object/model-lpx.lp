@@ -51,7 +51,7 @@ happensAtStep(hitGround(O), S) :-
 % it is impossible for the object to fall forever if it was dropped at some earlier time (without intervening drops in between)
 :- happensAtStep(drop(_,O), S1), not eventually_stopped_falling(O,S1).
 eventually_stopped_falling(O,S1) :- not interleaving_drop(O,S1,S2), -holdsAtStep(falling(O), S2), step(S1), S1 < S2.
-interleaving_drop(O,S1,S2) :- step(S1), step(S2), S3 < S2, S3 > S1, happens(drop(_,O),S3).
+interleaving_drop(O,S1,S2) :- step(S1), step(S2), S3 < S2, S3 > S1, happensAtStep(drop(_,O),S3).
 
     % TODO older alternatives
     %% can just add another event and increase step count by one
