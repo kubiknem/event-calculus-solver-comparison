@@ -1,0 +1,8 @@
+name: clingo-lpx
+channels:
+  - defaults
+  - potassco/label/dev
+  - conda-forge
+dependencies:
+  - clingo-lpx
+  - python=3.8
