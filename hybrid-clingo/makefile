@@ -13,8 +13,8 @@ log-all-parallel:
 	$(MAKE) -C ex5* log
 
 create-env-lpx:
-	@(conda env create -f ./utils/clingo_lpx_env.yaml || \
-	conda env update -f ./utils/clingo_lpx_env.yaml) > /dev/null 2>&1
+	conda env create -f ./utils/clingo_lpx_env.yaml || \
+	conda env update -f ./utils/clingo_lpx_env.yaml
 
 activate-clingo-lpx-env:
 	conda activate clingo-lpx
