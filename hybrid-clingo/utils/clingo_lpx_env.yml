@@ -6,3 +6,4 @@ channels:
 dependencies:
   - clingo-lpx
   - python=3.8
+  - clingcon
