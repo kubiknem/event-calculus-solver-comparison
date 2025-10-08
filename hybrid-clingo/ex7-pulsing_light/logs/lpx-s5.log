@@ -1,0 +1,56 @@
+$ clingo-lpx --strict -n0 ./model.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=5 | ../utils/replace_assignments.sh | ../utils/make-readable.sh
+
+
+clingo-lpx version 1.3.0
+Reading from ./model.lp ...
+Solving...
+Answer: 1
+(Time: 0.031s)
+happens(fade_in_end,20)
+happens(fade_in_end,40)
+happens(fade_out_end,30)
+happens(turn_light_off,45)
+happens(turn_light_on,10)
+holdsAt(fading_in,(10,"< T =<",20))
+holdsAt(fading_in,(30,"< T =<",40))
+holdsAt(fading_out,(20,"< T =<",30))
+holdsAt(fading_out,(40,"< T =<",45))
+holdsAt(light_on,(10,"< T =<",20))
+holdsAt(light_on,(20,"< T =<",30))
+holdsAt(light_on,(30,"< T =<",40))
+holdsAt(light_on,(40,"< T =<",45))
+holdsAt((brightness,0),(0,"< T =<",10))
+holdsAt((brightness,10),(10,"< T =<",20))
+holdsAt((brightness,0),(20,"< T =<",30))
+holdsAt((brightness,10),(30,"< T =<",40))
+holdsAt((brightness,5),(40,"< T =<",45))
+holdsAt((brightness,0),("T >",45))
+trajectoryAtStep(fading_in,1,brightness,10,2)
+trajectoryAtStep(fading_in,3,brightness,10,4)
+trajectoryAtStep(fading_out,2,brightness,0,3)
+trajectoryAtStep(fading_out,4,brightness,5,5)
+-holdsAt(fading_in,("T >",45))
+-holdsAt(fading_in,(0,"< T =<",10))
+-holdsAt(fading_in,(20,"< T =<",30))
+-holdsAt(fading_in,(40,"< T =<",45))
+-holdsAt(fading_out,("T >",45))
+-holdsAt(fading_out,(0,"< T =<",10))
+-holdsAt(fading_out,(10,"< T =<",20))
+-holdsAt(fading_out,(30,"< T =<",40))
+-holdsAt(light_on,("T >",45))
+-holdsAt(light_on,(0,"< T =<",10))
+SATISFIABLE
+
+Models       : 1
+Calls        : 1
+Time         : 0.032s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.021s
+
+Command exited with non-zero status 30
+
+  real      0:00.04
+  real [s]  0.04
+  user [s]  0.02
+  sys  [s]  0.00
+  mem  [KB] 9216
+  avgm [KB] 0

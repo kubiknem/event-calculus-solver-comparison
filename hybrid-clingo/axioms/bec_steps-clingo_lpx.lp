@@ -249,7 +249,7 @@ holdsBetweenStepsF(F, valueAtStep(F, S+1), S, S+1) :- holdsAtStepF(F, valueAtSte
 #show holdsAt((F, valueAtStep(F,S)), ("T >", T1)) : holdsBetweenStepsF(F, valueAtStep(F, S), maxstep, S), map(T1, maxstep).
 % the last step might be free floating (triggered events)
 #show holdsAt((F, valueAtStep(F,S)), ("T >", timeAtStep(maxstep))) : holdsBetweenStepsF(F, valueAtStep(F, S), maxstep, S), not map(_, maxstep).
-
+% TODO should define a better show for trajectories -- currently only shows value at the end of the trajectory (should maybe show both start and end value)
 
 % show all for debug
 %% #show  happensAtStep(E,S) : happensAtStep(E,S).
@@ -263,6 +263,8 @@ holdsBetweenStepsF(F, valueAtStep(F, S+1), S, S+1) :- holdsAtStepF(F, valueAtSte
 %% #show  holdsBetweenStepsF(F, V, S1, S2) : holdsBetweenStepsF(F, V, S1, S2).
 %% 
 %% #show  map(T, S) : map(T, S).
+%%
+%% #show  trajectoryAtStep(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2) : trajectoryAtStep(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2).
 
 
 %-------------------------------------------------------------------------------
