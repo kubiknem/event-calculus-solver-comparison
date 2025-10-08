@@ -44,12 +44,27 @@ step(0..maxstep).
 % timeAtStep(S): the time of step S (and timeAtStep(0) = 0)                                                                                
 &sum{ timeAtStep(0) } = 0.                                                                                                           
 &sum{ timeAtStep(S) } > timeAtStep(S-1) :- S > 0, step(S).                                                                                       
-&sum{ timeAtStep(S) } >= 0 :- step(S).                                                                                       
+&sum{ timeAtStep(S) } >= 0 :- step(S).
+
+% there can be no neighboring time steps such that the later one has a smaller time
+% TODO had to add this for some examples
+:- normal_atom(timeAtStep(S), gt, timeAtStep(S+1)), step(S), S < maxstep.
+comparison(timeAtStep(S), timeAtStep(S+1)) :- step(S), S < maxstep.
+
 
 % map(T, S): Map time point T to state S                                                                                       
   map(0, 0).                                                                           
-{ map(T, S) : step(S) } = 1 :- happens(_, T), T > 0.                                                                           
-%  map(inf, maxstep+1).                                                                           
+{ map(T, S) : step(S) } = 1 :- happens(_, T), T > 0.                                                                       
+%  map(inf, maxstep+1).       
+
+% TODO this might be useful as a domain
+inputTime(T) :- happens(_, T).
+
+% restrict free floating steps:
+% each step must either be mapped to an input time or it must have a triggered event
+:- not map(_, S), not happensAtStep(_, S), step(S). 
+% :- not happensAtStep(_, S), step(S), S > 0. % TODO alternatively we could say that there must be an event at all steps
+
 
 % if T is mapped to S, then S is at time T                                                                                     
 &sum{ timeAtStep(S) } = T :- map(T, S), step(S).                                                                                              
@@ -72,50 +87,61 @@ holdsAtStep(F, 0) :- initiallyP(F).
 % fluent F does not hold (is false) at step zero
 -holdsAtStep(F, 0) :- initiallyN(F).
 
+%% shorthand predicates (and for negations)
+initiatedAtStep(F, S) :- happensAtStep(E, S), initiatesAtStep(E, F, S).
+terminatedAtStep(F, S) :- happensAtStep(E, S), terminatesAtStep(E, F, S).
+
 %% DBEC6* - HoldsAt(f,t)
 % event effects: events can initiate discrete fluents
-holdsAtStep(F, S+1) :- initiatesAtStep(E, F, S), happensAtStep(E, S), step(S).
+holdsAtStep(F, S+1) :- initiatedAtStep(F, S), step(S).
 % inertia: value of fluents persists unless changed
-holdsAtStep(F, S+1) :- holdsAtStep(F, S), not terminated1(F, S), step(S).
-terminated1(F, S) :- happensAtStep(E, S), terminatesAtStep(E, F, S).
+holdsAtStep(F, S+1) :- holdsAtStep(F, S), not terminatedAtStep(F, S), step(S).
 
 %% DBEC7* - not HoldsAt(f,t)
 % event effects: events can terminate discrete fluents
--holdsAtStep(F, S+1) :- terminatesAtStep(E, F, S), happensAtStep(E, S), step(S).
+-holdsAtStep(F, S+1) :- terminatedAtStep(F, S), step(S).
 % inertia: value of fluents persists unless changed
--holdsAtStep(F, S+1) :- -holdsAtStep(F, S), not initiated1(F, S), step(S).
-initiated1(F, S) :- happensAtStep(E, S), initiatesAtStep(E, F, S).
+-holdsAtStep(F, S+1) :- -holdsAtStep(F, S), not initiatedAtStep(F, S), step(S).
 
 
 %-------------------------------------------------------------------------------
 % functional fluents -- with an interpreted value (have a grounding-free value)
 %-------------------------------------------------------------------------------
 
-% functional fluent F has value V at step zero
-&sum{ valueAtStep(Fluent,0) } = V :- initiallyF(Fluent, V).
+% designated using fluentF(X).
+% they holdAtStep in the same way as discrete fluents using their own axioms/predicates
+% but also have a valueAtStep(F,S) associated with them which is then interpreted do a non-ground value
 
-% functional fluents
-% for clingo-lpx, replace in
-%   defined((F,S)) :- &sum{ (F,S) } = (F,S-1), fluentF(F), step(S).
-% the theory atom
-%   &sum{ (F,S) } = (F,S-1)
-% by a normal atom
-%   normal_atom((F,S), eq, (F,S-1))
-%
-% TODO still get confused about what this does
-defined(valueAtStep(F,0)) :- fluentF(F).
-defined(valueAtStep(F,S+1)) :- normal_atom(valueAtStep(F,S+1), eq, valueAtStep(F,S)), fluentF(F), step(S).
-:- not defined(valueAtStep(F,S)), fluentF(F), step(S).
-:- not defined(valueAtStep(F,maxstep+1)), fluentF(F).
+%% DBEC4* - HoldsAtF(f,t)
+% fluent F holds (is true) at step zero
+holdsAtStepF(F, valueAtStep(F, 0), 0) :- initiallyPF(F, V).
+&sum{ valueAtStep(F,0) } = V :- initiallyPF(F, V).
 
-%
-% Note: 
-%   1. The last constraint requires that all fluents F are defined at all steps S
-%   2. A fluent is defined if it persists, or if it is the effect of some event 
-%      (this is derived by the domain-specific rules)
-%   From 1 and 2, the fluents either persist, or are the effect of some event. 
-%   This solves the frame problem in this setting.
-%
+%% DBEC5* - not HoldsAtF(f,t) % TODO ?
+% ...
+
+%% shorthand predicates (and for negations)
+initiatedAtStepF(F, valueAtStep(F, S1), S) :- happensAtStep(E, S), initiatesAtStepF(E, F, valueAtStep(F, S1), S).
+terminatedAtStepF(F, valueAtStep(F, S1), S) :- happensAtStep(E, S), terminatesAtStepF(E, F, valueAtStep(F, S1), S).
+
+%% DBEC6* - HoldsAt(f,t)
+% event effects: events can initiate functional fluents
+holdsAtStepF(F, valueAtStep(F, S+1), S+1) :- initiatedAtStepF(F, valueAtStep(F, S+1), S), step(S).
+% inertia: value of fluents persists unless changed
+holdsAtStepF(F, valueAtStep(F, S+1), S+1) :- holdsAtStepF(F, valueAtStep(F, S), S), not terminatedAtStepF(F, valueAtStep(F, S), S), not initiatedAtStepF(F, valueAtStep(F, S+1), S), step(S).
+&sum{ valueAtStep(F,S+1) } = valueAtStep(F,S) :- holdsAtStepF(F, valueAtStep(F, S), S), not terminatedAtStepF(F, valueAtStep(F, S), S), not initiatedAtStepF(F, valueAtStep(F, S+1), S), step(S).
+
+% when a functional fluent is false, then its value is zero
+% TODO this is a trick to avoid listing of all possible values
+&sum{ valueAtStep(F,S) } = 0 :- not holdsAtStepF(F, valueAtStep(F, S), S), fluentF(F), step(S).
+&sum{ valueAtStep(F,maxstep+1) } = 0 :- not holdsAtStepF(F, valueAtStep(F, maxstep+1), maxstep+1), fluentF(F).
+
+%% DBEC7* - not HoldsAt(f,t) % TODO ?
+% ...
+
+%% shorthand predicates
+initiatedByAtStepF(E, F, valueAtStep(F, S1), S) :- happensAtStep(E, S), initiatesAtStepF(E, F, valueAtStep(F, S1), S).
+terminatedByAtStepF(E, F, valueAtStep(F, S1), S) :- happensAtStep(E, S), terminatesAtStepF(E, F, valueAtStep(F, S1), S).
 
 % TODO I think this generates a comparison(A,B) for each interpreted value of fluents at adjacent steps
 % TODO and the choice rule for normal_atom below then says that each comparison leads to exactly one interpreted result of the comparison
@@ -152,7 +178,7 @@ normal_atom(A, geq, B) :- normal_atom(A, gt, B).
 holdsBetweenSteps(F, S, S+1) :- holdsAtStep(F, S+1), step(S).
 -holdsBetweenSteps(F, S, S+1) :- -holdsAtStep(F, S+1), step(S).
 
-definedBetweenSteps(F, S, S+1) :- defined(valueAtStep(F, S+1)), step(S).
+holdsBetweenStepsF(F, valueAtStep(F, S+1), S, S+1) :- holdsAtStepF(F, valueAtStep(F, S+1), S+1), step(S).
 
 
 %-------------------------------------------------------------------------------
@@ -161,17 +187,20 @@ definedBetweenSteps(F, S, S+1) :- defined(valueAtStep(F, S+1)), step(S).
 
 % NOTE: using #show to translate steps to times using map/2
 
+%any_map(S) :- not map(T, S), step(S), inputTime(T).
+
 #show.
 
 % show all events that come as facts in the narrative
 #show  happens(E, T) : happens(E, T).
 % triggered events do not have a mapping of step to time
-#show  happens(F,timeAtStep(S)) : happensAtStep(F,S), not map(_, S), step(S).
+#show  happens(E,timeAtStep(S)) : happensAtStep(E,S), not map(_, S).
 
 % discrete fluents have values between steps
 #show  holdsAt(F, (T1, "< T =<", T2)) :  holdsBetweenSteps(F, S, S+1), map(T1, S), map(T2, S+1).
 #show -holdsAt(F, (T1, "< T =<", T2)) : -holdsBetweenSteps(F, S, S+1), map(T1, S), map(T2, S+1).
 % any of the steps might be free floating (triggered events)
+#show  holdsAt(F, (timeAtStep(S), "< T =<", T2)) :  holdsBetweenSteps(F, S, S+1), not map(_, S), map(T2, S+1), step(S+1).
 #show  holdsAt(F, (timeAtStep(S), "< T =<", T2)) :  holdsBetweenSteps(F, S, S+1), not map(_, S), map(T2, S+1), step(S+1).
 #show -holdsAt(F, (timeAtStep(S), "< T =<", T2)) : -holdsBetweenSteps(F, S, S+1), not map(_, S), map(T2, S+1), step(S+1).
 #show  holdsAt(F, (T1, "< T =<", timeAtStep(S+1))) :  holdsBetweenSteps(F, S, S+1), map(T1, S), not map(_, S+1), step(S+1).
@@ -188,22 +217,29 @@ definedBetweenSteps(F, S, S+1) :- defined(valueAtStep(F, S+1)), step(S).
 
 % TODO any way to replace 'valueAtStep(F,S)' with its interpreted value? So that it is visible in the answer directly
 % functional fluents have values between steps
-#show holdsAt((F, valueAtStep(F,S+1)), (T1, "< T =<", T2)) : definedBetweenSteps(F, S, S+1), map(T1, S), map(T2, S+1).
+#show holdsAt((F, valueAtStep(F,S+1)), (T1, "< T =<", T2)) : holdsBetweenStepsF(F, valueAtStep(F, S+1), S, S+1), map(T1, S), map(T2, S+1).
 % any of the steps might be free floating (triggered events)
-#show holdsAt((F, valueAtStep(F,S+1)), (timeAtStep(S), "< T =<", T2)) : definedBetweenSteps(F, S, S+1), not map(_, S), map(T2, S+1), step(S+1).
-#show holdsAt((F, valueAtStep(F,S+1)), (T1, "< T =<", timeAtStep(S+1))) : definedBetweenSteps(F, S, S+1), map(T1, S), not map(_, S+1), step(S+1).
-#show holdsAt((F, valueAtStep(F,S+1)), (timeAtStep(S), "< T =<", timeAtStep(S+1))) : definedBetweenSteps(F, S, S+1), not map(_, S), not map(_, S+1), step(S+1).
+#show holdsAt((F, valueAtStep(F,S+1)), (timeAtStep(S), "< T =<", T2)) : holdsBetweenStepsF(F, valueAtStep(F, S+1), S, S+1), not map(_, S), map(T2, S+1), step(S+1).
+#show holdsAt((F, valueAtStep(F,S+1)), (T1, "< T =<", timeAtStep(S+1))) : holdsBetweenStepsF(F, valueAtStep(F, S+1), S, S+1), map(T1, S), not map(_, S+1), step(S+1).
+#show holdsAt((F, valueAtStep(F,S+1)), (timeAtStep(S), "< T =<", timeAtStep(S+1))) : holdsBetweenStepsF(F, valueAtStep(F, S+1), S, S+1), not map(_, S), not map(_, S+1), step(S+1).
 % functional fluents have a value into infinity after the last step
-#show holdsAt((F, valueAtStep(F,S)), ("T >", T1)) : definedBetweenSteps(F, maxstep, S), map(T1, maxstep).
+#show holdsAt((F, valueAtStep(F,S)), ("T >", T1)) : holdsBetweenStepsF(F, valueAtStep(F, S), maxstep, S), map(T1, maxstep).
 % the last step might be free floating (triggered events)
-#show holdsAt((F, valueAtStep(F,S)), ("T >", timeAtStep(maxstep))) : definedBetweenSteps(F, maxstep, S), not map(_, maxstep).
+#show holdsAt((F, valueAtStep(F,S)), ("T >", timeAtStep(maxstep))) : holdsBetweenStepsF(F, valueAtStep(F, S), maxstep, S), not map(_, maxstep).
 
 
 % show all for debug
-% #show  happensAtStep(F,S) : happensAtStep(F,S).
-% #show  holdsAtStep(F,S) : holdsAtStep(F,S).
-% #show  -holdsAtStep(F,S) : -holdsAtStep(F,S).
-% #show  defined(valueAtStep(F, S)) : defined(valueAtStep(F, S)).
+%% #show  happensAtStep(E,S) : happensAtStep(E,S).
+%% #show  holdsAtStep(F,S) : holdsAtStep(F,S).
+%% #show  -holdsAtStep(F,S) : -holdsAtStep(F,S).
+%% #show  holdsAtStepF(F,V,S) : holdsAtStepF(F,V,S).
+%% #show  holdsAtStepF(F,V,S) : holdsAtStepF(F,V,S).
+%% 
+%% #show  holdsBetweenSteps(F, S1, S2) : holdsBetweenSteps(F, S1, S2).
+%% #show  -holdsBetweenSteps(F, S1, S2) : -holdsBetweenSteps(F, S1, S2).
+%% #show  holdsBetweenStepsF(F, V, S1, S2) : holdsBetweenStepsF(F, V, S1, S2).
+%% 
+%% #show  map(T, S) : map(T, S).
 
 
 %-------------------------------------------------------------------------------

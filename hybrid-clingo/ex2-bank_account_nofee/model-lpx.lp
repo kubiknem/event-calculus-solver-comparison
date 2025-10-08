@@ -37,6 +37,19 @@ fluentF(balance(A)) :- account(A).
 %    TransM12 > 0,
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
+*%
+&sum{valueAtStep(balance(A2),S); TransM12} = valueAtStep(balance(A2),S+1) :-
+    initiatedByAtStepF(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balance(A2),S+1), S).
+initiatesAtStepF(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balance(A2), S+1), S) :-
+    TransM12 > 0,
+    % &sum{ (balance(A1),S-1) } >= TransM12, 
+    holdsAtStepF(balance(A2), valueAtStep(balance(A2), S), S),
+    holdsAtStepF(balance(A1), valueAtStep(balance(A1), S), S),
+    normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
+    account(A2),
+    step(S).
+
+%*
 %% terminate old balance of A2
 %terminates(transfer(A1, A2, TransM12), balance(A2, DstM2), T) :-
 %    holdsAt(balance(A2, DstM2), T),
@@ -45,19 +58,15 @@ fluentF(balance(A)) :- account(A).
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
 *%
-&sum{ valueAtStep(balance(A2),S); TransM12 } = valueAtStep(balance(A2),S+1) :- 
+terminatesAtStepF(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balance(A2), S), S) :-
     TransM12 > 0,
     % &sum{ (balance(A1),S-1) } >= TransM12, 
+    holdsAtStepF(balance(A2), valueAtStep(balance(A2), S), S),
+    holdsAtStepF(balance(A1), valueAtStep(balance(A1), S), S),
     normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
-    happensAtStep(transfer(A1, A2, TransM12), S),
+    account(A2),
     step(S).
 
-defined(valueAtStep(balance(A2),S+1)) :- 
-    TransM12 > 0,
-    % &sum{ (balance(A1),S-1) } >= TransM12, 
-    normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
-    happensAtStep(transfer(A1, A2, TransM12), S),
-    step(S).
 
 %*
 %% new balance of A1 (sends payment)
@@ -67,6 +76,19 @@ defined(valueAtStep(balance(A2),S+1)) :-
 %    TransM12 > 0,
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
+*%
+&sum{valueAtStep(balance(A1),S); -TransM12} = valueAtStep(balance(A1),S+1) :-
+    initiatedByAtStepF(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balance(A1),S+1), S).
+initiatesAtStepF(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balance(A1), S+1), S) :-
+    TransM12 > 0,
+    % &sum{ (balance(A1),S-1) } >= TransM12, 
+    holdsAtStepF(balance(A2), valueAtStep(balance(A2), S), S),
+    holdsAtStepF(balance(A1), valueAtStep(balance(A1), S), S),
+    normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
+    account(A2),
+    step(S).
+
+%*
 %% terminate old balance of A1
 %terminates(transfer(A1, A2, TransM12), balance(A1, SrcM1), T) :-
 %    holdsAt(balance(A2, DstM2), T),
@@ -75,25 +97,21 @@ defined(valueAtStep(balance(A2),S+1)) :-
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
 *%
-
-&sum{ valueAtStep(balance(A1),S); -TransM12 } = valueAtStep(balance(A1),S+1) :- 
+terminatesAtStepF(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balance(A1), S), S) :-
     TransM12 > 0,
     % &sum{ (balance(A1),S-1) } >= TransM12, 
+    holdsAtStepF(balance(A2), valueAtStep(balance(A2), S), S),
+    holdsAtStepF(balance(A1), valueAtStep(balance(A1), S), S),
     normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
-    happensAtStep(transfer(A1, A2, TransM12), S),
+    account(A2),
     step(S).
 
-defined(valueAtStep(balance(A1),S+1)) :- 
-    TransM12 > 0,
-    % &sum{ (balance(A1),S-1) } >= TransM12, 
-    normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
-    happensAtStep(transfer(A1, A2, TransM12), S),
-    step(S).
-    
+% TODO this IS needed
 comparison(valueAtStep(balance(A1),S), TransM12) :- 
     TransM12 > 0,
     happensAtStep(transfer(A1, A2, TransM12), S),
     step(S).
+
 
 %-------------------------------------------------------------------------------
 % state constraints
@@ -114,8 +132,8 @@ comparison(valueAtStep(balance(A1),S), TransM12) :-
 
 % initiallyP(balance(account1, 10)).      
 % initiallyP(balance(account2, 10)).      
-initiallyF(balance(account1), 10).      
-initiallyF(balance(account2), 10).      
+initiallyPF(balance(account1), 10).      
+initiallyPF(balance(account2), 10).      
 
 
 %-------------------------------------------------------------------------------
