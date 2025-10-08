@@ -97,14 +97,12 @@ initiatesAtStepF(hitGround(O), height(O), valueAtStep(height(O), S+1), S) :- ste
 %    holdsAt(height(O,H), T1),
 %    fGravity(G), object(O), fHeight(H), time(T1), time(T2).
 *%
-
-% TODO both rules below should be changed to use a trajectory predicate
 &sum{ valueAtStep(height(O),S); G*timeAtStep(S); -G*timeAtStep(S+1) } = valueAtStep(height(O),S+1) :-
-    holdsAtStep(falling(O), S+1),
+    trajectoryAtStep(falling(O), _, height(O), valueAtStep(height(O),S+1), S+1),
     fGravity(G), step(S),
-    S < maxstep. % TODO not sure why this is needed (otherwise there will be one more timeAtStep in the answer)
-holdsAtStepF(height(O), valueAtStep(height(O),S), S) :- 
-    holdsAtStep(falling(O), S), step(S).
+    S < maxstep.
+trajectory(falling(O), S1, height(O), valueAtStep(height(O), S2), S2) :- object(O), step(S1), step(S2).
+
 
 %-------------------------------------------------------------------------------
 % narrative 

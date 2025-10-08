@@ -160,10 +160,33 @@ normal_atom(A, geq, B) :- normal_atom(A, eq, B).
 normal_atom(A, geq, B) :- normal_atom(A, gt, B).
 
 
-% TODO add trajectories and release
 %% DBEC1 - StoppedIn(t1,f,t2)
+stoppedInSteps(S1, F, S2) :-
+    S1 < S, S < S2,
+    terminatedAtStep(F, S),
+    step(S1), step(S2).
+
+
 %% DBEC2 - StartedIn(t1,f,t2)
+startedInSteps(S1, F, S2) :-
+    S1 < S, S < S2,
+    initiatedAtStep(F, S),
+    step(S1), step(S2).
+
+
 %% DBEC3 - HoldsAt(f,t)
+holdsAtStepF(Fluent2, valueAtStep(Fluent2, S2), S2) :-
+  trajectoryAtStep(_, _, Fluent2, valueAtStep(Fluent2, S2), S2).
+
+%% shorthand predicate
+trajectoryAtStep(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2) :-
+  S1 < S2,
+  initiatedAtStep(Fluent1, S1),
+  trajectory(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2),
+  not stoppedInSteps(S1, Fluent1, S2).
+
+
+% TODO add release? -- currently terminating a functional fluent is the same as releasing it (i.e., it has no value after it is terminated)
 %% new DBEC8
 %% new DBEC9
 %% new DBEC10
