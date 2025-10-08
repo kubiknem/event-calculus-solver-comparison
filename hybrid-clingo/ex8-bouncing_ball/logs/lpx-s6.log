@@ -1,0 +1,76 @@
+$ clingo-lpx --strict -n0 ./model.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=6 | ../utils/replace_assignments.sh | ../utils/make-readable.sh
+
+
+clingo-lpx version 1.3.0
+Reading from ./model.lp ...
+Solving...
+Answer: 1
+(Time: 0.044s)
+happens(bounce_up,20)
+happens(bounce_up,25)
+happens(catch,26)
+happens(drop,10)
+happens(fall_down,10)
+happens(fall_down,45/2)
+happens(fall_down,205/8)
+happens(hit_ground,20)
+happens(hit_ground,25)
+happens(reach_apex,45/2)
+happens(reach_apex,205/8)
+holdsAt(falling,(10,"< T =<",20))
+holdsAt(falling,(45/2,"< T =<",25))
+holdsAt(falling,(205/8,"< T =<",26))
+holdsAt(rising,(20,"< T =<",45/2))
+holdsAt(rising,(25,"< T =<",205/8))
+holdsAt((constant_fall_rate,1),(0,"< T =<",10))
+holdsAt((constant_fall_rate,1),(10,"< T =<",20))
+holdsAt((constant_fall_rate,1),(20,"< T =<",45/2))
+holdsAt((constant_fall_rate,1),(45/2,"< T =<",25))
+holdsAt((constant_fall_rate,1),(25,"< T =<",205/8))
+holdsAt((constant_fall_rate,1),(205/8,"< T =<",26))
+holdsAt((constant_fall_rate,1),("T >",26))
+holdsAt((height,10),(0,"< T =<",10))
+holdsAt((height,0),(10,"< T =<",20))
+holdsAt((height,5/2),(20,"< T =<",45/2))
+holdsAt((height,0),(45/2,"< T =<",25))
+holdsAt((height,5/8),(25,"< T =<",205/8))
+holdsAt((height,1/4),(205/8,"< T =<",26))
+holdsAt((height,1/4),("T >",26))
+holdsAt((velocity,0),(0,"< T =<",10))
+holdsAt((velocity,10),(10,"< T =<",20))
+holdsAt((velocity,0),(20,"< T =<",45/2))
+holdsAt((velocity,5/2),(45/2,"< T =<",25))
+holdsAt((velocity,0),(25,"< T =<",205/8))
+holdsAt((velocity,3/8),(205/8,"< T =<",26))
+holdsAt((velocity,0),("T >",26))
+holdsAt((velocity_loss_portion,3/4),(0,"< T =<",10))
+holdsAt((velocity_loss_portion,3/4),(10,"< T =<",20))
+holdsAt((velocity_loss_portion,3/4),(20,"< T =<",45/2))
+holdsAt((velocity_loss_portion,3/4),(45/2,"< T =<",25))
+holdsAt((velocity_loss_portion,3/4),(25,"< T =<",205/8))
+holdsAt((velocity_loss_portion,3/4),(205/8,"< T =<",26))
+holdsAt((velocity_loss_portion,3/4),("T >",26))
+-holdsAt(falling,("T >",26))
+-holdsAt(falling,(0,"< T =<",10))
+-holdsAt(falling,(20,"< T =<",45/2))
+-holdsAt(falling,(25,"< T =<",205/8))
+-holdsAt(rising,("T >",26))
+-holdsAt(rising,(0,"< T =<",10))
+-holdsAt(rising,(10,"< T =<",20))
+-holdsAt(rising,(45/2,"< T =<",25))
+-holdsAt(rising,(205/8,"< T =<",26))
+SATISFIABLE
+
+Models       : 1
+Calls        : 1
+Time         : 0.045s (Solving: 0.01s 1st Model: 0.01s Unsat: 0.00s)
+CPU Time     : 0.035s
+
+Command exited with non-zero status 30
+
+  real      0:00.05
+  real [s]  0.05
+  user [s]  0.03
+  sys  [s]  0.00
+  mem  [KB] 9984
+  avgm [KB] 0
