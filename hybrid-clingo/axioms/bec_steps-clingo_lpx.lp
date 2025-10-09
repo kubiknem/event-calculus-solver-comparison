@@ -36,6 +36,7 @@
 %
 % TODO
 %  - why do we use -holdsAt and -releasedAt instead of 'not ...'
+%  - functional value zero now represent no value or released value
 
 %-------------------------------------------------------------------------------
 % mapping time to steps
@@ -43,6 +44,7 @@
 
 % step(S): S is a step, ranges from 0 to maxstep                                                                               
 step(0..maxstep).                                                                                                              
+stepMax(0..maxstep+1).                                                                                                              
 
 % timeAtStep(S): the time of step S (and timeAtStep(0) = 0)                                                                                
 &sum{ timeAtStep(0) } = 0.                                                                                                           
@@ -108,7 +110,7 @@ holdsAtStep(F, S+1) :- holdsAtStep(F, S), not happensTerminatesAtStep(F, S), -re
 -holdsAtStep(F, S+1) :- -holdsAtStep(F, S), not happensInitiatesAtStep(F, S), -releasedAtStep(F, S+1), step(S).
 
 
-% TODO  % nothing is initially released from CLoI
+% TODO nothing is initially released from inertia
 :- releasedAtStep(F,0), fluent(F).
 -releasedAtStep(F,0) :- fluent(F).
 % TODO holdsAtStep can be anything when released
@@ -160,13 +162,14 @@ holdsAtStepF(F, valueAtStep(F, 0), 0) :- initiallyPF(F, V).
 %% shorthand predicates (and for negations)
 happensInitiatesAtStepF(F, valueAtStep(F, S1), S) :- happensAtStep(E, S), initiatesAtStepF(E, F, valueAtStep(F, S1), S).
 happensTerminatesAtStepF(F, valueAtStep(F, S1), S) :- happensAtStep(E, S), terminatesAtStepF(E, F, valueAtStep(F, S1), S).
+happensReleasesAtStepF(F, valueAtStep(F, S1), S) :- happensAtStep(E, S), releasesAtStepF(E, F, valueAtStep(F, S1), S).
 
 %% DBEC6* - HoldsAt(f,t)
 % event effects: events can initiate functional fluents
 holdsAtStepF(F, valueAtStep(F, S+1), S+1) :- happensInitiatesAtStepF(F, valueAtStep(F, S+1), S), step(S).
 % inertia: value of fluents persists unless changed
-holdsAtStepF(F, valueAtStep(F, S+1), S+1) :- holdsAtStepF(F, valueAtStep(F, S), S), not happensTerminatesAtStepF(F, valueAtStep(F, S), S), not happensInitiatesAtStepF(F, valueAtStep(F, S+1), S), step(S).
-&sum{ valueAtStep(F,S+1) } = valueAtStep(F,S) :- holdsAtStepF(F, valueAtStep(F, S), S), not happensTerminatesAtStepF(F, valueAtStep(F, S), S), not happensInitiatesAtStepF(F, valueAtStep(F, S+1), S), step(S).
+holdsAtStepF(F, valueAtStep(F, S+1), S+1) :- holdsAtStepF(F, valueAtStep(F, S), S), not happensTerminatesAtStepF(F, valueAtStep(F, S), S), -releasedAtStepF(F, valueAtStep(F, S+1), S+1), step(S).
+&sum{ valueAtStep(F,S+1) } = valueAtStep(F,S) :- holdsAtStepF(F, valueAtStep(F, S), S), not happensTerminatesAtStepF(F, valueAtStep(F, S), S), -releasedAtStepF(F, valueAtStep(F, S+1), S+1), step(S).
 
 % when a functional fluent is false, then its value is zero
 % TODO this is a trick to avoid listing of all possible values
@@ -231,6 +234,46 @@ trajectoryAtStep(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2) :-
   not stoppedInSteps(S1, Fluent1, S2).
 
 
+% TODO nothing is initially released from inertia
+:- releasedAtStepF(F, valueAtStep(F, 0), 0), fluentF(F).
+-releasedAtStepF(F, valueAtStep(F, 0), 0) :- fluentF(F).
+% TODO holdsAtStep can be anything when released
+0{holdsAtStepF(F, valueAtStep(F, S), S)}1 :- releasedAtStepF(F, valueAtStep(F, S), S), fluentF(F), step(S).  
+
+% when a functional fluent is released, then its value is zero
+% TODO this is a trick to avoid listing of all possible values
+% TODO this might have to be removed later (maybe its a problem for some examples)
+&sum{ valueAtStep(F, S) } = 0 :- releasedAtStepF(F, valueAtStep(F, S), S), holdsAtStepF(F, valueAtStep(F, S), S), step(S).
+&sum{ valueAtStep(F, maxstep+1) } = 0 :- releasedAtStepF(F, valueAtStep(F, maxstep+1), maxstep+1), holdsAtStepF(F, valueAtStep(F, maxstep+1), maxstep+1).
+
+
+%% new DBEC8
+releasedAtStepF(Fluent, valueAtStep(Fluent, S+1), S+1) :-
+  releasedAtStepF(Fluent, valueAtStep(Fluent, S), S),
+  not happensInitiatesAtStepF(Fluent, valueAtStep(Fluent, S+1), S),
+  not happensTerminatesAtStepF(Fluent, valueAtStep(Fluent, S), S),
+  fluentF(Fluent), step(S).
+
+%% new DBEC9
+-releasedAtStepF(Fluent, valueAtStep(Fluent, S+1), S+1) :-
+  -releasedAtStepF(Fluent, valueAtStep(Fluent, S), S),
+  not happensReleasesAtStepF(Fluent, valueAtStep(Fluent, S+1), S),
+  fluentF(Fluent), step(S).
+
+%% new DBEC10
+releasedAtStepF(Fluent, valueAtStep(Fluent, S+1), S+1) :-
+  happensReleasesAtStepF(Fluent, valueAtStep(Fluent, S+1), S),
+  fluentF(Fluent), step(S).
+
+%% new DBEC11
+-releasedAtStepF(Fluent, valueAtStep(Fluent, S+1), S+1) :-
+  happensInitiatesAtStepF(Fluent, valueAtStep(Fluent, S+1), S),
+  fluentF(Fluent), step(S).
+-releasedAtStepF(Fluent, valueAtStep(Fluent, S+1), S+1) :-
+  happensTerminatesAtStepF(Fluent, valueAtStep(Fluent, S), S),
+  fluentF(Fluent), step(S).
+
+
 %-------------------------------------------------------------------------------
 % additional/helper predicates
 %-------------------------------------------------------------------------------
@@ -247,8 +290,6 @@ holdsBetweenStepsF(F, valueAtStep(F, S+1), S, S+1) :- holdsAtStepF(F, valueAtSte
 %-------------------------------------------------------------------------------
 
 % NOTE: using #show to translate steps to times using map/2
-
-%any_map(S) :- not map(T, S), step(S), inputTime(T).
 
 #show.
 
@@ -297,6 +338,8 @@ holdsBetweenStepsF(F, valueAtStep(F, S+1), S, S+1) :- holdsAtStepF(F, valueAtSte
 %% #show  -releasedAtStep(F,S) : -releasedAtStep(F,S).
 %% #show  holdsAtStepF(F,V,S) : holdsAtStepF(F,V,S).
 %% #show  holdsAtStepF(F,V,S) : holdsAtStepF(F,V,S).
+%% #show  releasedAtStepF(F,V,S) : releasedAtStepF(F,V,S).
+%% #show  -releasedAtStepF(F,V,S) : -releasedAtStepF(F,V,S).
 %% 
 %% #show  holdsBetweenSteps(F, S1, S2) : holdsBetweenSteps(F, S1, S2).
 %% #show  -holdsBetweenSteps(F, S1, S2) : -holdsBetweenSteps(F, S1, S2).
