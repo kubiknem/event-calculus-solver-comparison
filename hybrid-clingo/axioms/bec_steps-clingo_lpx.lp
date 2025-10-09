@@ -35,8 +35,13 @@
 %      these symbols then need to be compared to each other 
 %
 % TODO
-%  - why do we use -holdsAt and -releasedAt instead of 'not ...'
-%  - functional value zero now represent no value or released value
+%  - why do we use -holdsAt and -releasedAt instead of 'not ...' --> try removing
+%  - functional fluents do not have -holdsAt
+%  - add better #show for released at and trajectories
+%  - functional value zero now represents no value or released value
+%
+%  - integrating assignments into the model in the output
+%
 
 %-------------------------------------------------------------------------------
 % mapping time to steps
@@ -52,7 +57,7 @@ stepMax(0..maxstep+1).
 &sum{ timeAtStep(S) } >= 0 :- step(S).
 
 % there can be no neighboring time steps such that the later one has a smaller time
-% TODO had to add this for some examples
+% TODO had to add this for some examples -- not sure if this is still needed...
 :- normal_atom(timeAtStep(S), gt, timeAtStep(S+1)), step(S), S < maxstep.
 comparison(timeAtStep(S), timeAtStep(S+1)) :- step(S), S < maxstep.
 
@@ -60,10 +65,7 @@ comparison(timeAtStep(S), timeAtStep(S+1)) :- step(S), S < maxstep.
 % map(T, S): Map time point T to state S                                                                                       
   map(0, 0).                                                                           
 { map(T, S) : step(S) } = 1 :- happens(_, T), T > 0.                                                                       
-%  map(inf, maxstep+1).       
 
-% TODO this might be useful as a domain
-inputTime(T) :- happens(_, T).
 
 % restrict free floating steps:
 % each step must either be mapped to an input time or it must have a triggered event
