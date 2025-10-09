@@ -57,3 +57,5 @@ since instead of the number `1.1` we have a new variable "aeiou".
 - clingcon installed using `apt install clingcon` from potassco ppa (added using `add-apt-repository ppa:potassco/stable`)
 - clingo-lpx installed using `conda create -n clingo-lpx python=3.8 potassco/label/dev::clingo-lpx`
   - version from ppa did not work for me
+- alternatively feel free to use provided `hybrid-clingo/makefile`
+  - run `make create-env-lpx` to setup clingo-lpx environment using conda
