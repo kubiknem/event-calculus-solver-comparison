@@ -26,13 +26,16 @@
 %   discrete fluents are straight forward
 %      operate (almost?) the same as normal
 %      have ground values at ground steps
-%   functional fluents are more complicated [% TODO this will likely get overhauled]
+%   functional fluents are more complicated
 %      the general idea is the same as with discrete (being set by events, having inertia, ...)
 %      have interpreted values (non-ground) associated with them
-%      instead of saying holdsAtStep(F, S) we say defined(valueAtStep(F, S))
+%      instead of saying holdsAtStep(F, S) we say holdsAtStep(F, valueAtStep(F, S), S)
+%      instead of initiatedAtStep(F, S) we say initiatedAtStepF(F, valueAtStep(F, S+1), S), similar for terminates and releases
 %      valueAtStep(F, S) is the name of the symbol that will then be interpreted later
 %      these symbols then need to be compared to each other 
-
+%
+% TODO
+%  - why do we use -holdsAt and -releasedAt instead of 'not ...'
 
 %-------------------------------------------------------------------------------
 % mapping time to steps
@@ -88,21 +91,55 @@ holdsAtStep(F, 0) :- initiallyP(F).
 -holdsAtStep(F, 0) :- initiallyN(F).
 
 %% shorthand predicates (and for negations)
-initiatedAtStep(F, S) :- happensAtStep(E, S), initiatesAtStep(E, F, S).
-terminatedAtStep(F, S) :- happensAtStep(E, S), terminatesAtStep(E, F, S).
+happensInitiatesAtStep(F, S) :- happensAtStep(E, S), initiatesAtStep(E, F, S).
+happensTerminatesAtStep(F, S) :- happensAtStep(E, S), terminatesAtStep(E, F, S).
+happensReleasesAtStep(F, S) :- happensAtStep(E, S), releasesAtStep(E, F, S).
 
 %% DBEC6* - HoldsAt(f,t)
 % event effects: events can initiate discrete fluents
-holdsAtStep(F, S+1) :- initiatedAtStep(F, S), step(S).
+holdsAtStep(F, S+1) :- happensInitiatesAtStep(F, S), step(S).
 % inertia: value of fluents persists unless changed
-holdsAtStep(F, S+1) :- holdsAtStep(F, S), not terminatedAtStep(F, S), step(S).
+holdsAtStep(F, S+1) :- holdsAtStep(F, S), not happensTerminatesAtStep(F, S), -releasedAtStep(F, S+1), step(S).
 
 %% DBEC7* - not HoldsAt(f,t)
 % event effects: events can terminate discrete fluents
--holdsAtStep(F, S+1) :- terminatedAtStep(F, S), step(S).
+-holdsAtStep(F, S+1) :- happensTerminatesAtStep(F, S), step(S).
 % inertia: value of fluents persists unless changed
--holdsAtStep(F, S+1) :- -holdsAtStep(F, S), not initiatedAtStep(F, S), step(S).
+-holdsAtStep(F, S+1) :- -holdsAtStep(F, S), not happensInitiatesAtStep(F, S), -releasedAtStep(F, S+1), step(S).
 
+
+% TODO  % nothing is initially released from CLoI
+:- releasedAtStep(F,0), fluent(F).
+-releasedAtStep(F,0) :- fluent(F).
+% TODO holdsAtStep can be anything when released
+1{holdsAtStep(F, S); -holdsAtStep(F, S)}1 :- releasedAtStep(F, S), fluent(F), step(S).  
+
+
+%% new DBEC8
+releasedAtStep(Fluent, S+1) :-
+  releasedAtStep(Fluent, S),
+  not happensInitiatesAtStep(Fluent, S),
+  not happensTerminatesAtStep(Fluent, S),
+  fluent(Fluent), step(S).
+
+%% new DBEC9
+-releasedAtStep(Fluent, S+1) :-
+  -releasedAtStep(Fluent, S),
+  not happensReleasesAtStep(Fluent, S),
+  fluent(Fluent), step(S).
+
+%% new DBEC10
+releasedAtStep(Fluent, S+1) :-
+  happensReleasesAtStep(Fluent, S),
+  fluent(Fluent), step(S).
+
+%% new DBEC11
+-releasedAtStep(Fluent, S+1) :-
+  happensInitiatesAtStep(Fluent, S),
+  fluent(Fluent), step(S).
+-releasedAtStep(Fluent, S+1) :-
+  happensTerminatesAtStep(Fluent, S),
+  fluent(Fluent), step(S).
 
 %-------------------------------------------------------------------------------
 % functional fluents -- with an interpreted value (have a grounding-free value)
@@ -121,15 +158,15 @@ holdsAtStepF(F, valueAtStep(F, 0), 0) :- initiallyPF(F, V).
 % ...
 
 %% shorthand predicates (and for negations)
-initiatedAtStepF(F, valueAtStep(F, S1), S) :- happensAtStep(E, S), initiatesAtStepF(E, F, valueAtStep(F, S1), S).
-terminatedAtStepF(F, valueAtStep(F, S1), S) :- happensAtStep(E, S), terminatesAtStepF(E, F, valueAtStep(F, S1), S).
+happensInitiatesAtStepF(F, valueAtStep(F, S1), S) :- happensAtStep(E, S), initiatesAtStepF(E, F, valueAtStep(F, S1), S).
+happensTerminatesAtStepF(F, valueAtStep(F, S1), S) :- happensAtStep(E, S), terminatesAtStepF(E, F, valueAtStep(F, S1), S).
 
 %% DBEC6* - HoldsAt(f,t)
 % event effects: events can initiate functional fluents
-holdsAtStepF(F, valueAtStep(F, S+1), S+1) :- initiatedAtStepF(F, valueAtStep(F, S+1), S), step(S).
+holdsAtStepF(F, valueAtStep(F, S+1), S+1) :- happensInitiatesAtStepF(F, valueAtStep(F, S+1), S), step(S).
 % inertia: value of fluents persists unless changed
-holdsAtStepF(F, valueAtStep(F, S+1), S+1) :- holdsAtStepF(F, valueAtStep(F, S), S), not terminatedAtStepF(F, valueAtStep(F, S), S), not initiatedAtStepF(F, valueAtStep(F, S+1), S), step(S).
-&sum{ valueAtStep(F,S+1) } = valueAtStep(F,S) :- holdsAtStepF(F, valueAtStep(F, S), S), not terminatedAtStepF(F, valueAtStep(F, S), S), not initiatedAtStepF(F, valueAtStep(F, S+1), S), step(S).
+holdsAtStepF(F, valueAtStep(F, S+1), S+1) :- holdsAtStepF(F, valueAtStep(F, S), S), not happensTerminatesAtStepF(F, valueAtStep(F, S), S), not happensInitiatesAtStepF(F, valueAtStep(F, S+1), S), step(S).
+&sum{ valueAtStep(F,S+1) } = valueAtStep(F,S) :- holdsAtStepF(F, valueAtStep(F, S), S), not happensTerminatesAtStepF(F, valueAtStep(F, S), S), not happensInitiatesAtStepF(F, valueAtStep(F, S+1), S), step(S).
 
 % when a functional fluent is false, then its value is zero
 % TODO this is a trick to avoid listing of all possible values
@@ -163,14 +200,22 @@ normal_atom(A, geq, B) :- normal_atom(A, gt, B).
 %% DBEC1 - StoppedIn(t1,f,t2)
 stoppedInSteps(S1, F, S2) :-
     S1 < S, S < S2,
-    terminatedAtStep(F, S),
+    happensTerminatesAtStep(F, S),
+    step(S1), step(S2).
+stoppedInSteps(S1, F, S2) :-
+    S1 < S, S < S2,
+    happensReleasesAtStep(F, S),
     step(S1), step(S2).
 
 
 %% DBEC2 - StartedIn(t1,f,t2)
 startedInSteps(S1, F, S2) :-
     S1 < S, S < S2,
-    initiatedAtStep(F, S),
+    happensInitiatesAtStep(F, S),
+    step(S1), step(S2).
+startedInSteps(S1, F, S2) :-
+    S1 < S, S < S2,
+    happensReleasesAtStep(F, S),
     step(S1), step(S2).
 
 
@@ -181,16 +226,9 @@ holdsAtStepF(Fluent2, valueAtStep(Fluent2, S2), S2) :-
 %% shorthand predicate
 trajectoryAtStep(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2) :-
   S1 < S2,
-  initiatedAtStep(Fluent1, S1),
+  happensInitiatesAtStep(Fluent1, S1),
   trajectory(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2),
   not stoppedInSteps(S1, Fluent1, S2).
-
-
-% TODO add release? -- currently terminating a functional fluent is the same as releasing it (i.e., it has no value after it is terminated)
-%% new DBEC8
-%% new DBEC9
-%% new DBEC10
-%% new DBEC11
 
 
 %-------------------------------------------------------------------------------
@@ -255,6 +293,8 @@ holdsBetweenStepsF(F, valueAtStep(F, S+1), S, S+1) :- holdsAtStepF(F, valueAtSte
 %% #show  happensAtStep(E,S) : happensAtStep(E,S).
 %% #show  holdsAtStep(F,S) : holdsAtStep(F,S).
 %% #show  -holdsAtStep(F,S) : -holdsAtStep(F,S).
+%% #show  releasedAtStep(F,S) : releasedAtStep(F,S).
+%% #show  -releasedAtStep(F,S) : -releasedAtStep(F,S).
 %% #show  holdsAtStepF(F,V,S) : holdsAtStepF(F,V,S).
 %% #show  holdsAtStepF(F,V,S) : holdsAtStepF(F,V,S).
 %% 
@@ -263,7 +303,7 @@ holdsBetweenStepsF(F, valueAtStep(F, S+1), S, S+1) :- holdsAtStepF(F, valueAtSte
 %% #show  holdsBetweenStepsF(F, V, S1, S2) : holdsBetweenStepsF(F, V, S1, S2).
 %% 
 %% #show  map(T, S) : map(T, S).
-%%
+%% 
 %% #show  trajectoryAtStep(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2) : trajectoryAtStep(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2).
 
 
