@@ -1,0 +1,56 @@
+$ clingo-lpx --strict -n0 ./model.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=6 | ../utils/replace_assignments.sh | ../utils/make-readable.sh
+
+
+clingo-lpx version 1.3.0
+Reading from ./model.lp ...
+Solving...
+Answer: 1
+(Time: 0.022s)
+happens(turn_light_off,10+e)
+happens(turn_light_off,10+3*e)
+happens(turn_light_off,10+5*e)
+happens(turn_light_on,10)
+happens(turn_light_on,10+2*e)
+happens(turn_light_on,10+4*e)
+holdsAt(light_on,(10,"< T =<",10+e))
+holdsAt(light_on,(10+2*e,"< T =<",10+3*e))
+holdsAt(light_on,(10+4*e,"< T =<",10+5*e))
+-holdsAt(light_on,("T >",10+5*e))
+-holdsAt(light_on,(10+e,"< T =<",10+2*e))
+-holdsAt(light_on,(10+3*e,"< T =<",10+4*e))
+SATISFIABLE
+
+Models       : 1
+Calls        : 1
+Time         : 0.022s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.011s
+
+../axioms/bec_steps-clingo_lpx.lp:117:42-59: info: atom does not occur in any rule head:
+  initiallyPF(F,V)
+
+../axioms/bec_steps-clingo_lpx.lp:118:33-50: info: atom does not occur in any rule head:
+  initiallyPF(F,V)
+
+../axioms/bec_steps-clingo_lpx.lp:124:68-113: info: atom does not occur in any rule head:
+  initiatesAtStepF(E,F,valueAtStep(F,S1),S)
+
+../axioms/bec_steps-clingo_lpx.lp:125:69-115: info: atom does not occur in any rule head:
+  terminatesAtStepF(E,F,valueAtStep(F,S1),S)
+
+../axioms/bec_steps-clingo_lpx.lp:143:73-118: info: atom does not occur in any rule head:
+  initiatesAtStepF(E,F,valueAtStep(F,S1),S)
+
+../axioms/bec_steps-clingo_lpx.lp:144:74-120: info: atom does not occur in any rule head:
+  terminatesAtStepF(E,F,valueAtStep(F,S1),S)
+
+../axioms/bec_steps-clingo_lpx.lp:185:3-65: info: atom does not occur in any rule head:
+  trajectory(Fluent1,S1,Fluent2,valueAtStep(Fluent2,S2),S2)
+
+Command exited with non-zero status 30
+
+  real      0:00.03
+  real [s]  0.03
+  user [s]  0.01
+  sys  [s]  0.00
+  mem  [KB] 8576
+  avgm [KB] 0

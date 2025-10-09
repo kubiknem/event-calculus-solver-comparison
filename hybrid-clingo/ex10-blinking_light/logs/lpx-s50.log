@@ -1,0 +1,144 @@
+$ clingo-lpx --strict -n0 ./model.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=50 | ../utils/replace_assignments.sh | ../utils/make-readable.sh
+
+
+clingo-lpx version 1.3.0
+Reading from ./model.lp ...
+Solving...
+Answer: 1
+(Time: 0.096s)
+happens(turn_light_off,10+e)
+happens(turn_light_off,10+3*e)
+happens(turn_light_off,10+5*e)
+happens(turn_light_off,10+7*e)
+happens(turn_light_off,10+9*e)
+happens(turn_light_off,10+11*e)
+happens(turn_light_off,10+13*e)
+happens(turn_light_off,10+15*e)
+happens(turn_light_off,10+17*e)
+happens(turn_light_off,10+19*e)
+happens(turn_light_off,10+21*e)
+happens(turn_light_off,10+23*e)
+happens(turn_light_off,10+25*e)
+happens(turn_light_off,10+27*e)
+happens(turn_light_off,10+29*e)
+happens(turn_light_off,10+31*e)
+happens(turn_light_off,10+33*e)
+happens(turn_light_off,10+35*e)
+happens(turn_light_off,10+37*e)
+happens(turn_light_off,10+39*e)
+happens(turn_light_off,10+41*e)
+happens(turn_light_off,10+43*e)
+happens(turn_light_off,10+45*e)
+happens(turn_light_off,10+47*e)
+happens(turn_light_off,10+49*e)
+happens(turn_light_on,10)
+happens(turn_light_on,10+2*e)
+happens(turn_light_on,10+4*e)
+happens(turn_light_on,10+6*e)
+happens(turn_light_on,10+8*e)
+happens(turn_light_on,10+10*e)
+happens(turn_light_on,10+12*e)
+happens(turn_light_on,10+14*e)
+happens(turn_light_on,10+16*e)
+happens(turn_light_on,10+18*e)
+happens(turn_light_on,10+20*e)
+happens(turn_light_on,10+22*e)
+happens(turn_light_on,10+24*e)
+happens(turn_light_on,10+26*e)
+happens(turn_light_on,10+28*e)
+happens(turn_light_on,10+30*e)
+happens(turn_light_on,10+32*e)
+happens(turn_light_on,10+34*e)
+happens(turn_light_on,10+36*e)
+happens(turn_light_on,10+38*e)
+happens(turn_light_on,10+40*e)
+happens(turn_light_on,10+42*e)
+happens(turn_light_on,10+44*e)
+happens(turn_light_on,10+46*e)
+happens(turn_light_on,10+48*e)
+holdsAt(light_on,(10,"< T =<",10+e))
+holdsAt(light_on,(10+2*e,"< T =<",10+3*e))
+holdsAt(light_on,(10+4*e,"< T =<",10+5*e))
+holdsAt(light_on,(10+6*e,"< T =<",10+7*e))
+holdsAt(light_on,(10+8*e,"< T =<",10+9*e))
+holdsAt(light_on,(10+10*e,"< T =<",10+11*e))
+holdsAt(light_on,(10+12*e,"< T =<",10+13*e))
+holdsAt(light_on,(10+14*e,"< T =<",10+15*e))
+holdsAt(light_on,(10+16*e,"< T =<",10+17*e))
+holdsAt(light_on,(10+18*e,"< T =<",10+19*e))
+holdsAt(light_on,(10+20*e,"< T =<",10+21*e))
+holdsAt(light_on,(10+22*e,"< T =<",10+23*e))
+holdsAt(light_on,(10+24*e,"< T =<",10+25*e))
+holdsAt(light_on,(10+26*e,"< T =<",10+27*e))
+holdsAt(light_on,(10+28*e,"< T =<",10+29*e))
+holdsAt(light_on,(10+30*e,"< T =<",10+31*e))
+holdsAt(light_on,(10+32*e,"< T =<",10+33*e))
+holdsAt(light_on,(10+34*e,"< T =<",10+35*e))
+holdsAt(light_on,(10+36*e,"< T =<",10+37*e))
+holdsAt(light_on,(10+38*e,"< T =<",10+39*e))
+holdsAt(light_on,(10+40*e,"< T =<",10+41*e))
+holdsAt(light_on,(10+42*e,"< T =<",10+43*e))
+holdsAt(light_on,(10+44*e,"< T =<",10+45*e))
+holdsAt(light_on,(10+46*e,"< T =<",10+47*e))
+holdsAt(light_on,(10+48*e,"< T =<",10+49*e))
+-holdsAt(light_on,("T >",10+49*e))
+-holdsAt(light_on,(10+e,"< T =<",10+2*e))
+-holdsAt(light_on,(10+3*e,"< T =<",10+4*e))
+-holdsAt(light_on,(10+5*e,"< T =<",10+6*e))
+-holdsAt(light_on,(10+7*e,"< T =<",10+8*e))
+-holdsAt(light_on,(10+9*e,"< T =<",10+10*e))
+-holdsAt(light_on,(10+11*e,"< T =<",10+12*e))
+-holdsAt(light_on,(10+13*e,"< T =<",10+14*e))
+-holdsAt(light_on,(10+15*e,"< T =<",10+16*e))
+-holdsAt(light_on,(10+17*e,"< T =<",10+18*e))
+-holdsAt(light_on,(10+19*e,"< T =<",10+20*e))
+-holdsAt(light_on,(10+21*e,"< T =<",10+22*e))
+-holdsAt(light_on,(10+23*e,"< T =<",10+24*e))
+-holdsAt(light_on,(10+25*e,"< T =<",10+26*e))
+-holdsAt(light_on,(10+27*e,"< T =<",10+28*e))
+-holdsAt(light_on,(10+29*e,"< T =<",10+30*e))
+-holdsAt(light_on,(10+31*e,"< T =<",10+32*e))
+-holdsAt(light_on,(10+33*e,"< T =<",10+34*e))
+-holdsAt(light_on,(10+35*e,"< T =<",10+36*e))
+-holdsAt(light_on,(10+37*e,"< T =<",10+38*e))
+-holdsAt(light_on,(10+39*e,"< T =<",10+40*e))
+-holdsAt(light_on,(10+41*e,"< T =<",10+42*e))
+-holdsAt(light_on,(10+43*e,"< T =<",10+44*e))
+-holdsAt(light_on,(10+45*e,"< T =<",10+46*e))
+-holdsAt(light_on,(10+47*e,"< T =<",10+48*e))
+SATISFIABLE
+
+Models       : 1
+Calls        : 1
+Time         : 0.097s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.086s
+
+../axioms/bec_steps-clingo_lpx.lp:117:42-59: info: atom does not occur in any rule head:
+  initiallyPF(F,V)
+
+../axioms/bec_steps-clingo_lpx.lp:118:33-50: info: atom does not occur in any rule head:
+  initiallyPF(F,V)
+
+../axioms/bec_steps-clingo_lpx.lp:124:68-113: info: atom does not occur in any rule head:
+  initiatesAtStepF(E,F,valueAtStep(F,S1),S)
+
+../axioms/bec_steps-clingo_lpx.lp:125:69-115: info: atom does not occur in any rule head:
+  terminatesAtStepF(E,F,valueAtStep(F,S1),S)
+
+../axioms/bec_steps-clingo_lpx.lp:143:73-118: info: atom does not occur in any rule head:
+  initiatesAtStepF(E,F,valueAtStep(F,S1),S)
+
+../axioms/bec_steps-clingo_lpx.lp:144:74-120: info: atom does not occur in any rule head:
+  terminatesAtStepF(E,F,valueAtStep(F,S1),S)
+
+../axioms/bec_steps-clingo_lpx.lp:185:3-65: info: atom does not occur in any rule head:
+  trajectory(Fluent1,S1,Fluent2,valueAtStep(Fluent2,S2),S2)
+
+Command exited with non-zero status 30
+
+  real      0:00.10
+  real [s]  0.10
+  user [s]  0.07
+  sys  [s]  0.01
+  mem  [KB] 11904
+  avgm [KB] 0
