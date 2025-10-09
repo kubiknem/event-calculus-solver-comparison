@@ -13,11 +13,8 @@ event(start(right)).
 
 initiatesAtStep(start(left), left_filling, S) :- step(S).
 initiatesAtStep(start(right), right_filling, S) :- step(S).
-% TODO releases is not implemented yet, TMP hack
-% releases(start(_), water_left(X), S) :- step(S).
-% releases(start(_), water_right(X), S) :- step(S).
-terminatesAtStepF(start(LR), water_left, valueAtStep(water_left, S), S) :- step(S), event(start(LR)).
-terminatesAtStepF(start(LR), water_right, valueAtStep(water_right, S), S) :- step(S), event(start(LR)).
+releasesAtStepF(start(LR), water_left, valueAtStep(water_left, S+1), S) :- step(S), event(start(LR)).
+releasesAtStepF(start(LR), water_right, valueAtStep(water_right, S+1), S) :- step(S), event(start(LR)).
 
 initiatesAtStep(switch_left, left_filling, S) :- step(S).
 terminatesAtStep(switch_left, right_filling, S) :- step(S).
@@ -63,12 +60,6 @@ comparison(valueAtStep(water_right, S), 50) :- step(S).
 :- normal_atom(valueAtStep(water_left, S), gt, 50), normal_atom(valueAtStep(water_left, S+1), lt, 50), step(S).
 :- normal_atom(valueAtStep(water_right, S), gt, 50), normal_atom(valueAtStep(water_right, S+1), lt, 50), step(S).
 
-
-% TODO this is a TMP workaround since releasedAt is not implemented yet 
-terminatesAtStepF(switch_left, water_right, valueAtStep(water_right, S), S) :- step(S).
-terminatesAtStepF(switch_left, water_left, valueAtStep(water_left, S), S) :- step(S).
-terminatesAtStepF(switch_right, water_right, valueAtStep(water_right, S), S) :- step(S).
-terminatesAtStepF(switch_right, water_left, valueAtStep(water_left, S), S) :- step(S).
 
 % ----- narrative & queries  -----
 

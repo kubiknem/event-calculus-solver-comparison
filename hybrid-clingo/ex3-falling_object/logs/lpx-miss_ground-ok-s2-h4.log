@@ -5,27 +5,38 @@ clingo-lpx version 1.3.0
 Reading from ./model-lpx.lp ...
 Solving...
 Answer: 1
-(Time: 0.023s)
+(Time: 0.029s)
 happens(hitGround(apple),12)
 happens(drop(nathan,apple),10)
 holdsAt(falling(apple),(10,"< T =<",12))
 holdsAt((height(apple),4),(0,"< T =<",10))
 holdsAt((height(apple),0),(10,"< T =<",12))
 holdsAt((height(apple),0),("T >",12))
+releasedAtStepF(height(apple),0,2)
+trajectoryAtStep(falling(apple),1,height(apple),0,2)
 -holdsAt(falling(apple),("T >",12))
 -holdsAt(falling(apple),(0,"< T =<",10))
 SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.023s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.013s
+Time         : 0.029s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.018s
+
+../axioms/bec_steps-clingo_lpx.lp:98:53-76: info: atom does not occur in any rule head:
+  releasesAtStep(E,F,S)
+
+../axioms/bec_steps-clingo_lpx.lp:164:76-122: info: atom does not occur in any rule head:
+  terminatesAtStepF(E,F,valueAtStep(F,S1),S)
+
+../axioms/bec_steps-clingo_lpx.lp:183:74-120: info: atom does not occur in any rule head:
+  terminatesAtStepF(E,F,valueAtStep(F,S1),S)
 
 Command exited with non-zero status 30
 
   real      0:00.03
   real [s]  0.03
-  user [s]  0.00
+  user [s]  0.01
   sys  [s]  0.00
-  mem  [KB] 8448
+  mem  [KB] 8704
   avgm [KB] 0

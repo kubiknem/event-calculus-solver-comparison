@@ -35,10 +35,7 @@ fGravity(2).
 initiatesAtStep(drop(A,O), falling(O), S) :- agent(A), object(O), step(S).
 
 % [effect + CLoI]
-% releases(drop(A,O), height(O,H), T) :-
-%     agent(A), object(O), fHeight(H), time(T).
-% TODO this should be changed to releasesAtStepF
-terminatesAtStepF(drop(A,O), height(O), valueAtStep(height(O), S), S) :- agent(A), object(O), step(S).
+releasesAtStepF(drop(A,O), height(O), valueAtStep(height(O), S+1), S) :- agent(A), object(O), step(S).
 
 % [triggered event]
 % an object hits the ground when its falling and its height becomes zero

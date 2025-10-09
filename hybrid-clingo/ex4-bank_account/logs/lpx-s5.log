@@ -5,7 +5,7 @@ clingo-lpx version 1.3.0
 Reading from ./model-lpx.lp ...
 Solving...
 Answer: 1
-(Time: 0.055s)
+(Time: 0.078s)
 happens(chargeServiceFee(account1),211/10)
 happens(chargeServiceFee(account1),511/10)
 happens(monthlyReset(account1),50)
@@ -64,14 +64,23 @@ SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.057s (Solving: 0.01s 1st Model: 0.01s Unsat: 0.00s)
-CPU Time     : 0.034s
+Time         : 0.079s (Solving: 0.01s 1st Model: 0.01s Unsat: 0.00s)
+CPU Time     : 0.061s
+
+../axioms/bec_steps-clingo_lpx.lp:98:53-76: info: atom does not occur in any rule head:
+  releasesAtStep(E,F,S)
+
+../axioms/bec_steps-clingo_lpx.lp:165:74-118: info: atom does not occur in any rule head:
+  releasesAtStepF(E,F,valueAtStep(F,S1),S)
+
+../axioms/bec_steps-clingo_lpx.lp:232:3-65: info: atom does not occur in any rule head:
+  trajectory(Fluent1,S1,Fluent2,valueAtStep(Fluent2,S2),S2)
 
 Command exited with non-zero status 30
 
-  real      0:00.06
-  real [s]  0.06
-  user [s]  0.02
+  real      0:00.09
+  real [s]  0.09
+  user [s]  0.05
   sys  [s]  0.01
-  mem  [KB] 9600
+  mem  [KB] 9984
   avgm [KB] 0

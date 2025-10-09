@@ -5,7 +5,7 @@ clingo-lpx version 1.3.0
 Reading from ./model.lp ...
 Solving...
 Answer: 1
-(Time: 0.044s)
+(Time: 0.115s)
 happens(bounce_up,20)
 happens(bounce_up,25)
 happens(catch,26)
@@ -50,6 +50,26 @@ holdsAt((velocity_loss_portion,3/4),(45/2,"< T =<",25))
 holdsAt((velocity_loss_portion,3/4),(25,"< T =<",205/8))
 holdsAt((velocity_loss_portion,3/4),(205/8,"< T =<",26))
 holdsAt((velocity_loss_portion,3/4),("T >",26))
+releasedAtStepF(height,0,2)
+releasedAtStepF(height,5/2,3)
+releasedAtStepF(height,0,4)
+releasedAtStepF(height,5/8,5)
+releasedAtStepF(height,1/4,6)
+releasedAtStepF(velocity,10,2)
+releasedAtStepF(velocity,0,3)
+releasedAtStepF(velocity,5/2,4)
+releasedAtStepF(velocity,0,5)
+releasedAtStepF(velocity,3/8,6)
+trajectoryAtStep(falling,1,height,0,2)
+trajectoryAtStep(falling,1,velocity,10,2)
+trajectoryAtStep(falling,3,height,0,4)
+trajectoryAtStep(falling,3,velocity,5/2,4)
+trajectoryAtStep(falling,5,height,1/4,6)
+trajectoryAtStep(falling,5,velocity,3/8,6)
+trajectoryAtStep(rising,2,height,5/2,3)
+trajectoryAtStep(rising,2,velocity,0,3)
+trajectoryAtStep(rising,4,height,5/8,5)
+trajectoryAtStep(rising,4,velocity,0,5)
 -holdsAt(falling,("T >",26))
 -holdsAt(falling,(0,"< T =<",10))
 -holdsAt(falling,(20,"< T =<",45/2))
@@ -63,14 +83,17 @@ SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.045s (Solving: 0.01s 1st Model: 0.01s Unsat: 0.00s)
-CPU Time     : 0.035s
+Time         : 0.116s (Solving: 0.02s 1st Model: 0.02s Unsat: 0.00s)
+CPU Time     : 0.085s
+
+../axioms/bec_steps-clingo_lpx.lp:98:53-76: info: atom does not occur in any rule head:
+  releasesAtStep(E,F,S)
 
 Command exited with non-zero status 30
 
-  real      0:00.05
-  real [s]  0.05
-  user [s]  0.03
-  sys  [s]  0.00
-  mem  [KB] 9984
+  real      0:00.13
+  real [s]  0.13
+  user [s]  0.08
+  sys  [s]  0.01
+  mem  [KB] 10240
   avgm [KB] 0

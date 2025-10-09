@@ -173,8 +173,7 @@ holdsAtStepF(F, valueAtStep(F, S+1), S+1) :- holdsAtStepF(F, valueAtStep(F, S), 
 
 % when a functional fluent is false, then its value is zero
 % TODO this is a trick to avoid listing of all possible values
-&sum{ valueAtStep(F,S) } = 0 :- not holdsAtStepF(F, valueAtStep(F, S), S), fluentF(F), step(S).
-&sum{ valueAtStep(F,maxstep+1) } = 0 :- not holdsAtStepF(F, valueAtStep(F, maxstep+1), maxstep+1), fluentF(F).
+&sum{ valueAtStep(F,S) } = 0 :- not holdsAtStepF(F, valueAtStep(F, S), S), fluentF(F), stepMax(S).
 
 %% DBEC7* - not HoldsAt(f,t) % TODO ?
 % ...
@@ -239,12 +238,6 @@ trajectoryAtStep(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2) :-
 -releasedAtStepF(F, valueAtStep(F, 0), 0) :- fluentF(F).
 % TODO holdsAtStep can be anything when released
 0{holdsAtStepF(F, valueAtStep(F, S), S)}1 :- releasedAtStepF(F, valueAtStep(F, S), S), fluentF(F), step(S).  
-
-% when a functional fluent is released, then its value is zero
-% TODO this is a trick to avoid listing of all possible values
-% TODO this might have to be removed later (maybe its a problem for some examples)
-&sum{ valueAtStep(F, S) } = 0 :- releasedAtStepF(F, valueAtStep(F, S), S), holdsAtStepF(F, valueAtStep(F, S), S), step(S).
-&sum{ valueAtStep(F, maxstep+1) } = 0 :- releasedAtStepF(F, valueAtStep(F, maxstep+1), maxstep+1), holdsAtStepF(F, valueAtStep(F, maxstep+1), maxstep+1).
 
 
 %% new DBEC8
@@ -328,7 +321,13 @@ holdsBetweenStepsF(F, valueAtStep(F, S+1), S, S+1) :- holdsAtStepF(F, valueAtSte
 #show holdsAt((F, valueAtStep(F,S)), ("T >", T1)) : holdsBetweenStepsF(F, valueAtStep(F, S), maxstep, S), map(T1, maxstep).
 % the last step might be free floating (triggered events)
 #show holdsAt((F, valueAtStep(F,S)), ("T >", timeAtStep(maxstep))) : holdsBetweenStepsF(F, valueAtStep(F, S), maxstep, S), not map(_, maxstep).
+
 % TODO should define a better show for trajectories -- currently only shows value at the end of the trajectory (should maybe show both start and end value)
+#show  trajectoryAtStep(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2) : trajectoryAtStep(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2).
+
+% TODO should show releasedAt?
+#show  releasedAtStep(F,S) : releasedAtStep(F,S).
+#show  releasedAtStepF(F,V,S) : releasedAtStepF(F,V,S).
 
 % show all for debug
 %% #show  happensAtStep(E,S) : happensAtStep(E,S).

@@ -24,11 +24,8 @@ fluentF(velocity_loss_portion).     % ball looses a portion of velocity on each 
 
 
 % start by dropping the ball
-% TODO releases is not implemented yet, TMP hack
-% releases(drop, height(X), T).
-% releases(drop, velocity(X), T).
-terminatesAtStepF(drop, height, valueAtStep(height, S), S) :- step(S).
-terminatesAtStepF(drop, velocity, valueAtStep(velocity, S), S) :- step(S).
+releasesAtStepF(drop, height, valueAtStep(height, S+1), S) :- step(S).
+releasesAtStepF(drop, velocity, valueAtStep(velocity, S+1), S) :- step(S).
 
 
 % start by dropping the ball
@@ -47,22 +44,22 @@ terminatesAtStep(reach_apex, rising, S) :- step(S).
 terminatesAtStep(catch, falling, S) :- step(S).
 terminatesAtStep(catch, rising, S) :- step(S).
 
-initiatesAtStepF(catch, height, valueAtStep(height, S+1), S) :- holdsAtStepF(height, valueAtStep(height, S), S).
+initiatesAtStepF(catch, height, valueAtStep(height, S+1), S) :- step(S).
 &sum{valueAtStep(height,S+1)} = valueAtStep(height,S) :- initiatedByAtStepF(catch, height, valueAtStep(height,S+1), S).
-%terminatesAtStepF(catch, height(X), S) :- X .<>. Y, holdsAtStepF(height(Y), S).
+terminatesAtStepF(catch, height, valueAtStep(height, S), S) :- step(S).
 
 initiatesAtStepF(catch, velocity, valueAtStep(velocity, S+1), S) :- step(S).
 &sum{valueAtStep(velocity,S+1)} = 0 :- initiatedByAtStepF(catch, velocity, valueAtStep(velocity,S+1), S).
-%terminatesAtStepF(catch, velocity(X), S) :- X .<>. 0.
+terminatesAtStepF(catch, velocity, valueAtStep(velocity, S), S) :- step(S).
 
 % stop everything if the ball stops bouncing
 initiatesAtStepF(stop_bouncing, height, valueAtStep(height, S+1), S) :- step(S).
 &sum{valueAtStep(height,S+1)} = 0 :- initiatedByAtStepF(stop_bouncing, height, valueAtStep(height,S+1), S).
-%terminatesAtStepF(stop_bouncing, height(X), S) :- X .<>. 0.
+terminatesAtStepF(stop_bouncing, height, valueAtStep(height, S), S) :- step(S).
 
 initiatesAtStepF(stop_bouncing, velocity, valueAtStep(velocity, S+1), S) :- step(S).
 &sum{valueAtStep(velocity,S+1)} = 0 :- initiatedByAtStepF(stop_bouncing, velocity, valueAtStep(velocity,S+1), S).
-%terminatesAtStepF(stop_bouncing, velocity(X), S) :- X .<>. 0.
+terminatesAtStepF(stop_bouncing, velocity, valueAtStep(velocity, S), S) :- step(S).
 
 
 % falling 
@@ -115,14 +112,6 @@ happensAtStep(reach_apex, S) :-
     normal_atom(valueAtStep(velocity, S), eq, 0).
 
 happensAtStep(fall_down, S) :- happensAtStep(reach_apex, S).
-
-
-
-% TODO this is a TMP workaround since releasedAt is not implemented yet 
-terminatesAtStepF(reach_apex, height, valueAtStep(height, S), S) :- step(S).
-terminatesAtStepF(reach_apex, velocity, valueAtStep(velocity, S), S) :- step(S).
-terminatesAtStepF(hit_ground, height, valueAtStep(height, S), S) :- step(S).
-terminatesAtStepF(hit_ground, velocity, valueAtStep(velocity, S), S) :- step(S).
 
 
 % ----- narrative & queries  -----

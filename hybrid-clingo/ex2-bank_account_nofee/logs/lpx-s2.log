@@ -5,7 +5,7 @@ clingo-lpx version 1.3.0
 Reading from ./model-lpx.lp ...
 Solving...
 Answer: 1
-(Time: 0.028s)
+(Time: 0.045s)
 happens(transfer(account1,account2,2),10)
 happens(transfer(account1,account2,4),20)
 holdsAt((balance(account1),10),(0,"< T =<",10))
@@ -18,14 +18,47 @@ SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.028s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.012s
+Time         : 0.045s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.023s
+
+../axioms/bec_steps-clingo_lpx.lp:98:53-76: info: atom does not occur in any rule head:
+  releasesAtStep(E,F,S)
+
+../axioms/bec_steps-clingo_lpx.lp:114:25-34: info: atom does not occur in any rule head:
+  fluent(F)
+
+../axioms/bec_steps-clingo_lpx.lp:115:25-34: info: atom does not occur in any rule head:
+  fluent(F)
+
+../axioms/bec_steps-clingo_lpx.lp:117:68-77: info: atom does not occur in any rule head:
+  fluent(F)
+
+../axioms/bec_steps-clingo_lpx.lp:125:3-17: info: atom does not occur in any rule head:
+  fluent(Fluent)
+
+../axioms/bec_steps-clingo_lpx.lp:131:3-17: info: atom does not occur in any rule head:
+  fluent(Fluent)
+
+../axioms/bec_steps-clingo_lpx.lp:136:3-17: info: atom does not occur in any rule head:
+  fluent(Fluent)
+
+../axioms/bec_steps-clingo_lpx.lp:141:3-17: info: atom does not occur in any rule head:
+  fluent(Fluent)
+
+../axioms/bec_steps-clingo_lpx.lp:144:3-17: info: atom does not occur in any rule head:
+  fluent(Fluent)
+
+../axioms/bec_steps-clingo_lpx.lp:165:74-118: info: atom does not occur in any rule head:
+  releasesAtStepF(E,F,valueAtStep(F,S1),S)
+
+../axioms/bec_steps-clingo_lpx.lp:232:3-65: info: atom does not occur in any rule head:
+  trajectory(Fluent1,S1,Fluent2,valueAtStep(Fluent2,S2),S2)
 
 Command exited with non-zero status 30
 
-  real      0:00.03
-  real [s]  0.03
-  user [s]  0.01
+  real      0:00.05
+  real [s]  0.05
+  user [s]  0.02
   sys  [s]  0.00
-  mem  [KB] 8576
+  mem  [KB] 8832
   avgm [KB] 0

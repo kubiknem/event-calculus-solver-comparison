@@ -20,8 +20,7 @@ initiatesAtStep(fade_out_end, fading_in, S) :- step(S).
 initiatesAtStep(turn_light_on,  light_on, S) :- step(S).
 initiatesAtStep(turn_light_on, fading_in, S) :- step(S).
 
-terminatesAtStepF(turn_light_on, brightness, valueAtStep(brightness, S), S) :- step(S).
-%releases(turn_light_on, brightness(X), S) :- step(S).
+releasesAtStepF(turn_light_on, brightness, valueAtStep(brightness, S+1), S) :- step(S).
 
 terminatesAtStep(turn_light_off, light_on, S) :- step(S).
 terminatesAtStep(turn_light_off, fading_in, S) :- holdsAtStep(fading_in, S).
@@ -30,7 +29,7 @@ terminatesAtStep(turn_light_off, fading_out, S) :- holdsAtStep(fading_out, S).
 initiatesAtStepF(turn_light_off, brightness, valueAtStep(brightness, S+1), S) :- step(S).
 &sum{valueAtStep(brightness,S+1)} = 0 :-
     initiatedByAtStepF(turn_light_off, brightness, valueAtStep(brightness,S+1), S).
-%terminates(turn_light_off, brightness(X), S) :- X .<>. 0.
+terminatesAtStepF(turn_light_off, brightness, valueAtStep(brightness, S), S) :- step(S).
 
 trajectory(fading_in, S1, brightness, valueAtStep(brightness,S2), S2) :- step(S1), step(S2).
 &sum{ valueAtStep(brightness,S); -timeAtStep(S); timeAtStep(S+1) } = valueAtStep(brightness,S+1) :-
@@ -53,11 +52,6 @@ happensAtStep(fade_out_end, S) :-
     holdsAtStep(fading_out, S),
     normal_atom(valueAtStep(brightness, S), eq, 0).
 comparison(valueAtStep(brightness, S), 0) :- step(S). 
-
-
-% TODO this is a TMP workaround since releasedAt is not implemented yet 
-terminatesAtStepF(fade_in_end, brightness, valueAtStep(brightness, S), S) :- step(S).
-terminatesAtStepF(fade_out_end, brightness, valueAtStep(brightness, S), S) :- step(S).
 
 
 % ----- narrative & queries  -----
