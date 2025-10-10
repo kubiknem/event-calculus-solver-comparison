@@ -98,7 +98,7 @@ initiatesAtStepF(hitGround(O), height(O), valueAtStep(height(O), S+1), S) :- ste
     trajectoryAtStep(falling(O), _, height(O), valueAtStep(height(O),S+1), S+1),
     fGravity(G), step(S),
     S < maxstep.
-trajectory(falling(O), S1, height(O), valueAtStep(height(O), S2), S2) :- object(O), step(S1), step(S2).
+trajectory(falling(O), S1, height(O), valueAtStep(height(O), S2), S2) :- object(O), step(S1), stepMax(S2).
 
 
 %-------------------------------------------------------------------------------

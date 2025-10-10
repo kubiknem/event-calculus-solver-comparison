@@ -1,45 +1,89 @@
 % PREDICATES / NOTATION:
-%   happensAtStep(E, S): event S happens at state S                                                                              
-%   holdsAtStep(F, S): fluent F holds (is true) at step S
-%   not holdsAtStep(F, S): fluent F does not hold (is false) at step S
-%   holdsAtStep(F, V, S) = V: functional fluent F at step S has value V
-%   TODO update this
-
+%   input narrative:
+%     happens(E, T)
+%     initiallyP(F)
+%     initiallyN(F)
+%     initiallyPF(F, V)
+%     initiallyNF(F)
+%
+%   input domain:
+%     fluent(F)
+%     fluentF(F)
+%
+%     initiatesAtStep(E, F, S)
+%     terminatesAtStep(E, F, S)
+%     releasesAtStep(E, F, S)
+%
+%     initiatesAtStepF(E, F, V@S+1, S)
+%     terminatesAtStepF(E, F, V@S, S)
+%     releasesAtStepF(E, F, V@S+1, S)
+%
+%     trajectory(F1, S1, F2, V@S2, S2)
+%
+%   general predicates:
+%     happensAtStep(E, S): event S happens at state S                                                                              
+%     holdsAtStep(F, S): fluent F holds (is true) at step S
+%     holdsAtStepF(F, V@S, S) = V: functional fluent F at step S has value V
+%
+%   utility predicates
+%     happensInitiatesAtStep(F, S)
+%     happensTerminatesAtStep(F, S)
+%     happensReleasesAtStep(F, S)
+%
+%     happensInitiatesAtStepF(F, V@S+1, S)
+%     happensTerminatesAtStepF(F, V@S, S)
+%     happensReleasesAtStepF(F, V@S+1, S)
+%
+%     initiatedByAtStepF(E, F, V@S+1, S)
+%     trajectoryAtStep(F1, S1, F2, V@S2, S2)
+%
+%   output predicates:
+%     happens(E, T)
+%     holdsAt(F, T)
+%     holdsAtF(F, V, T)
+%     holdsAtCF(F, (V1 -> V2), T)
+%     releasedAt(F, T)
+%     releasedAtF(F, T)
 
 % OVERVIEW OF HOW IT WORKS:
-%   there is a fixed number of discrete steps (grounded)
-%   these is an equal number of interpreted timepoints (non-ground)
-%   timepoints are mapped to steps via event occurrences
+%   `there is a fixed number of discrete steps (grounded)
+%   `these is an equal number of interpreted timepoints (non-ground)
+%   `timepoints are mapped to steps via event occurrences
 %      event occurrences in the narrative are specified using happens(E,T)
 %      each T in happens(E,T) gets mapped to a step S in a ordered way (step S has a lower time than step S+1)
 %      when S is mapped to T then the interpreted timepoint of S will be equal to T (forces the value of the interpreted timepoint)
 %
-%   all event calculus predicates operate (almost) as normal on the discrete steps
+%   all event calculus predicates operate as normal on the discrete steps
 %
-%   things get a bit complicated for triggered events [% TODO this is the hardest part of the encoding / the potential limitation]
+%   things get a bit complicated for triggered events
 %      we can specify more steps than there are events in the narrative
 %      this results in free-floating steps that have no mapping
 %      a trigger rule then can imply that an event occurs at some state and imply its interpreted timepoint
-%      the free-floating step should then get mapped to this triggered event occurrence
+%      the free-floating then gets mapped to this triggered event occurrence
 %      such a step will not have a mapping to a ground timepoint, but will have an interpreted timepoint
+%      there is also a restriction that there must be an event occurrence at every timepoint
+%         this ensures binding of triggered events to the free floating timepoints
+%         and means that specifying more steps than needed will cause no models, while specifying less currently gives models where the triggered events do no happen
+%         TODO this might need adjustment but the workflow of running with more and more steps while getting bigger and bigger models until we get no model seems to work well
 %
 %   fluents are divided into discrete (grounded) and functional (interpreted / non-ground)
 %   discrete fluents are straight forward
-%      operate (almost?) the same as normal
+%      operate the same as normal
 %      have ground values at ground steps
 %   functional fluents are more complicated
 %      the general idea is the same as with discrete (being set by events, having inertia, ...)
 %      have interpreted values (non-ground) associated with them
 %      instead of saying holdsAtStep(F, S) we say holdsAtStep(F, valueAtStep(F, S), S)
 %      instead of initiatedAtStep(F, S) we say initiatedAtStepF(F, valueAtStep(F, S+1), S), similar for terminates and releases
+%      a initiatedAtStepF(F, valueAtStep(F, S+1), S) needs to also be paired with a "&sum{ ... } = valueAtStep(F, S+1) :- ..."
 %      valueAtStep(F, S) is the name of the symbol that will then be interpreted later
-%      these symbols then need to be compared to each other 
+%      these symbols can be compared using normal_atom(X, ..., Y), but their their comparison must also be defined using comparison(X,Y)
 %
 % TODO
-%  - add better #show for released at and trajectories
 %  - functional value zero now represents no value
+%  - releasedAtStepF and terminatesAtStepF maybe dont need the value argument (only makes sense for initiatesAtStepF?)
 %
-%  - integrating assignments into the model in the output
+%  - integrating assignments into the model in the output (currently using a post-processing script)
 %
 
 %-------------------------------------------------------------------------------
@@ -114,7 +158,7 @@ holdsAtStep(F, S+1) :- holdsAtStep(F, S), not happensTerminatesAtStep(F, S), not
 % TODO nothing is initially released from inertia
 :- releasedAtStep(F,0), fluent(F).
 % TODO holdsAtStep can be anything when released
-0{holdsAtStep(F, S)}1 :- releasedAtStep(F, S), fluent(F), step(S).  
+0{holdsAtStep(F, S)}1 :- releasedAtStep(F, S), fluent(F).  
 
 
 %% new DBEC8
@@ -184,11 +228,10 @@ holdsAtStepF(F, valueAtStep(F, S+1), S+1) :- holdsAtStepF(F, valueAtStep(F, S), 
 
 %% shorthand predicates
 initiatedByAtStepF(E, F, valueAtStep(F, S1), S) :- happensAtStep(E, S), initiatesAtStepF(E, F, valueAtStep(F, S1), S).
-terminatedByAtStepF(E, F, valueAtStep(F, S1), S) :- happensAtStep(E, S), terminatesAtStepF(E, F, valueAtStep(F, S1), S).
 
 % TODO I think this generates a comparison(A,B) for each interpreted value of fluents at adjacent steps
 % TODO and the choice rule for normal_atom below then says that each comparison leads to exactly one interpreted result of the comparison
-comparison(valueAtStep(F,S+1), valueAtStep(F,S)) :- fluentF(F), step(S).
+comparison(valueAtStep(F,S+1), valueAtStep(F,S)) :- fluentF(F), step(S), S < maxstep.
 
 % theory_atom(A,COMPARISON,B)
 { normal_atom(A, (lt;eq;gt), B) } = 1 :- comparison(A, B).
@@ -207,22 +250,22 @@ normal_atom(A, geq, B) :- normal_atom(A, gt, B).
 stoppedInSteps(S1, F, S2) :-
     S1 < S, S < S2,
     happensTerminatesAtStep(F, S),
-    step(S1), step(S2).
+    step(S1), stepMax(S2).
 stoppedInSteps(S1, F, S2) :-
     S1 < S, S < S2,
     happensReleasesAtStep(F, S),
-    step(S1), step(S2).
+    step(S1), stepMax(S2).
 
 
 %% DBEC2 - StartedIn(t1,f,t2)
 startedInSteps(S1, F, S2) :-
     S1 < S, S < S2,
     happensInitiatesAtStep(F, S),
-    step(S1), step(S2).
+    step(S1), stepMax(S2).
 startedInSteps(S1, F, S2) :-
     S1 < S, S < S2,
     happensReleasesAtStep(F, S),
-    step(S1), step(S2).
+    step(S1), stepMax(S2).
 
 
 %% DBEC3 - HoldsAt(f,t)
@@ -240,7 +283,7 @@ trajectoryAtStep(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2) :-
 % TODO nothing is initially released from inertia
 :- releasedAtStepF(F, valueAtStep(F, 0), 0), fluentF(F).
 % TODO holdsAtStep can be anything when released
-0{holdsAtStepF(F, valueAtStep(F, S), S)}1 :- releasedAtStepF(F, valueAtStep(F, S), S), fluentF(F), step(S).  
+0{holdsAtStepF(F, valueAtStep(F, S), S)}1 :- releasedAtStepF(F, valueAtStep(F, S), S), fluentF(F).  
 
 
 %% new DBEC8
@@ -276,9 +319,12 @@ releasedAtStepF(Fluent, valueAtStep(Fluent, S+1), S+1) :-
 
 % helper predicate to visualize fluent values between steps
 holdsBetweenSteps(F, S, S+1) :- holdsAtStep(F, S+1), step(S).
+holdsBetweenStepsF(F, valueAtStep(F, S+1), S, S+1) :- holdsAtStepF(F, valueAtStep(F, S+1), S+1), not trajectoryAtStep(_, _, F, valueAtStep(F, S+1), S+1), step(S).
 
-holdsBetweenStepsF(F, valueAtStep(F, S+1), S, S+1) :- holdsAtStepF(F, valueAtStep(F, S+1), S+1), step(S).
+releasedBetweenSteps(F, S, S+1) :- releasedAtStep(F, S+1), step(S).
+releasedBetweenStepsF(F, valueAtStep(F, S+1), S, S+1) :- releasedAtStepF(F, valueAtStep(F, S+1), S+1), step(S).
 
+trajectoryBetweenSteps(F1, F2, valueAtStep(F2, S), valueAtStep(F2, S+1), S, S+1) :- trajectoryAtStep(F1, _, F2, valueAtStep(F2, S+1), S+1), step(S).
 
 %-------------------------------------------------------------------------------
 % Show
@@ -317,18 +363,46 @@ holdsBetweenStepsF(F, valueAtStep(F, S+1), S, S+1) :- holdsAtStepF(F, valueAtSte
 % the last step might be free floating (triggered events)
 #show holdsAtF(F, valueAtStep(F,S), ("T >", timeAtStep(maxstep))) : holdsBetweenStepsF(F, valueAtStep(F, S), maxstep, S), not map(_, maxstep).
 
-% TODO should define a better show for trajectories -- currently only shows value at the end of the trajectory (should maybe show both start and end value)
-#show  trajectoryAtStep(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2) : trajectoryAtStep(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2).
 
-% TODO should show releasedAt?
-#show  releasedAtStep(F,S) : releasedAtStep(F,S).
-#show  releasedAtStepF(F,V,S) : releasedAtStepF(F,V,S).
-%%% 
+% functional fluents have values between steps
+#show holdsAtCF(F, (valueAtStep(F, S), "->", valueAtStep(F, S+1)), (T1, "< T =<", T2)) : trajectoryBetweenSteps(_, F, valueAtStep(F, S), valueAtStep(F, S+1), S, S+1), map(T1, S), map(T2, S+1).
+% any of the steps might be free floating (triggered events)
+#show holdsAtCF(F, (valueAtStep(F, S), "->", valueAtStep(F, S+1)), (timeAtStep(S), "< T =<", T2)) : trajectoryBetweenSteps(_, F, valueAtStep(F, S), valueAtStep(F, S+1), S, S+1), not map(_, S), map(T2, S+1), step(S+1).
+#show holdsAtCF(F, (valueAtStep(F, S), "->", valueAtStep(F, S+1)), (T1, "< T =<", timeAtStep(S+1))) : trajectoryBetweenSteps(_, F, valueAtStep(F, S), valueAtStep(F, S+1), S, S+1), map(T1, S), not map(_, S+1), step(S+1).
+#show holdsAtCF(F, (valueAtStep(F, S), "->", valueAtStep(F, S+1)), (timeAtStep(S), "< T =<", timeAtStep(S+1))) : trajectoryBetweenSteps(_, F, valueAtStep(F, S), valueAtStep(F, S+1), S, S+1), not map(_, S), not map(_, S+1), step(S+1).
+% functional fluents have a value into infinity after the last step
+#show holdsAtCF(F, (valueAtStep(F, S), "-> X"), ("T >", T1)) : trajectoryBetweenSteps(_, F, valueAtStep(F, maxstep), valueAtStep(F, S), maxstep, S), map(T1, maxstep).
+% the last step might be free floating (triggered events)
+#show holdsAtCF(F,(valueAtStep(F, S), "-> X"), ("T >", timeAtStep(maxstep))) : trajectoryBetweenSteps(_, F, valueAtStep(F, maxstep), valueAtStep(F, S), maxstep, S), not map(_, maxstep).
+
+% discrete fluents can be released between steps
+#show  releasedAt(F, (T1, "< T =<", T2)) :  releasedBetweenSteps(F, S, S+1), map(T1, S), map(T2, S+1).
+% any of the steps might be free floating (triggered events)
+#show  releasedAt(F, (timeAtStep(S), "< T =<", T2)) :  releasedBetweenSteps(F, S, S+1), not map(_, S), map(T2, S+1), step(S+1).
+#show  releasedAt(F, (timeAtStep(S), "< T =<", T2)) :  releasedBetweenSteps(F, S, S+1), not map(_, S), map(T2, S+1), step(S+1).
+#show  releasedAt(F, (T1, "< T =<", timeAtStep(S+1))) :  releasedBetweenSteps(F, S, S+1), map(T1, S), not map(_, S+1), step(S+1).
+#show  releasedAt(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  releasedBetweenSteps(F, S, S+1), not map(_, S), not map(_, S+1), step(S+1).
+% discrete fluents have a value into infinity after the last step
+#show  releasedAt(F, ("T >", T1)) :  releasedBetweenSteps(F, maxstep, _), map(T1, maxstep).
+% the last step might be free floating (triggered events)
+#show  releasedAt(F, ("T >", timeAtStep(maxstep))) :  releasedBetweenSteps(F, maxstep, _), not map(_, maxstep).
+
+% functional fluents can be released between steps
+#show releasedAtF(F, (T1, "< T =<", T2)) : releasedBetweenStepsF(F, valueAtStep(F, S+1), S, S+1), map(T1, S), map(T2, S+1).
+% any of the steps might be free floating (triggered events)
+#show releasedAtF(F, (timeAtStep(S), "< T =<", T2)) : releasedBetweenStepsF(F, valueAtStep(F, S+1), S, S+1), not map(_, S), map(T2, S+1), step(S+1).
+#show releasedAtF(F, (T1, "< T =<", timeAtStep(S+1))) : releasedBetweenStepsF(F, valueAtStep(F, S+1), S, S+1), map(T1, S), not map(_, S+1), step(S+1).
+#show releasedAtF(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) : releasedBetweenStepsF(F, valueAtStep(F, S+1), S, S+1), not map(_, S), not map(_, S+1), step(S+1).
+% functional fluents have a value into infinity after the last step
+#show releasedAtF(F, ("T >", T1)) : releasedBetweenStepsF(F, valueAtStep(F, S), maxstep, S), map(T1, maxstep).
+% the last step might be free floating (triggered events)
+#show releasedAtF(F, ("T >", timeAtStep(maxstep))) : releasedBetweenStepsF(F, valueAtStep(F, S), maxstep, S), not map(_, maxstep).
+
+
 %%% % show all for debug
 %%% #show  happensAtStep(E,S) : happensAtStep(E,S).
 %%% #show  holdsAtStep(F,S) : holdsAtStep(F,S).
 %%% #show  releasedAtStep(F,S) : releasedAtStep(F,S).
-%%% #show  holdsAtStepF(F,V,S) : holdsAtStepF(F,V,S).
 %%% #show  holdsAtStepF(F,V,S) : holdsAtStepF(F,V,S).
 %%% #show  releasedAtStepF(F,V,S) : releasedAtStepF(F,V,S).
 %%% 
@@ -337,7 +411,8 @@ holdsBetweenStepsF(F, valueAtStep(F, S+1), S, S+1) :- holdsAtStepF(F, valueAtSte
 %%% 
 %%% #show  map(T, S) : map(T, S).
 %%% 
-%%% #show  trajectoryAtStep(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2) : trajectoryAtStep(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2).
+%%% #show trajectoryAtStep(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2) : trajectoryAtStep(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2).
+%%% #show trajectoryBetweenSteps(F1, F2, valueAtStep(F2, S), valueAtStep(F2, S+1), S, S+1) : trajectoryBetweenSteps(F1, F2, valueAtStep(F2, S), valueAtStep(F2, S+1), S, S+1).
 
 
 %-------------------------------------------------------------------------------

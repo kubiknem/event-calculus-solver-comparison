@@ -5,7 +5,7 @@ clingo-lpx version 1.3.0
 Reading from ./model.lp ...
 Solving...
 Answer: 1
-(Time: 0.081s)
+(Time: 0.076s)
 happens(switch_left,25/2)
 happens(switch_left,145/8)
 happens(switch_left,625/32)
@@ -18,52 +18,44 @@ holdsAt(left_filling,(145/8,"< T =<",305/16))
 holdsAt(right_filling,(10,"< T =<",25/2))
 holdsAt(right_filling,(65/4,"< T =<",145/8))
 holdsAt(right_filling,(305/16,"< T =<",625/32))
+releasedAtF(water_left,("T >",625/32))
+releasedAtF(water_left,(10,"< T =<",25/2))
+releasedAtF(water_left,(25/2,"< T =<",65/4))
+releasedAtF(water_left,(65/4,"< T =<",145/8))
+releasedAtF(water_left,(145/8,"< T =<",305/16))
+releasedAtF(water_left,(305/16,"< T =<",625/32))
+releasedAtF(water_right,("T >",625/32))
+releasedAtF(water_right,(10,"< T =<",25/2))
+releasedAtF(water_right,(25/2,"< T =<",65/4))
+releasedAtF(water_right,(65/4,"< T =<",145/8))
+releasedAtF(water_right,(145/8,"< T =<",305/16))
+releasedAtF(water_right,(305/16,"< T =<",625/32))
+holdsAtCF(water_left,(0,"-> X"),("T >",625/32))
+holdsAtCF(water_left,(100,"->",50),(10,"< T =<",25/2))
+holdsAtCF(water_left,(50,"->",175/2),(25/2,"< T =<",65/4))
+holdsAtCF(water_left,(175/2,"->",50),(65/4,"< T =<",145/8))
+holdsAtCF(water_left,(50,"->",475/8),(145/8,"< T =<",305/16))
+holdsAtCF(water_left,(475/8,"->",50),(305/16,"< T =<",625/32))
+holdsAtCF(water_right,(0,"-> X"),("T >",625/32))
+holdsAtCF(water_right,(100,"->",125),(10,"< T =<",25/2))
+holdsAtCF(water_right,(125,"->",50),(25/2,"< T =<",65/4))
+holdsAtCF(water_right,(50,"->",275/4),(65/4,"< T =<",145/8))
+holdsAtCF(water_right,(275/4,"->",50),(145/8,"< T =<",305/16))
+holdsAtCF(water_right,(50,"->",875/16),(305/16,"< T =<",625/32))
 holdsAtF(water_left,100,(0,"< T =<",10))
-holdsAtF(water_left,50,(10,"< T =<",25/2))
-holdsAtF(water_left,175/2,(25/2,"< T =<",65/4))
-holdsAtF(water_left,50,(65/4,"< T =<",145/8))
-holdsAtF(water_left,475/8,(145/8,"< T =<",305/16))
-holdsAtF(water_left,50,(305/16,"< T =<",625/32))
 holdsAtF(water_right,100,(0,"< T =<",10))
-holdsAtF(water_right,125,(10,"< T =<",25/2))
-holdsAtF(water_right,50,(25/2,"< T =<",65/4))
-holdsAtF(water_right,275/4,(65/4,"< T =<",145/8))
-holdsAtF(water_right,50,(145/8,"< T =<",305/16))
-holdsAtF(water_right,875/16,(305/16,"< T =<",625/32))
-releasedAtStepF(water_left,50,2)
-releasedAtStepF(water_left,175/2,3)
-releasedAtStepF(water_left,50,4)
-releasedAtStepF(water_left,475/8,5)
-releasedAtStepF(water_left,50,6)
-releasedAtStepF(water_left,0,7)
-releasedAtStepF(water_right,125,2)
-releasedAtStepF(water_right,50,3)
-releasedAtStepF(water_right,275/4,4)
-releasedAtStepF(water_right,50,5)
-releasedAtStepF(water_right,875/16,6)
-releasedAtStepF(water_right,0,7)
-trajectoryAtStep(left_filling,2,water_left,175/2,3)
-trajectoryAtStep(left_filling,2,water_right,50,3)
-trajectoryAtStep(left_filling,4,water_left,475/8,5)
-trajectoryAtStep(left_filling,4,water_right,50,5)
-trajectoryAtStep(right_filling,1,water_left,50,2)
-trajectoryAtStep(right_filling,1,water_right,125,2)
-trajectoryAtStep(right_filling,3,water_left,50,4)
-trajectoryAtStep(right_filling,3,water_right,275/4,4)
-trajectoryAtStep(right_filling,5,water_left,50,6)
-trajectoryAtStep(right_filling,5,water_right,875/16,6)
 SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.082s (Solving: 0.01s 1st Model: 0.01s Unsat: 0.00s)
-CPU Time     : 0.055s
+Time         : 0.077s (Solving: 0.01s 1st Model: 0.01s Unsat: 0.00s)
+CPU Time     : 0.050s
 
 Command exited with non-zero status 30
 
-  real      0:00.10
-  real [s]  0.10
+  real      0:00.09
+  real [s]  0.09
   user [s]  0.05
-  sys  [s]  0.01
-  mem  [KB] 9216
+  sys  [s]  0.00
+  mem  [KB] 9600
   avgm [KB] 0

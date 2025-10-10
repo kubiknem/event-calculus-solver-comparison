@@ -63,13 +63,13 @@ terminatesAtStepF(stop_bouncing, velocity, valueAtStep(velocity, S), S) :- step(
 
 
 % falling 
-trajectory(falling, S1, height, valueAtStep(height, S2), S2) :- step(S1), step(S2).
+trajectory(falling, S1, height, valueAtStep(height, S2), S2) :- step(S1), stepMax(S2).
 &sum{ valueAtStep(height,S); Rate*timeAtStep(S); -Rate*timeAtStep(S+1) } = valueAtStep(height,S+1) :-
     trajectoryAtStep(falling, _, height, valueAtStep(height,S+1), S+1),
     initiallyPF(constant_fall_rate, Rate),
     step(S), S < maxstep.
 
-trajectory(falling, S1, velocity, valueAtStep(velocity, S2), S2) :- step(S1), step(S2).
+trajectory(falling, S1, velocity, valueAtStep(velocity, S2), S2) :- step(S1), stepMax(S2).
 &sum{ valueAtStep(velocity,S); -Rate*timeAtStep(S); Rate*timeAtStep(S+1) } = valueAtStep(velocity,S+1) :-
     trajectoryAtStep(falling, _, velocity, valueAtStep(velocity,S+1), S+1),
     initiallyPF(constant_fall_rate, Rate),
@@ -77,13 +77,13 @@ trajectory(falling, S1, velocity, valueAtStep(velocity, S2), S2) :- step(S1), st
 
 
 % rising
-trajectory(rising, S1, height, valueAtStep(height, S2), S2) :- step(S1), step(S2).
+trajectory(rising, S1, height, valueAtStep(height, S2), S2) :- step(S1), stepMax(S2).
 &sum{ valueAtStep(height,S); -Rate*timeAtStep(S); Rate*timeAtStep(S+1) } = valueAtStep(height,S+1) :-
     trajectoryAtStep(rising, _, height, valueAtStep(height,S+1), S+1),
     initiallyPF(constant_fall_rate, Rate),
     step(S), S < maxstep.
 
-trajectory(rising, S1, velocity, valueAtStep(velocity, S2), S2) :- step(S1), step(S2).
+trajectory(rising, S1, velocity, valueAtStep(velocity, S2), S2) :- step(S1), stepMax(S2).
 &sum{ (1-LossPortion)*valueAtStep(velocity,S); Rate*timeAtStep(S); -Rate*timeAtStep(S+1) } = valueAtStep(velocity,S+1) :-
     trajectoryAtStep(rising, _, velocity, valueAtStep(velocity,S+1), S+1),
     initiallyPF(constant_fall_rate, Rate),

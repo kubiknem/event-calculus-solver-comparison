@@ -22,25 +22,25 @@ terminatesAtStep(switch_left, right_filling, S) :- step(S).
 terminatesAtStep(switch_right, left_filling, S) :- step(S).
 initiatesAtStep(switch_right, right_filling, S) :- step(S).
 
-trajectory(left_filling, S1, water_left, valueAtStep(water_left, S2), S2) :- step(S1), step(S2).
+trajectory(left_filling, S1, water_left, valueAtStep(water_left, S2), S2) :- step(S1), stepMax(S2).
 &sum{ valueAtStep(water_left,S); -TotalFlow*timeAtStep(S); TotalFlow*timeAtStep(S+1) } = valueAtStep(water_left,S+1) :-
     trajectoryAtStep(left_filling, _, water_left, valueAtStep(water_left,S+1), S+1),
     TotalFlow = 30 - 20, % in rate 30, out rate 20
     step(S), S < maxstep.
 
-trajectory(right_filling, S1, water_left, valueAtStep(water_left, S2), S2) :- step(S1), step(S2).
+trajectory(right_filling, S1, water_left, valueAtStep(water_left, S2), S2) :- step(S1), stepMax(S2).
 &sum{ valueAtStep(water_left,S); TotalFlow*timeAtStep(S); -TotalFlow*timeAtStep(S+1) } = valueAtStep(water_left,S+1) :-
     trajectoryAtStep(right_filling, _, water_left, valueAtStep(water_left,S+1), S+1),
     TotalFlow = 20, % out rate 20
     step(S), S < maxstep.
 
-trajectory(right_filling, S1, water_right, valueAtStep(water_right, S2), S2) :- step(S1), step(S2).
+trajectory(right_filling, S1, water_right, valueAtStep(water_right, S2), S2) :- step(S1), stepMax(S2).
 &sum{ valueAtStep(water_right,S); -TotalFlow*timeAtStep(S); TotalFlow*timeAtStep(S+1) } = valueAtStep(water_right,S+1) :-
     trajectoryAtStep(right_filling, _, water_right, valueAtStep(water_right,S+1), S+1),
     TotalFlow = 30 - 20, % in rate 30, out rate 20
     step(S), S < maxstep.
 
-trajectory(left_filling, S1, water_right, valueAtStep(water_right, S2), S2) :- step(S1), step(S2).
+trajectory(left_filling, S1, water_right, valueAtStep(water_right, S2), S2) :- step(S1), stepMax(S2).
 &sum{ valueAtStep(water_right,S); TotalFlow*timeAtStep(S); -TotalFlow*timeAtStep(S+1) } = valueAtStep(water_right,S+1) :-
     trajectoryAtStep(left_filling, _, water_right, valueAtStep(water_right,S+1), S+1),
     TotalFlow = 20, % out rate 20

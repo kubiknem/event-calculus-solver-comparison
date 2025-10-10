@@ -5,21 +5,20 @@ clingo-lpx version 1.3.0
 Reading from ./model-lpx.lp ...
 Solving...
 Answer: 1
-(Time: 0.036s)
+(Time: 0.031s)
 happens(hitGround(apple),50)
 happens(drop(nathan,apple),10)
 holdsAt(falling(apple),(10,"< T =<",50))
+releasedAtF(height(apple),(10,"< T =<",50))
+holdsAtCF(height(apple),(80,"->",0),(10,"< T =<",50))
 holdsAtF(height(apple),80,(0,"< T =<",10))
-holdsAtF(height(apple),0,(10,"< T =<",50))
 holdsAtF(height(apple),0,("T >",50))
-releasedAtStepF(height(apple),0,2)
-trajectoryAtStep(falling(apple),1,height(apple),0,2)
 SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.036s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.021s
+Time         : 0.031s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.018s
 
 Command exited with non-zero status 30
 
@@ -27,5 +26,5 @@ Command exited with non-zero status 30
   real [s]  0.04
   user [s]  0.01
   sys  [s]  0.00
-  mem  [KB] 8704
+  mem  [KB] 8832
   avgm [KB] 0

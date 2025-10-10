@@ -5,7 +5,7 @@ clingo-lpx version 1.3.0
 Reading from ./model.lp ...
 Solving...
 Answer: 1
-(Time: 0.113s)
+(Time: 0.104s)
 happens(bounce_up,20)
 happens(bounce_up,25)
 happens(catch,26)
@@ -22,6 +22,26 @@ holdsAt(falling,(45/2,"< T =<",25))
 holdsAt(falling,(205/8,"< T =<",26))
 holdsAt(rising,(20,"< T =<",45/2))
 holdsAt(rising,(25,"< T =<",205/8))
+releasedAtF(height,(10,"< T =<",20))
+releasedAtF(height,(20,"< T =<",45/2))
+releasedAtF(height,(45/2,"< T =<",25))
+releasedAtF(height,(25,"< T =<",205/8))
+releasedAtF(height,(205/8,"< T =<",26))
+releasedAtF(velocity,(10,"< T =<",20))
+releasedAtF(velocity,(20,"< T =<",45/2))
+releasedAtF(velocity,(45/2,"< T =<",25))
+releasedAtF(velocity,(25,"< T =<",205/8))
+releasedAtF(velocity,(205/8,"< T =<",26))
+holdsAtCF(height,(10,"->",0),(10,"< T =<",20))
+holdsAtCF(height,(0,"->",5/2),(20,"< T =<",45/2))
+holdsAtCF(height,(5/2,"->",0),(45/2,"< T =<",25))
+holdsAtCF(height,(0,"->",5/8),(25,"< T =<",205/8))
+holdsAtCF(height,(5/8,"->",1/4),(205/8,"< T =<",26))
+holdsAtCF(velocity,(0,"->",10),(10,"< T =<",20))
+holdsAtCF(velocity,(10,"->",0),(20,"< T =<",45/2))
+holdsAtCF(velocity,(0,"->",5/2),(45/2,"< T =<",25))
+holdsAtCF(velocity,(5/2,"->",0),(25,"< T =<",205/8))
+holdsAtCF(velocity,(0,"->",3/8),(205/8,"< T =<",26))
 holdsAtF(constant_fall_rate,1,(0,"< T =<",10))
 holdsAtF(constant_fall_rate,1,(10,"< T =<",20))
 holdsAtF(constant_fall_rate,1,(20,"< T =<",45/2))
@@ -30,18 +50,8 @@ holdsAtF(constant_fall_rate,1,(25,"< T =<",205/8))
 holdsAtF(constant_fall_rate,1,(205/8,"< T =<",26))
 holdsAtF(constant_fall_rate,1,("T >",26))
 holdsAtF(height,10,(0,"< T =<",10))
-holdsAtF(height,0,(10,"< T =<",20))
-holdsAtF(height,5/2,(20,"< T =<",45/2))
-holdsAtF(height,0,(45/2,"< T =<",25))
-holdsAtF(height,5/8,(25,"< T =<",205/8))
-holdsAtF(height,1/4,(205/8,"< T =<",26))
 holdsAtF(height,1/4,("T >",26))
 holdsAtF(velocity,0,(0,"< T =<",10))
-holdsAtF(velocity,10,(10,"< T =<",20))
-holdsAtF(velocity,0,(20,"< T =<",45/2))
-holdsAtF(velocity,5/2,(45/2,"< T =<",25))
-holdsAtF(velocity,0,(25,"< T =<",205/8))
-holdsAtF(velocity,3/8,(205/8,"< T =<",26))
 holdsAtF(velocity,0,("T >",26))
 holdsAtF(velocity_loss_portion,3/4,(0,"< T =<",10))
 holdsAtF(velocity_loss_portion,3/4,(10,"< T =<",20))
@@ -50,38 +60,18 @@ holdsAtF(velocity_loss_portion,3/4,(45/2,"< T =<",25))
 holdsAtF(velocity_loss_portion,3/4,(25,"< T =<",205/8))
 holdsAtF(velocity_loss_portion,3/4,(205/8,"< T =<",26))
 holdsAtF(velocity_loss_portion,3/4,("T >",26))
-releasedAtStepF(height,0,2)
-releasedAtStepF(height,5/2,3)
-releasedAtStepF(height,0,4)
-releasedAtStepF(height,5/8,5)
-releasedAtStepF(height,1/4,6)
-releasedAtStepF(velocity,10,2)
-releasedAtStepF(velocity,0,3)
-releasedAtStepF(velocity,5/2,4)
-releasedAtStepF(velocity,0,5)
-releasedAtStepF(velocity,3/8,6)
-trajectoryAtStep(falling,1,height,0,2)
-trajectoryAtStep(falling,1,velocity,10,2)
-trajectoryAtStep(falling,3,height,0,4)
-trajectoryAtStep(falling,3,velocity,5/2,4)
-trajectoryAtStep(falling,5,height,1/4,6)
-trajectoryAtStep(falling,5,velocity,3/8,6)
-trajectoryAtStep(rising,2,height,5/2,3)
-trajectoryAtStep(rising,2,velocity,0,3)
-trajectoryAtStep(rising,4,height,5/8,5)
-trajectoryAtStep(rising,4,velocity,0,5)
 SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.114s (Solving: 0.02s 1st Model: 0.02s Unsat: 0.00s)
-CPU Time     : 0.073s
+Time         : 0.105s (Solving: 0.02s 1st Model: 0.02s Unsat: 0.00s)
+CPU Time     : 0.072s
 
 Command exited with non-zero status 30
 
-  real      0:00.13
-  real [s]  0.13
-  user [s]  0.04
-  sys  [s]  0.03
-  mem  [KB] 9852
+  real      0:00.12
+  real [s]  0.12
+  user [s]  0.06
+  sys  [s]  0.01
+  mem  [KB] 9984
   avgm [KB] 0

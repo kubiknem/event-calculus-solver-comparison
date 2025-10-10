@@ -5,7 +5,7 @@ clingo-lpx version 1.3.0
 Reading from ./model.lp ...
 Solving...
 Answer: 1
-(Time: 0.083s)
+(Time: 0.072s)
 happens(fade_in_end,20)
 happens(fade_in_end,40)
 happens(fade_out_end,30)
@@ -19,32 +19,28 @@ holdsAt(light_on,(10,"< T =<",20))
 holdsAt(light_on,(20,"< T =<",30))
 holdsAt(light_on,(30,"< T =<",40))
 holdsAt(light_on,(40,"< T =<",45))
+releasedAtF(brightness,(10,"< T =<",20))
+releasedAtF(brightness,(20,"< T =<",30))
+releasedAtF(brightness,(30,"< T =<",40))
+releasedAtF(brightness,(40,"< T =<",45))
+holdsAtCF(brightness,(0,"->",10),(10,"< T =<",20))
+holdsAtCF(brightness,(10,"->",0),(20,"< T =<",30))
+holdsAtCF(brightness,(0,"->",10),(30,"< T =<",40))
+holdsAtCF(brightness,(10,"->",5),(40,"< T =<",45))
 holdsAtF(brightness,0,(0,"< T =<",10))
-holdsAtF(brightness,10,(10,"< T =<",20))
-holdsAtF(brightness,0,(20,"< T =<",30))
-holdsAtF(brightness,10,(30,"< T =<",40))
-holdsAtF(brightness,5,(40,"< T =<",45))
 holdsAtF(brightness,0,("T >",45))
-releasedAtStepF(brightness,10,2)
-releasedAtStepF(brightness,0,3)
-releasedAtStepF(brightness,10,4)
-releasedAtStepF(brightness,5,5)
-trajectoryAtStep(fading_in,1,brightness,10,2)
-trajectoryAtStep(fading_in,3,brightness,10,4)
-trajectoryAtStep(fading_out,2,brightness,0,3)
-trajectoryAtStep(fading_out,4,brightness,5,5)
 SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.084s (Solving: 0.01s 1st Model: 0.01s Unsat: 0.00s)
-CPU Time     : 0.042s
+Time         : 0.072s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.041s
 
 Command exited with non-zero status 30
 
-  real      0:00.10
-  real [s]  0.10
-  user [s]  0.05
+  real      0:00.09
+  real [s]  0.09
+  user [s]  0.04
   sys  [s]  0.00
   mem  [KB] 8960
   avgm [KB] 0

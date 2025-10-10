@@ -31,12 +31,12 @@ initiatesAtStepF(turn_light_off, brightness, valueAtStep(brightness, S+1), S) :-
     initiatedByAtStepF(turn_light_off, brightness, valueAtStep(brightness,S+1), S).
 terminatesAtStepF(turn_light_off, brightness, valueAtStep(brightness, S), S) :- step(S).
 
-trajectory(fading_in, S1, brightness, valueAtStep(brightness,S2), S2) :- step(S1), step(S2).
+trajectory(fading_in, S1, brightness, valueAtStep(brightness,S2), S2) :- step(S1), stepMax(S2).
 &sum{ valueAtStep(brightness,S); -timeAtStep(S); timeAtStep(S+1) } = valueAtStep(brightness,S+1) :-
     trajectoryAtStep(fading_in, _, brightness, valueAtStep(brightness,S+1), S+1),
     step(S), S < maxstep.
 
-trajectory(fading_out, S1, brightness, valueAtStep(brightness,S2), S2) :- step(S1), step(S2).
+trajectory(fading_out, S1, brightness, valueAtStep(brightness,S2), S2) :- step(S1), stepMax(S2).
 &sum{ valueAtStep(brightness,S); timeAtStep(S); -timeAtStep(S+1) } = valueAtStep(brightness,S+1) :-
     trajectoryAtStep(fading_out, _, brightness, valueAtStep(brightness,S+1), S+1),
     step(S), S < maxstep.
