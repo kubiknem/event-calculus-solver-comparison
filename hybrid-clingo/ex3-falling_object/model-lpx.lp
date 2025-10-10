@@ -14,7 +14,7 @@ object(apple).
 % fHeight(-paramHeight..paramHeight).
 
 % fluent(height(O, H)) :- object(O), fHeight(H).
-fluentF(height(O)) :- object(O).
+fluent_Func(height(O)) :- object(O).
 fluent(falling(O)) :- object(O).
 
 % event(drop(A, O)) :- agent(A), object(O).
@@ -35,7 +35,7 @@ fGravity(2).
 initiatesAtStep(drop(A,O), falling(O), S) :- agent(A), object(O), step(S).
 
 % [effect + CLoI]
-releasesAtStepF(drop(A,O), height(O), valueAtStep(height(O), S+1), S) :- agent(A), object(O), step(S).
+releasesAtStep_Func(drop(A,O), height(O), valueAtStep(height(O), S+1), S) :- agent(A), object(O), step(S).
 
 % [triggered event]
 % an object hits the ground when its falling and its height becomes zero
@@ -66,8 +66,8 @@ terminatesAtStep(hitGround(O), falling(O), S) :- object(O), step(S).
 % [effect + CLoI]
 % if an object hits the ground then its height will no longer be released from CLoI
 &sum{valueAtStep(height(O),S)} = valueAtStep(height(O),S+1) :-
-    initiatedByAtStepF(hitGround(O), height(O), valueAtStep(height(O),S+1), S).
-initiatesAtStepF(hitGround(O), height(O), valueAtStep(height(O), S+1), S) :- step(S), object(O).
+    initiatedByAtStep_Func(hitGround(O), height(O), valueAtStep(height(O),S+1), S).
+initiatesAtStep_Func(hitGround(O), height(O), valueAtStep(height(O), S+1), S) :- step(S), object(O).
 
 
 
@@ -89,16 +89,16 @@ initiatesAtStepF(hitGround(O), height(O), valueAtStep(height(O), S+1), S) :- ste
 
 % motion of an object from the moment it is dropped to the moment it hits the ground
 %*
-%trajectory(falling(O), T1, height(O,H - (G)*(T2-T1)), T2) :-
+%trajectory_Func(falling(O), T1, height(O,H - (G)*(T2-T1)), T2) :-
 %    T1 < T2,
 %    holdsAt(height(O,H), T1),
 %    fGravity(G), object(O), fHeight(H), time(T1), time(T2).
 *%
 &sum{ valueAtStep(height(O),S); G*timeAtStep(S); -G*timeAtStep(S+1) } = valueAtStep(height(O),S+1) :-
-    trajectoryAtStep(falling(O), _, height(O), valueAtStep(height(O),S+1), S+1),
+    trajectoryAtStep_Func(falling(O), _, height(O), valueAtStep(height(O),S+1), S+1),
     fGravity(G), step(S),
     S < maxstep.
-trajectory(falling(O), S1, height(O), valueAtStep(height(O), S2), S2) :- object(O), step(S1), stepMax(S2).
+trajectory_Func(falling(O), S1, height(O), valueAtStep(height(O), S2), S2) :- object(O), step(S1), stepMax(S2).
 
 
 %-------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ trajectory(falling(O), S1, height(O), valueAtStep(height(O), S2), S2) :- object(
 %-------------------------------------------------------------------------------
 
 % initiallyP(height(apple, H)) :- initHeight(H).  % apples height initially is something
-initiallyPF(height(apple), H) :- initHeight(H).  % apples height initially is something
+initiallyP_Func(height(apple), H) :- initHeight(H).  % apples height initially is something
 initiallyN(F) :- not initiallyP(F), fluent(F).  % apple is initially not falling
 
 happens(drop(nathan,apple), 10).                 % nathan drop the apple at time 10

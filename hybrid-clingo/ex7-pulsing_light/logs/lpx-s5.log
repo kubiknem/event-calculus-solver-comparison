@@ -5,7 +5,7 @@ clingo-lpx version 1.3.0
 Reading from ./model.lp ...
 Solving...
 Answer: 1
-(Time: 0.072s)
+(Time: 0.080s)
 happens(fade_in_end,20)
 happens(fade_in_end,40)
 happens(fade_out_end,30)
@@ -19,28 +19,28 @@ holdsAt(light_on,(10,"< T =<",20))
 holdsAt(light_on,(20,"< T =<",30))
 holdsAt(light_on,(30,"< T =<",40))
 holdsAt(light_on,(40,"< T =<",45))
-releasedAtF(brightness,(10,"< T =<",20))
-releasedAtF(brightness,(20,"< T =<",30))
-releasedAtF(brightness,(30,"< T =<",40))
-releasedAtF(brightness,(40,"< T =<",45))
-holdsAtCF(brightness,(0,"->",10),(10,"< T =<",20))
-holdsAtCF(brightness,(10,"->",0),(20,"< T =<",30))
-holdsAtCF(brightness,(0,"->",10),(30,"< T =<",40))
-holdsAtCF(brightness,(10,"->",5),(40,"< T =<",45))
-holdsAtF(brightness,0,(0,"< T =<",10))
-holdsAtF(brightness,0,("T >",45))
+releasedAt_Func(brightness,(10,"< T =<",20))
+releasedAt_Func(brightness,(20,"< T =<",30))
+releasedAt_Func(brightness,(30,"< T =<",40))
+releasedAt_Func(brightness,(40,"< T =<",45))
+holdsAt_Func(brightness,0,(0,"< T =<",10))
+holdsAt_Func(brightness,0,("T >",45))
+holdsAt_Func_Cont(brightness,(0,"->",10),(10,"< T =<",20))
+holdsAt_Func_Cont(brightness,(10,"->",0),(20,"< T =<",30))
+holdsAt_Func_Cont(brightness,(0,"->",10),(30,"< T =<",40))
+holdsAt_Func_Cont(brightness,(10,"->",5),(40,"< T =<",45))
 SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.072s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.041s
+Time         : 0.080s (Solving: 0.01s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.045s
 
 Command exited with non-zero status 30
 
   real      0:00.09
   real [s]  0.09
-  user [s]  0.04
-  sys  [s]  0.00
-  mem  [KB] 8960
+  user [s]  0.03
+  sys  [s]  0.02
+  mem  [KB] 9344
   avgm [KB] 0

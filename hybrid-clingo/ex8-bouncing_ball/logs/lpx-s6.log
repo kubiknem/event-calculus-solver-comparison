@@ -5,7 +5,7 @@ clingo-lpx version 1.3.0
 Reading from ./model.lp ...
 Solving...
 Answer: 1
-(Time: 0.104s)
+(Time: 0.110s)
 happens(bounce_up,20)
 happens(bounce_up,25)
 happens(catch,26)
@@ -22,56 +22,56 @@ holdsAt(falling,(45/2,"< T =<",25))
 holdsAt(falling,(205/8,"< T =<",26))
 holdsAt(rising,(20,"< T =<",45/2))
 holdsAt(rising,(25,"< T =<",205/8))
-releasedAtF(height,(10,"< T =<",20))
-releasedAtF(height,(20,"< T =<",45/2))
-releasedAtF(height,(45/2,"< T =<",25))
-releasedAtF(height,(25,"< T =<",205/8))
-releasedAtF(height,(205/8,"< T =<",26))
-releasedAtF(velocity,(10,"< T =<",20))
-releasedAtF(velocity,(20,"< T =<",45/2))
-releasedAtF(velocity,(45/2,"< T =<",25))
-releasedAtF(velocity,(25,"< T =<",205/8))
-releasedAtF(velocity,(205/8,"< T =<",26))
-holdsAtCF(height,(10,"->",0),(10,"< T =<",20))
-holdsAtCF(height,(0,"->",5/2),(20,"< T =<",45/2))
-holdsAtCF(height,(5/2,"->",0),(45/2,"< T =<",25))
-holdsAtCF(height,(0,"->",5/8),(25,"< T =<",205/8))
-holdsAtCF(height,(5/8,"->",1/4),(205/8,"< T =<",26))
-holdsAtCF(velocity,(0,"->",10),(10,"< T =<",20))
-holdsAtCF(velocity,(10,"->",0),(20,"< T =<",45/2))
-holdsAtCF(velocity,(0,"->",5/2),(45/2,"< T =<",25))
-holdsAtCF(velocity,(5/2,"->",0),(25,"< T =<",205/8))
-holdsAtCF(velocity,(0,"->",3/8),(205/8,"< T =<",26))
-holdsAtF(constant_fall_rate,1,(0,"< T =<",10))
-holdsAtF(constant_fall_rate,1,(10,"< T =<",20))
-holdsAtF(constant_fall_rate,1,(20,"< T =<",45/2))
-holdsAtF(constant_fall_rate,1,(45/2,"< T =<",25))
-holdsAtF(constant_fall_rate,1,(25,"< T =<",205/8))
-holdsAtF(constant_fall_rate,1,(205/8,"< T =<",26))
-holdsAtF(constant_fall_rate,1,("T >",26))
-holdsAtF(height,10,(0,"< T =<",10))
-holdsAtF(height,1/4,("T >",26))
-holdsAtF(velocity,0,(0,"< T =<",10))
-holdsAtF(velocity,0,("T >",26))
-holdsAtF(velocity_loss_portion,3/4,(0,"< T =<",10))
-holdsAtF(velocity_loss_portion,3/4,(10,"< T =<",20))
-holdsAtF(velocity_loss_portion,3/4,(20,"< T =<",45/2))
-holdsAtF(velocity_loss_portion,3/4,(45/2,"< T =<",25))
-holdsAtF(velocity_loss_portion,3/4,(25,"< T =<",205/8))
-holdsAtF(velocity_loss_portion,3/4,(205/8,"< T =<",26))
-holdsAtF(velocity_loss_portion,3/4,("T >",26))
+releasedAt_Func(height,(10,"< T =<",20))
+releasedAt_Func(height,(20,"< T =<",45/2))
+releasedAt_Func(height,(45/2,"< T =<",25))
+releasedAt_Func(height,(25,"< T =<",205/8))
+releasedAt_Func(height,(205/8,"< T =<",26))
+releasedAt_Func(velocity,(10,"< T =<",20))
+releasedAt_Func(velocity,(20,"< T =<",45/2))
+releasedAt_Func(velocity,(45/2,"< T =<",25))
+releasedAt_Func(velocity,(25,"< T =<",205/8))
+releasedAt_Func(velocity,(205/8,"< T =<",26))
+holdsAt_Func(constant_fall_rate,1,(0,"< T =<",10))
+holdsAt_Func(constant_fall_rate,1,(10,"< T =<",20))
+holdsAt_Func(constant_fall_rate,1,(20,"< T =<",45/2))
+holdsAt_Func(constant_fall_rate,1,(45/2,"< T =<",25))
+holdsAt_Func(constant_fall_rate,1,(25,"< T =<",205/8))
+holdsAt_Func(constant_fall_rate,1,(205/8,"< T =<",26))
+holdsAt_Func(constant_fall_rate,1,("T >",26))
+holdsAt_Func(height,10,(0,"< T =<",10))
+holdsAt_Func(height,1/4,("T >",26))
+holdsAt_Func(velocity,0,(0,"< T =<",10))
+holdsAt_Func(velocity,0,("T >",26))
+holdsAt_Func(velocity_loss_portion,3/4,(0,"< T =<",10))
+holdsAt_Func(velocity_loss_portion,3/4,(10,"< T =<",20))
+holdsAt_Func(velocity_loss_portion,3/4,(20,"< T =<",45/2))
+holdsAt_Func(velocity_loss_portion,3/4,(45/2,"< T =<",25))
+holdsAt_Func(velocity_loss_portion,3/4,(25,"< T =<",205/8))
+holdsAt_Func(velocity_loss_portion,3/4,(205/8,"< T =<",26))
+holdsAt_Func(velocity_loss_portion,3/4,("T >",26))
+holdsAt_Func_Cont(height,(10,"->",0),(10,"< T =<",20))
+holdsAt_Func_Cont(height,(0,"->",5/2),(20,"< T =<",45/2))
+holdsAt_Func_Cont(height,(5/2,"->",0),(45/2,"< T =<",25))
+holdsAt_Func_Cont(height,(0,"->",5/8),(25,"< T =<",205/8))
+holdsAt_Func_Cont(height,(5/8,"->",1/4),(205/8,"< T =<",26))
+holdsAt_Func_Cont(velocity,(0,"->",10),(10,"< T =<",20))
+holdsAt_Func_Cont(velocity,(10,"->",0),(20,"< T =<",45/2))
+holdsAt_Func_Cont(velocity,(0,"->",5/2),(45/2,"< T =<",25))
+holdsAt_Func_Cont(velocity,(5/2,"->",0),(25,"< T =<",205/8))
+holdsAt_Func_Cont(velocity,(0,"->",3/8),(205/8,"< T =<",26))
 SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.105s (Solving: 0.02s 1st Model: 0.02s Unsat: 0.00s)
-CPU Time     : 0.072s
+Time         : 0.111s (Solving: 0.02s 1st Model: 0.02s Unsat: 0.00s)
+CPU Time     : 0.077s
 
 Command exited with non-zero status 30
 
   real      0:00.12
   real [s]  0.12
   user [s]  0.06
-  sys  [s]  0.01
-  mem  [KB] 9984
+  sys  [s]  0.02
+  mem  [KB] 10112
   avgm [KB] 0

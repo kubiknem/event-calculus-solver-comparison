@@ -9,10 +9,10 @@ Answer: 1
 happens(hitGround(apple),90)
 happens(drop(nathan,apple),10)
 holdsAt(falling(apple),(10,"< T =<",90))
-releasedAtF(height(apple),(10,"< T =<",90))
-holdsAtCF(height(apple),(160,"->",0),(10,"< T =<",90))
-holdsAtF(height(apple),160,(0,"< T =<",10))
-holdsAtF(height(apple),0,("T >",90))
+releasedAt_Func(height(apple),(10,"< T =<",90))
+holdsAt_Func(height(apple),160,(0,"< T =<",10))
+holdsAt_Func(height(apple),0,("T >",90))
+holdsAt_Func_Cont(height(apple),(160,"->",0),(10,"< T =<",90))
 SATISFIABLE
 
 Models       : 1
@@ -25,6 +25,6 @@ Command exited with non-zero status 30
   real      0:00.04
   real [s]  0.04
   user [s]  0.01
-  sys  [s]  0.01
-  mem  [KB] 8832
+  sys  [s]  0.00
+  mem  [KB] 8960
   avgm [KB] 0

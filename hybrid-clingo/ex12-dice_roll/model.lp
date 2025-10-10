@@ -8,22 +8,22 @@
 % event(roll).
 % event(land).
 
-fluentF(sideUp).    % functional fluent
+fluent_Func(sideUp).    % functional fluent
 
 % the fluent can only have positive values
-&sum{ valueAtStep(sideUp, S) } > 0 :- holdsAtStepF(sideUp, valueAtStep(sideUp, S), S), not releasedAtStepF(sideUp, valueAtStep(sideUp, S), S), stepMax(S).
+&sum{ valueAtStep(sideUp, S) } > 0 :- holdsAtStep_Func(sideUp, valueAtStep(sideUp, S), S), not releasedAtStep_Func(sideUp, valueAtStep(sideUp, S), S), stepMax(S).
 
 
 %-------------------------------------------------------------------------------
 % effects 
 %-------------------------------------------------------------------------------
 
-releasesAtStepF(roll, sideUp, valueAtStep(sideUp, S+1), S) :- step(S).
+releasesAtStep_Func(roll, sideUp, valueAtStep(sideUp, S+1), S) :- step(S).
 
-initiatesAtStepF(land, sideUp, valueAtStep(sideUp, S+1), S) :- holdsAtStepF(sideUp, valueAtStep(sideUp, S), S), step(S).
+initiatesAtStep_Func(land, sideUp, valueAtStep(sideUp, S+1), S) :- holdsAtStep_Func(sideUp, valueAtStep(sideUp, S), S), step(S).
 &sum{valueAtStep(sideUp,S)} = valueAtStep(sideUp,S+1) :-
-    initiatedByAtStepF(land, sideUp, valueAtStep(sideUp,S+1), S).
-terminatesAtStepF(land, sideUp, valueAtStep(sideUp, S), S) :- step(S).
+    initiatedByAtStep_Func(land, sideUp, valueAtStep(sideUp,S+1), S).
+terminatesAtStep_Func(land, sideUp, valueAtStep(sideUp, S), S) :- step(S).
 
 
 %-------------------------------------------------------------------------------
@@ -31,13 +31,13 @@ terminatesAtStepF(land, sideUp, valueAtStep(sideUp, S), S) :- step(S).
 %-------------------------------------------------------------------------------
 
 % the dice must always be exactly one of the sides up
-1{holdsAtStepF(sideUp, valueAtStep(sideUp, S), S)}1 :- step(S).
+1{holdsAtStep_Func(sideUp, valueAtStep(sideUp, S), S)}1 :- step(S).
 
 %-------------------------------------------------------------------------------
 % observations
 %-------------------------------------------------------------------------------
 
-initiallyPF(sideUp, 1).
+initiallyP_Func(sideUp, 1).
 %initiallyN(F) :- not initiallyP(F), fluent(F).
 
 
@@ -54,7 +54,7 @@ happens(land,      20). % TODO could be triggered
 
 % enforce a result that we are looking for
 % (since its not really useful to list all non-ground values...)
-&sum{ valueAtStep(sideUp, 3) } = X :- holdsAtStepF(sideUp, valueAtStep(sideUp, 3), 3), goal(X).
+&sum{ valueAtStep(sideUp, 3) } = X :- holdsAtStep_Func(sideUp, valueAtStep(sideUp, 3), 3), goal(X).
 
 goal(6).
 

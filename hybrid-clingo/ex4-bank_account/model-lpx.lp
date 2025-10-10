@@ -17,9 +17,9 @@ account(account2).
 % fluent(balance(A, M)) :- account(A), money(M).
 % fluent(minimumBalance(A, M)) :- account(A), money(M).
 % fluent(serviceFee(A, M)) :- account(A), money(M).
-fluentF(         balance(A)) :- account(A).
-fluentF(  minimumBalance(A)) :- account(A).
-fluentF(      serviceFee(A)) :- account(A).
+fluent_Func(         balance(A)) :- account(A).
+fluent_Func(  minimumBalance(A)) :- account(A).
+fluent_Func(      serviceFee(A)) :- account(A).
 fluent(serviceFeeCharged(A)) :- account(A).
 
 event(transfer(A1, A2)) :- account(A1), account(A2).
@@ -46,12 +46,12 @@ event(monthlyReset(A)) :- account(A).
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
 *%
 &sum{valueAtStep(balance(A2),S); TransM12} = valueAtStep(balance(A2),S+1) :-
-    initiatedByAtStepF(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balance(A2),S+1), S).
-initiatesAtStepF(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balance(A2), S+1), S) :-
+    initiatedByAtStep_Func(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balance(A2),S+1), S).
+initiatesAtStep_Func(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balance(A2), S+1), S) :-
     TransM12 > 0,
     % &sum{ (balance(A1),S-1) } >= TransM12, 
-    holdsAtStepF(balance(A2), valueAtStep(balance(A2), S), S),
-    holdsAtStepF(balance(A1), valueAtStep(balance(A1), S), S),
+    holdsAtStep_Func(balance(A2), valueAtStep(balance(A2), S), S),
+    holdsAtStep_Func(balance(A1), valueAtStep(balance(A1), S), S),
     normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
     account(A2),
     step(S).
@@ -65,11 +65,11 @@ initiatesAtStepF(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balance(A2
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
 *%
-terminatesAtStepF(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balance(A2), S), S) :-
+terminatesAtStep_Func(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balance(A2), S), S) :-
     TransM12 > 0,
     % &sum{ (balance(A1),S-1) } >= TransM12, 
-    holdsAtStepF(balance(A2), valueAtStep(balance(A2), S), S),
-    holdsAtStepF(balance(A1), valueAtStep(balance(A1), S), S),
+    holdsAtStep_Func(balance(A2), valueAtStep(balance(A2), S), S),
+    holdsAtStep_Func(balance(A1), valueAtStep(balance(A1), S), S),
     normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
     account(A2),
     step(S).
@@ -85,12 +85,12 @@ terminatesAtStepF(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balance(A
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
 *%
 &sum{valueAtStep(balance(A1),S); -TransM12} = valueAtStep(balance(A1),S+1) :-
-    initiatedByAtStepF(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balance(A1),S+1), S).
-initiatesAtStepF(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balance(A1), S+1), S) :-
+    initiatedByAtStep_Func(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balance(A1),S+1), S).
+initiatesAtStep_Func(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balance(A1), S+1), S) :-
     TransM12 > 0,
     % &sum{ (balance(A1),S-1) } >= TransM12, 
-    holdsAtStepF(balance(A2), valueAtStep(balance(A2), S), S),
-    holdsAtStepF(balance(A1), valueAtStep(balance(A1), S), S),
+    holdsAtStep_Func(balance(A2), valueAtStep(balance(A2), S), S),
+    holdsAtStep_Func(balance(A1), valueAtStep(balance(A1), S), S),
     normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
     account(A2),
     step(S).
@@ -104,11 +104,11 @@ initiatesAtStepF(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balance(A1
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
 *%
-terminatesAtStepF(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balance(A1), S), S) :-
+terminatesAtStep_Func(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balance(A1), S), S) :-
     TransM12 > 0,
     % &sum{ (balance(A1),S-1) } >= TransM12, 
-    holdsAtStepF(balance(A2), valueAtStep(balance(A2), S), S),
-    holdsAtStepF(balance(A1), valueAtStep(balance(A1), S), S),
+    holdsAtStep_Func(balance(A2), valueAtStep(balance(A2), S), S),
+    holdsAtStep_Func(balance(A1), valueAtStep(balance(A1), S), S),
     normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
     account(A2),
     step(S).
@@ -149,8 +149,8 @@ comparison(timeAtStep(S), T) :- endOfMonth(T), step(S).
 %    account(A), time(T), money(OldM), money(FeeM).
 *%
 &sum{ valueAtStep(balance(A),S); -valueAtStep(serviceFee(A),S) } = valueAtStep(balance(A),S+1) :-
-    initiatedByAtStepF(chargeServiceFee(A), balance(A), valueAtStep(balance(A),S+1), S).
-initiatesAtStepF(chargeServiceFee(A), balance(A), valueAtStep(balance(A), S+1), S) :-
+    initiatedByAtStep_Func(chargeServiceFee(A), balance(A), valueAtStep(balance(A),S+1), S).
+initiatesAtStep_Func(chargeServiceFee(A), balance(A), valueAtStep(balance(A), S+1), S) :-
     step(S), S > 0, account(A).
 
 %*
@@ -159,7 +159,7 @@ initiatesAtStepF(chargeServiceFee(A), balance(A), valueAtStep(balance(A), S+1), 
 %    holdsAt(balance(A, OldM), T),
 %    account(A), time(T), money(OldM).
 *%
-terminatesAtStepF(chargeServiceFee(A), balance(A), valueAtStep(balance(A), S), S) :-
+terminatesAtStep_Func(chargeServiceFee(A), balance(A), valueAtStep(balance(A), S), S) :-
     step(S), S > 0, account(A).
 
 
@@ -199,8 +199,8 @@ terminatesAtStepF(chargeServiceFee(A), balance(A), valueAtStep(balance(A), S), S
 %// happens(chargeServiceFee(account1), 21).
 happensAtStep(chargeServiceFee(A), S) :-
     % &sum{ (balance(A),S-1) } < (minimumBalance(A),S-1), 
-    holdsAtStepF(balance(A), valueAtStep(balance(A),S), S),
-    holdsAtStepF(minimumBalance(A), valueAtStep(minimumBalance(A),S), S),
+    holdsAtStep_Func(balance(A), valueAtStep(balance(A),S), S),
+    holdsAtStep_Func(minimumBalance(A), valueAtStep(minimumBalance(A),S), S),
     normal_atom(valueAtStep(balance(A),S), lt, valueAtStep(minimumBalance(A),S)), 
     not holdsAtStep(serviceFeeCharged(A), S),
     account(A), step(S), S > 0.
@@ -234,12 +234,12 @@ initiallyN(serviceFeeCharged(account2)).
 %initiallyP(serviceFee(account1, 1)).    
 %initiallyP(serviceFee(account2, 1)).    
 *%
-initiallyPF(       balance(account1), 10).      
-initiallyPF(       balance(account2), 10).      
-initiallyPF(minimumBalance(account1),  5).
-initiallyPF(minimumBalance(account2),  5).
-initiallyPF(    serviceFee(account1),  1).    
-initiallyPF(    serviceFee(account2),  1).    
+initiallyP_Func(       balance(account1), 10).      
+initiallyP_Func(       balance(account2), 10).      
+initiallyP_Func(minimumBalance(account1),  5).
+initiallyP_Func(minimumBalance(account2),  5).
+initiallyP_Func(    serviceFee(account1),  1).    
+initiallyP_Func(    serviceFee(account2),  1).    
 initiallyN(F) :- not initiallyP(F), fluent(F).
 
 %-------------------------------------------------------------------------------
