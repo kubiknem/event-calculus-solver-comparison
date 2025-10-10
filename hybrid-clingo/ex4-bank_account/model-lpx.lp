@@ -202,7 +202,7 @@ happensAtStep(chargeServiceFee(A), S) :-
     holdsAtStepF(balance(A), valueAtStep(balance(A),S), S),
     holdsAtStepF(minimumBalance(A), valueAtStep(minimumBalance(A),S), S),
     normal_atom(valueAtStep(balance(A),S), lt, valueAtStep(minimumBalance(A),S)), 
-    -holdsAtStep(serviceFeeCharged(A), S),
+    not holdsAtStep(serviceFeeCharged(A), S),
     account(A), step(S), S > 0.
     
 comparison(valueAtStep(balance(A),S), valueAtStep(minimumBalance(A),S)) :- 
@@ -213,7 +213,7 @@ epsilon("1.1"). % valid with clingo-lpx
 &sum{ timeAtStep(S+1); -timeAtStep(S) } = E :- epsilon(E),
     % &sum{ (balance(A),S-1) } < (minimumBalance(A),S-1), 
     normal_atom(valueAtStep(balance(A),S+1), lt, valueAtStep(minimumBalance(A),S+1)), 
-    -holdsAtStep(serviceFeeCharged(A), S+1),
+    not holdsAtStep(serviceFeeCharged(A), S+1),
     happensAtStep(chargeServiceFee(A), S+1),
     account(A), step(S), S > 0,
     S < maxstep. % TODO not sure why this is needed (otherwise there will be one more timeAtStep in the answer)

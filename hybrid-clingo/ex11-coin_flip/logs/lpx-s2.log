@@ -5,7 +5,7 @@ clingo-lpx version 1.3.0
 Reading from ./model.lp ...
 Solving...
 Answer: 1
-(Time: 0.048s)
+(Time: 0.039s)
 happens(land,20)
 happens(toss,10)
 holdsAt(up(heads),(0,"< T =<",10))
@@ -13,15 +13,12 @@ holdsAt(up(tails),("T >",20))
 holdsAt(up(tails),(10,"< T =<",20))
 releasedAtStep(up(heads),2)
 releasedAtStep(up(tails),2)
--holdsAt(up(heads),("T >",20))
--holdsAt(up(heads),(10,"< T =<",20))
--holdsAt(up(tails),(0,"< T =<",10))
 Assignment:
 timeAtStep(0)=0
 timeAtStep(1)=10
 timeAtStep(2)=20
 Answer: 2
-(Time: 0.048s)
+(Time: 0.039s)
 happens(land,20)
 happens(toss,10)
 holdsAt(up(heads),("T >",20))
@@ -29,9 +26,6 @@ holdsAt(up(heads),(0,"< T =<",10))
 holdsAt(up(heads),(10,"< T =<",20))
 releasedAtStep(up(heads),2)
 releasedAtStep(up(tails),2)
--holdsAt(up(tails),("T >",20))
--holdsAt(up(tails),(0,"< T =<",10))
--holdsAt(up(tails),(10,"< T =<",20))
 Assignment:
 timeAtStep(0)=0
 timeAtStep(1)=10
@@ -40,38 +34,14 @@ SATISFIABLE
 
 Models       : 2
 Calls        : 1
-Time         : 0.048s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.026s
-
-../axioms/bec_steps-clingo_lpx.lp:156:42-59: info: atom does not occur in any rule head:
-  initiallyPF(F,V)
-
-../axioms/bec_steps-clingo_lpx.lp:157:33-50: info: atom does not occur in any rule head:
-  initiallyPF(F,V)
-
-../axioms/bec_steps-clingo_lpx.lp:163:75-120: info: atom does not occur in any rule head:
-  initiatesAtStepF(E,F,valueAtStep(F,S1),S)
-
-../axioms/bec_steps-clingo_lpx.lp:164:76-122: info: atom does not occur in any rule head:
-  terminatesAtStepF(E,F,valueAtStep(F,S1),S)
-
-../axioms/bec_steps-clingo_lpx.lp:165:74-118: info: atom does not occur in any rule head:
-  releasesAtStepF(E,F,valueAtStep(F,S1),S)
-
-../axioms/bec_steps-clingo_lpx.lp:182:73-118: info: atom does not occur in any rule head:
-  initiatesAtStepF(E,F,valueAtStep(F,S1),S)
-
-../axioms/bec_steps-clingo_lpx.lp:183:74-120: info: atom does not occur in any rule head:
-  terminatesAtStepF(E,F,valueAtStep(F,S1),S)
-
-../axioms/bec_steps-clingo_lpx.lp:232:3-65: info: atom does not occur in any rule head:
-  trajectory(Fluent1,S1,Fluent2,valueAtStep(Fluent2,S2),S2)
+Time         : 0.039s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.019s
 
 Command exited with non-zero status 30
 
   real      0:00.05
   real [s]  0.05
-  user [s]  0.02
+  user [s]  0.01
   sys  [s]  0.00
-  mem  [KB] 8576
+  mem  [KB] 8448
   avgm [KB] 0

@@ -5,7 +5,7 @@ clingo-lpx version 1.3.0
 Reading from ./model.lp ...
 Solving...
 Answer: 1
-(Time: 0.080s)
+(Time: 0.081s)
 happens(switch_left,25/2)
 happens(switch_left,145/8)
 happens(switch_left,625/32)
@@ -18,18 +18,18 @@ holdsAt(left_filling,(145/8,"< T =<",305/16))
 holdsAt(right_filling,(10,"< T =<",25/2))
 holdsAt(right_filling,(65/4,"< T =<",145/8))
 holdsAt(right_filling,(305/16,"< T =<",625/32))
-holdsAt((water_left,100),(0,"< T =<",10))
-holdsAt((water_left,50),(10,"< T =<",25/2))
-holdsAt((water_left,175/2),(25/2,"< T =<",65/4))
-holdsAt((water_left,50),(65/4,"< T =<",145/8))
-holdsAt((water_left,475/8),(145/8,"< T =<",305/16))
-holdsAt((water_left,50),(305/16,"< T =<",625/32))
-holdsAt((water_right,100),(0,"< T =<",10))
-holdsAt((water_right,125),(10,"< T =<",25/2))
-holdsAt((water_right,50),(25/2,"< T =<",65/4))
-holdsAt((water_right,275/4),(65/4,"< T =<",145/8))
-holdsAt((water_right,50),(145/8,"< T =<",305/16))
-holdsAt((water_right,875/16),(305/16,"< T =<",625/32))
+holdsAtF(water_left,100,(0,"< T =<",10))
+holdsAtF(water_left,50,(10,"< T =<",25/2))
+holdsAtF(water_left,175/2,(25/2,"< T =<",65/4))
+holdsAtF(water_left,50,(65/4,"< T =<",145/8))
+holdsAtF(water_left,475/8,(145/8,"< T =<",305/16))
+holdsAtF(water_left,50,(305/16,"< T =<",625/32))
+holdsAtF(water_right,100,(0,"< T =<",10))
+holdsAtF(water_right,125,(10,"< T =<",25/2))
+holdsAtF(water_right,50,(25/2,"< T =<",65/4))
+holdsAtF(water_right,275/4,(65/4,"< T =<",145/8))
+holdsAtF(water_right,50,(145/8,"< T =<",305/16))
+holdsAtF(water_right,875/16,(305/16,"< T =<",625/32))
 releasedAtStepF(water_left,50,2)
 releasedAtStepF(water_left,175/2,3)
 releasedAtStepF(water_left,50,4)
@@ -52,40 +52,17 @@ trajectoryAtStep(right_filling,3,water_left,50,4)
 trajectoryAtStep(right_filling,3,water_right,275/4,4)
 trajectoryAtStep(right_filling,5,water_left,50,6)
 trajectoryAtStep(right_filling,5,water_right,875/16,6)
--holdsAt(left_filling,(0,"< T =<",10))
--holdsAt(left_filling,(10,"< T =<",25/2))
--holdsAt(left_filling,(65/4,"< T =<",145/8))
--holdsAt(left_filling,(305/16,"< T =<",625/32))
--holdsAt(right_filling,("T >",625/32))
--holdsAt(right_filling,(0,"< T =<",10))
--holdsAt(right_filling,(25/2,"< T =<",65/4))
--holdsAt(right_filling,(145/8,"< T =<",305/16))
 SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.080s (Solving: 0.01s 1st Model: 0.01s Unsat: 0.00s)
-CPU Time     : 0.056s
-
-../axioms/bec_steps-clingo_lpx.lp:98:53-76: info: atom does not occur in any rule head:
-  releasesAtStep(E,F,S)
-
-../axioms/bec_steps-clingo_lpx.lp:163:75-120: info: atom does not occur in any rule head:
-  initiatesAtStepF(E,F,valueAtStep(F,S1),S)
-
-../axioms/bec_steps-clingo_lpx.lp:164:76-122: info: atom does not occur in any rule head:
-  terminatesAtStepF(E,F,valueAtStep(F,S1),S)
-
-../axioms/bec_steps-clingo_lpx.lp:182:73-118: info: atom does not occur in any rule head:
-  initiatesAtStepF(E,F,valueAtStep(F,S1),S)
-
-../axioms/bec_steps-clingo_lpx.lp:183:74-120: info: atom does not occur in any rule head:
-  terminatesAtStepF(E,F,valueAtStep(F,S1),S)
+Time         : 0.082s (Solving: 0.01s 1st Model: 0.01s Unsat: 0.00s)
+CPU Time     : 0.055s
 
 Command exited with non-zero status 30
 
-  real      0:00.09
-  real [s]  0.09
+  real      0:00.10
+  real [s]  0.10
   user [s]  0.05
   sys  [s]  0.01
   mem  [KB] 9216

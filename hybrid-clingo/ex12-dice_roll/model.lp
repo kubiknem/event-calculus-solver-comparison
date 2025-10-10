@@ -11,7 +11,7 @@
 fluentF(sideUp).    % functional fluent
 
 % the fluent can only have positive values
-&sum{ valueAtStep(sideUp, S) } > 0 :- holdsAtStepF(sideUp, valueAtStep(sideUp, S), S), -releasedAtStepF(sideUp, valueAtStep(sideUp, S), S), stepMax(S).
+&sum{ valueAtStep(sideUp, S) } > 0 :- holdsAtStepF(sideUp, valueAtStep(sideUp, S), S), not releasedAtStepF(sideUp, valueAtStep(sideUp, S), S), stepMax(S).
 
 
 %-------------------------------------------------------------------------------
@@ -21,6 +21,8 @@ fluentF(sideUp).    % functional fluent
 releasesAtStepF(roll, sideUp, valueAtStep(sideUp, S+1), S) :- step(S).
 
 initiatesAtStepF(land, sideUp, valueAtStep(sideUp, S+1), S) :- holdsAtStepF(sideUp, valueAtStep(sideUp, S), S), step(S).
+&sum{valueAtStep(sideUp,S)} = valueAtStep(sideUp,S+1) :-
+    initiatedByAtStepF(land, sideUp, valueAtStep(sideUp,S+1), S).
 terminatesAtStepF(land, sideUp, valueAtStep(sideUp, S), S) :- step(S).
 
 
@@ -47,15 +49,14 @@ happens(roll,      10).
 happens(land,      20). % TODO could be triggered
 
 
-% --> result is 'e'
-% TODO I assume this means some positive value 
+% --> result is 3 models 1, e, or 1+e
 
 
 % enforce a result that we are looking for
-% (since its not possible to list all non-ground values...)
-%&sum{ valueAtStep(sideUp, 3) } = X :- holdsAtStepF(sideUp, valueAtStep(sideUp, 3), 3), goal(X).
-%
-%goal(6).
+% (since its not really useful to list all non-ground values...)
+&sum{ valueAtStep(sideUp, 3) } = X :- holdsAtStepF(sideUp, valueAtStep(sideUp, 3), 3), goal(X).
+
+goal(6).
 
 % goalDomain(1).
 % goalDomain(2).

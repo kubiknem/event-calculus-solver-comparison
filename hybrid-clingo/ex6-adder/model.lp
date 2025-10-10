@@ -33,7 +33,7 @@ terminatesAtStepF(add(Add), result, valueAtStep(result, S), S) :- Add > 0, holds
 
 
 % initiates(turn_on, powered_on, T) :- -holdsAt(powered_on, T), time(T).
-initiatesAtStep(turn_on, powered_on, S) :- -holdsAtStep(powered_on, S).
+initiatesAtStep(turn_on, powered_on, S) :- not holdsAtStep(powered_on, S), step(S).
 
 % terminates(turn_off, powered_on, T) :- holdsAt(powered_on, T), time(T).
 terminatesAtStep(turn_off, powered_on, S) :- holdsAtStep(powered_on, S).
@@ -41,7 +41,7 @@ terminatesAtStep(turn_off, powered_on, S) :- holdsAtStep(powered_on, S).
 
 % initiates(turn_on, result(0), T) :- time(T).
 &sum{valueAtStep(result, S+1)} = 0 :- initiatedByAtStepF(turn_on, result, valueAtStep(result, S+1), S).
-initiatesAtStepF(turn_on, result, valueAtStep(result, S+1), S) :- -holdsAtStep(powered_on, S), step(S).
+initiatesAtStepF(turn_on, result, valueAtStep(result, S+1), S) :- not holdsAtStep(powered_on, S), step(S).
 
 % terminates(turn_off, result(_), T) :- holdsAt(powered_on, T), time(T).
 terminatesAtStepF(turn_off, result, valueAtStep(result, S), S) :- holdsAtStep(powered_on, S), step(S).
@@ -52,7 +52,7 @@ terminatesAtStepF(turn_off, result, valueAtStep(result, S), S) :- holdsAtStep(po
 %-------------------------------------------------------------------------------
 
 initiallyN(powered_on).
-% initiallyPF(result, 0).
+initiallyNF(result).
 
 
 %-------------------------------------------------------------------------------

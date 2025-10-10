@@ -19,7 +19,7 @@ fluent(up(tails)).
 releasesAtStep(toss,  up(X), S) :- fluent(up(X)), step(S).
 
 initiatesAtStep(land, up(X), S) :- holdsAtStep(up(X), S), step(S).
-terminatesAtStep(land, up(X), S) :- -holdsAtStep(up(X), S), step(S).
+terminatesAtStep(land, up(X), S) :- not holdsAtStep(up(X), S), step(S), fluent(up(X)).
 
 
 %-------------------------------------------------------------------------------

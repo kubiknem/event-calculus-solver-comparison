@@ -21,6 +21,6 @@ run-lpx:
 
 # TODO how to check scaling? (maybe number of events --> steps?)
 log:
-	MAXSTEP=6;  ../../scripts/maketrace.sh "${CON_CMD}" ./logs/con-s$$MAXSTEP.log ; exit 0
+#	MAXSTEP=6;  ../../scripts/maketrace.sh "${CON_CMD}" ./logs/con-s$$MAXSTEP.log ; exit 0
 	
 	MAXSTEP=5;  ../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx-s$$MAXSTEP.log ; exit 0

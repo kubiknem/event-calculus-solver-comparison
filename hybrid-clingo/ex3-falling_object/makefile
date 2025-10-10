@@ -21,13 +21,13 @@ run-lpx:
 
 # TODO how to check scaling? (maybe number of events --> steps?)
 log:
-	MAXSTEP=2; HEIGHT=20;	../../scripts/maketrace.sh "${CON_CMD}" ./logs/con-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
-	MAXSTEP=2; HEIGHT=40;	../../scripts/maketrace.sh "${CON_CMD}" ./logs/con-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
-	MAXSTEP=2; HEIGHT=80;	../../scripts/maketrace.sh "${CON_CMD}" ./logs/con-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
-	MAXSTEP=2; HEIGHT=160;  ../../scripts/maketrace.sh "${CON_CMD}" ./logs/con-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
-	MAXSTEP=2; HEIGHT=320;  ../../scripts/maketrace.sh "${CON_CMD}" ./logs/con-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
-	MAXSTEP=2; HEIGHT=4;    ../../scripts/maketrace.sh "${CON_CMD}" ./logs/con-miss_ground-ok-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
-	MAXSTEP=2; HEIGHT=3;    ../../scripts/maketrace.sh "${CON_CMD}" ./logs/con-miss_ground-miss-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+#	MAXSTEP=2; HEIGHT=20;	../../scripts/maketrace.sh "${CON_CMD}" ./logs/con-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+#	MAXSTEP=2; HEIGHT=40;	../../scripts/maketrace.sh "${CON_CMD}" ./logs/con-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+#	MAXSTEP=2; HEIGHT=80;	../../scripts/maketrace.sh "${CON_CMD}" ./logs/con-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+#	MAXSTEP=2; HEIGHT=160;  ../../scripts/maketrace.sh "${CON_CMD}" ./logs/con-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+#	MAXSTEP=2; HEIGHT=320;  ../../scripts/maketrace.sh "${CON_CMD}" ./logs/con-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+#	MAXSTEP=2; HEIGHT=4;    ../../scripts/maketrace.sh "${CON_CMD}" ./logs/con-miss_ground-ok-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+#	MAXSTEP=2; HEIGHT=3;    ../../scripts/maketrace.sh "${CON_CMD}" ./logs/con-miss_ground-miss-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
 
 	MAXSTEP=2; HEIGHT=20;	../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
 	MAXSTEP=2; HEIGHT=40;	../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx-s$$MAXSTEP-h$$HEIGHT.log ; exit 0

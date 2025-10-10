@@ -5,7 +5,7 @@ clingo-lpx version 1.3.0
 Reading from ./model-lpx.lp ...
 Solving...
 Answer: 1
-(Time: 0.078s)
+(Time: 0.112s)
 happens(chargeServiceFee(account1),211/10)
 happens(chargeServiceFee(account1),511/10)
 happens(monthlyReset(account1),50)
@@ -14,73 +14,54 @@ happens(transfer(account1,account2,2),10)
 happens(transfer(account1,account2,4),20)
 holdsAt(serviceFeeCharged(account1),("T >",511/10))
 holdsAt(serviceFeeCharged(account1),(211/10,"< T =<",50))
-holdsAt((balance(account1),10),(0,"< T =<",10))
-holdsAt((balance(account1),8),(10,"< T =<",20))
-holdsAt((balance(account1),4),(20,"< T =<",211/10))
-holdsAt((balance(account1),3),(211/10,"< T =<",50))
-holdsAt((balance(account1),3),(50,"< T =<",511/10))
-holdsAt((balance(account1),2),("T >",511/10))
-holdsAt((balance(account2),10),(0,"< T =<",10))
-holdsAt((balance(account2),12),(10,"< T =<",20))
-holdsAt((balance(account2),16),(20,"< T =<",211/10))
-holdsAt((balance(account2),16),(211/10,"< T =<",50))
-holdsAt((balance(account2),16),(50,"< T =<",511/10))
-holdsAt((balance(account2),16),("T >",511/10))
-holdsAt((minimumBalance(account1),5),(0,"< T =<",10))
-holdsAt((minimumBalance(account1),5),(10,"< T =<",20))
-holdsAt((minimumBalance(account1),5),(20,"< T =<",211/10))
-holdsAt((minimumBalance(account1),5),(211/10,"< T =<",50))
-holdsAt((minimumBalance(account1),5),(50,"< T =<",511/10))
-holdsAt((minimumBalance(account1),5),("T >",511/10))
-holdsAt((minimumBalance(account2),5),(0,"< T =<",10))
-holdsAt((minimumBalance(account2),5),(10,"< T =<",20))
-holdsAt((minimumBalance(account2),5),(20,"< T =<",211/10))
-holdsAt((minimumBalance(account2),5),(211/10,"< T =<",50))
-holdsAt((minimumBalance(account2),5),(50,"< T =<",511/10))
-holdsAt((minimumBalance(account2),5),("T >",511/10))
-holdsAt((serviceFee(account1),1),(0,"< T =<",10))
-holdsAt((serviceFee(account1),1),(10,"< T =<",20))
-holdsAt((serviceFee(account1),1),(20,"< T =<",211/10))
-holdsAt((serviceFee(account1),1),(211/10,"< T =<",50))
-holdsAt((serviceFee(account1),1),(50,"< T =<",511/10))
-holdsAt((serviceFee(account1),1),("T >",511/10))
-holdsAt((serviceFee(account2),1),(0,"< T =<",10))
-holdsAt((serviceFee(account2),1),(10,"< T =<",20))
-holdsAt((serviceFee(account2),1),(20,"< T =<",211/10))
-holdsAt((serviceFee(account2),1),(211/10,"< T =<",50))
-holdsAt((serviceFee(account2),1),(50,"< T =<",511/10))
-holdsAt((serviceFee(account2),1),("T >",511/10))
--holdsAt(serviceFeeCharged(account1),(0,"< T =<",10))
--holdsAt(serviceFeeCharged(account1),(10,"< T =<",20))
--holdsAt(serviceFeeCharged(account1),(20,"< T =<",211/10))
--holdsAt(serviceFeeCharged(account1),(50,"< T =<",511/10))
--holdsAt(serviceFeeCharged(account2),("T >",511/10))
--holdsAt(serviceFeeCharged(account2),(0,"< T =<",10))
--holdsAt(serviceFeeCharged(account2),(10,"< T =<",20))
--holdsAt(serviceFeeCharged(account2),(20,"< T =<",211/10))
--holdsAt(serviceFeeCharged(account2),(211/10,"< T =<",50))
--holdsAt(serviceFeeCharged(account2),(50,"< T =<",511/10))
+holdsAtF(balance(account1),10,(0,"< T =<",10))
+holdsAtF(balance(account1),8,(10,"< T =<",20))
+holdsAtF(balance(account1),4,(20,"< T =<",211/10))
+holdsAtF(balance(account1),3,(211/10,"< T =<",50))
+holdsAtF(balance(account1),3,(50,"< T =<",511/10))
+holdsAtF(balance(account1),2,("T >",511/10))
+holdsAtF(balance(account2),10,(0,"< T =<",10))
+holdsAtF(balance(account2),12,(10,"< T =<",20))
+holdsAtF(balance(account2),16,(20,"< T =<",211/10))
+holdsAtF(balance(account2),16,(211/10,"< T =<",50))
+holdsAtF(balance(account2),16,(50,"< T =<",511/10))
+holdsAtF(balance(account2),16,("T >",511/10))
+holdsAtF(minimumBalance(account1),5,(0,"< T =<",10))
+holdsAtF(minimumBalance(account1),5,(10,"< T =<",20))
+holdsAtF(minimumBalance(account1),5,(20,"< T =<",211/10))
+holdsAtF(minimumBalance(account1),5,(211/10,"< T =<",50))
+holdsAtF(minimumBalance(account1),5,(50,"< T =<",511/10))
+holdsAtF(minimumBalance(account1),5,("T >",511/10))
+holdsAtF(minimumBalance(account2),5,(0,"< T =<",10))
+holdsAtF(minimumBalance(account2),5,(10,"< T =<",20))
+holdsAtF(minimumBalance(account2),5,(20,"< T =<",211/10))
+holdsAtF(minimumBalance(account2),5,(211/10,"< T =<",50))
+holdsAtF(minimumBalance(account2),5,(50,"< T =<",511/10))
+holdsAtF(minimumBalance(account2),5,("T >",511/10))
+holdsAtF(serviceFee(account1),1,(0,"< T =<",10))
+holdsAtF(serviceFee(account1),1,(10,"< T =<",20))
+holdsAtF(serviceFee(account1),1,(20,"< T =<",211/10))
+holdsAtF(serviceFee(account1),1,(211/10,"< T =<",50))
+holdsAtF(serviceFee(account1),1,(50,"< T =<",511/10))
+holdsAtF(serviceFee(account1),1,("T >",511/10))
+holdsAtF(serviceFee(account2),1,(0,"< T =<",10))
+holdsAtF(serviceFee(account2),1,(10,"< T =<",20))
+holdsAtF(serviceFee(account2),1,(20,"< T =<",211/10))
+holdsAtF(serviceFee(account2),1,(211/10,"< T =<",50))
+holdsAtF(serviceFee(account2),1,(50,"< T =<",511/10))
+holdsAtF(serviceFee(account2),1,("T >",511/10))
 SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.079s (Solving: 0.01s 1st Model: 0.01s Unsat: 0.00s)
-CPU Time     : 0.061s
-
-../axioms/bec_steps-clingo_lpx.lp:98:53-76: info: atom does not occur in any rule head:
-  releasesAtStep(E,F,S)
-
-../axioms/bec_steps-clingo_lpx.lp:165:74-118: info: atom does not occur in any rule head:
-  releasesAtStepF(E,F,valueAtStep(F,S1),S)
-
-../axioms/bec_steps-clingo_lpx.lp:232:3-65: info: atom does not occur in any rule head:
-  trajectory(Fluent1,S1,Fluent2,valueAtStep(Fluent2,S2),S2)
+Time         : 0.113s (Solving: 0.01s 1st Model: 0.01s Unsat: 0.00s)
+CPU Time     : 0.071s
 
 Command exited with non-zero status 30
 
-  real      0:00.09
-  real [s]  0.09
+  real      0:00.16
+  real [s]  0.16
   user [s]  0.05
-  sys  [s]  0.01
-  mem  [KB] 9984
+  sys  [s]  0.02
+  mem  [KB] 9344
   avgm [KB] 0

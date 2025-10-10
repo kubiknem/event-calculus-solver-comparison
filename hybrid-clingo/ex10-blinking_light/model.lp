@@ -12,12 +12,12 @@ terminatesAtStep(turn_light_off, light_on, S) :- step(S).
 
 happensAtStep(turn_light_off, S) :- holdsAtStep(light_on, S), step(S).
 
-happensAtStep(turn_light_on, S) :- -holdsAtStep(light_on, S), step(S).
+happensAtStep(turn_light_on, S) :- not holdsAtStep(light_on, S), step(S),
+    S > 1. % TODO to avoid triggering before the first event
 
 
 % ----- narrative & queries  -----
 
-% initiallyN(light_on). % no initial value means no triggers until the first event
 happens(turn_light_on,      10).
 
 % TODO clingo-lpx can automatically use 'e' (I assume 'epsilon') to represent an infinitely small time step
