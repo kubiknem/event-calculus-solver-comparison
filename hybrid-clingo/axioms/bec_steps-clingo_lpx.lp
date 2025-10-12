@@ -161,7 +161,7 @@ definedBetweenSteps(F, S, S+1) :- defined(valueAtStep(F, S+1)), step(S).
 
 % NOTE: using #show to translate steps to times using map/2
 
-#show.
+#show. % nechat?
 
 % show all events that come as facts in the narrative
 #show  happens(E, T) : happens(E, T).
@@ -199,7 +199,7 @@ definedBetweenSteps(F, S, S+1) :- defined(valueAtStep(F, S+1)), step(S).
 #show holdsAt((F, valueAtStep(F,S)), ("T >", timeAtStep(maxstep))) : definedBetweenSteps(F, maxstep, S), not map(_, maxstep).
 
 
-% show all for debug
+% show all for debug - vlozit misto toho tyhle:
 % #show  happensAtStep(F,S) : happensAtStep(F,S).
 % #show  holdsAtStep(F,S) : holdsAtStep(F,S).
 % #show  -holdsAtStep(F,S) : -holdsAtStep(F,S).
