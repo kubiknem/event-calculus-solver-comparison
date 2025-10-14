@@ -1,0 +1,64 @@
+$ clingo-lpx --strict -n0 ../axioms/bec_steps-clingo_lpx.lp -c maxstep=6 ./model.lp | ../utils/replace_assignments.sh | ../utils/make-readable.sh
+
+
+clingo-lpx version 1.3.0
+Reading from ../axioms/bec_steps-clingo_lpx.lp ...
+Solving...
+Answer: 1
+(Time: 0.039s)
+happens(switch_left,25/2)
+happens(switch_left,145/8)
+happens(switch_left,625/32)
+happens(switch_right,65/4)
+happens(switch_right,305/16)
+happens(start(right),10)
+holdsAt(left_filling,("T >",625/32))
+holdsAt(left_filling,(25/2,"< T =<",65/4))
+holdsAt(left_filling,(145/8,"< T =<",305/16))
+holdsAt(right_filling,(10,"< T =<",25/2))
+holdsAt(right_filling,(65/4,"< T =<",145/8))
+holdsAt(right_filling,(305/16,"< T =<",625/32))
+releasedAt_Func(water_left,("T >",625/32))
+releasedAt_Func(water_left,(10,"< T =<",25/2))
+releasedAt_Func(water_left,(25/2,"< T =<",65/4))
+releasedAt_Func(water_left,(65/4,"< T =<",145/8))
+releasedAt_Func(water_left,(145/8,"< T =<",305/16))
+releasedAt_Func(water_left,(305/16,"< T =<",625/32))
+releasedAt_Func(water_right,("T >",625/32))
+releasedAt_Func(water_right,(10,"< T =<",25/2))
+releasedAt_Func(water_right,(25/2,"< T =<",65/4))
+releasedAt_Func(water_right,(65/4,"< T =<",145/8))
+releasedAt_Func(water_right,(145/8,"< T =<",305/16))
+releasedAt_Func(water_right,(305/16,"< T =<",625/32))
+holdsAt_Func(water_left,100,(0,"< T =<",10))
+holdsAt_Func(water_right,100,(0,"< T =<",10))
+holdsAt_Func_Cont(water_left,(0,"-> X"),("T >",625/32))
+holdsAt_Func_Cont(water_left,(100,"->",50),(10,"< T =<",25/2))
+holdsAt_Func_Cont(water_left,(50,"->",175/2),(25/2,"< T =<",65/4))
+holdsAt_Func_Cont(water_left,(175/2,"->",50),(65/4,"< T =<",145/8))
+holdsAt_Func_Cont(water_left,(50,"->",475/8),(145/8,"< T =<",305/16))
+holdsAt_Func_Cont(water_left,(475/8,"->",50),(305/16,"< T =<",625/32))
+holdsAt_Func_Cont(water_right,(0,"-> X"),("T >",625/32))
+holdsAt_Func_Cont(water_right,(100,"->",125),(10,"< T =<",25/2))
+holdsAt_Func_Cont(water_right,(125,"->",50),(25/2,"< T =<",65/4))
+holdsAt_Func_Cont(water_right,(50,"->",275/4),(65/4,"< T =<",145/8))
+holdsAt_Func_Cont(water_right,(275/4,"->",50),(145/8,"< T =<",305/16))
+holdsAt_Func_Cont(water_right,(50,"->",875/16),(305/16,"< T =<",625/32))
+SATISFIABLE
+
+Models       : 1
+Calls        : 1
+Time         : 0.040s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.028s
+
+../axioms/bec_steps-clingo_lpx.lp:265:50-73: info: atom does not occur in any rule head:
+  comparisonDiff(A,B,R)
+
+Command exited with non-zero status 30
+
+  real      0:00.04
+  real [s]  0.04
+  user [s]  0.02
+  sys  [s]  0.01
+  mem  [KB] 9984
+  avgm [KB] 0

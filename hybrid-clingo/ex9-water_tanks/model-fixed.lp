@@ -46,19 +46,44 @@ trajectory_Func(left_filling, S1, water_right, valueAtStep(water_right, S2), S2)
     TotalFlow = 20, % out rate 20
     step(S), S < maxstep.
 
+minDuration(1).
+% trigger exactly at 50 if the trajectory took at least the minimum duration
 happensAtStep(switch_left, S) :-
     holdsAtStep(right_filling, S),
-    normal_atom(valueAtStep(water_left, S), leq, 50). % target level
+    minDuration(MinDur),
+    trajectoryAtStep_Func(right_filling, S1, water_left, valueAtStep(water_left, S), S),
+    normal_atom_diff(timeAtStep(S), timeAtStep(S1), geq, MinDur),
+    normal_atom(valueAtStep(water_left, S), eq, 50). % target level
+% trigger exactly after the minimum duration if the level is below 50
+happensAtStep(switch_left, S) :-
+    holdsAtStep(right_filling, S),
+    minDuration(MinDur),
+    trajectoryAtStep_Func(right_filling, S1, water_left, valueAtStep(water_left, S), S),
+    normal_atom_diff(timeAtStep(S), timeAtStep(S1), eq, MinDur),
+    normal_atom(valueAtStep(water_left, S), lt, 50). % target level
 comparison(valueAtStep(water_left, S), 50) :- step(S).
+comparisonDiff(timeAtStep(S2), timeAtStep(S1), MinDur) :- minDuration(MinDur), trajectoryAtStep_Func(right_filling, S1, water_left, valueAtStep(water_left, S2), S2), step(S1), step(S2).
 
+% trigger exactly at 50 if the trajectory took at least the minimum duration
 happensAtStep(switch_right, S) :-
     holdsAtStep(left_filling, S),
-    normal_atom(valueAtStep(water_right, S), leq, 50). % target level
+    minDuration(MinDur),
+    trajectoryAtStep_Func(left_filling, S1, water_right, valueAtStep(water_right, S), S),
+    normal_atom_diff(timeAtStep(S), timeAtStep(S1), geq, MinDur),
+    normal_atom(valueAtStep(water_right, S), eq, 50). % target level
+% trigger exactly after the minimum duration if the level is below 50
+happensAtStep(switch_right, S) :-
+    holdsAtStep(left_filling, S),
+    minDuration(MinDur),
+    trajectoryAtStep_Func(left_filling, S1, water_right, valueAtStep(water_right, S), S),
+    normal_atom_diff(timeAtStep(S), timeAtStep(S1), eq, MinDur),
+    normal_atom(valueAtStep(water_right, S), lt, 50). % target level
 comparison(valueAtStep(water_right, S), 50) :- step(S).
+comparisonDiff(timeAtStep(S2), timeAtStep(S1), MinDur) :- minDuration(MinDur), trajectoryAtStep_Func(left_filling, S1, water_right, valueAtStep(water_right, S2), S2), step(S1), step(S2).
 
-% this is needed bc of the leq above
-:- normal_atom(valueAtStep(water_left, S), gt, 50), normal_atom(valueAtStep(water_left, S+1), lt, 50), step(S).
-:- normal_atom(valueAtStep(water_right, S), gt, 50), normal_atom(valueAtStep(water_right, S+1), lt, 50), step(S).
+%! this forces a step at exactly 50, which would not work for the zeno-free version
+% :- normal_atom(valueAtStep(water_left, S), gt, 50), normal_atom(valueAtStep(water_left, S+1), lt, 50), step(S).
+% :- normal_atom(valueAtStep(water_right, S), gt, 50), normal_atom(valueAtStep(water_right, S+1), lt, 50), step(S).
 
 
 % ----- narrative & queries  -----
