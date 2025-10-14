@@ -115,6 +115,7 @@ comparison(timeAtStep(S), timeAtStep(S+1)) :- step(S), S < maxstep.
 % map(T, S): Map time point T to state S                                                                                       
   map(0, 0).                                                                           
 { map(T, S) : step(S) } = 1 :- happens(_, T), T > 0.  
+
 %%% TODO helps to see no models when there is not enough steps                                                                     
 %%% { map(T, S) : step(S), not happensAtStepAux(_,S) } = 1 :- happens(_, T), T > 0.                                                                       
 %%% { map(20, S) : step(S), happensAtStepAux(_, S)} = 1.                                                                       
@@ -260,6 +261,18 @@ normal_atom(A, leq, B) :- normal_atom(A, eq, B).
 normal_atom(A, geq, B) :- normal_atom(A, eq, B).
 normal_atom(A, geq, B) :- normal_atom(A, gt, B).
 
+% 
+{ normal_atom_diff(A, B, (lt;eq;gt), R) } = 1 :- comparisonDiff(A, B, R).
+%
+&sum{ A - B } < R :- normal_atom_diff(A, B, lt, R).
+&sum{ A - B } = R :- normal_atom_diff(A, B, eq, R).
+&sum{ A - B } > R :- normal_atom_diff(A, B, gt, R).
+%
+normal_atom_diff(A, B, leq, R) :- normal_atom_diff(A, B, lt, R).
+normal_atom_diff(A, B, leq, R) :- normal_atom_diff(A, B, eq, R).
+normal_atom_diff(A, B, geq, R) :- normal_atom_diff(A, B, eq, R).
+normal_atom_diff(A, B, geq, R) :- normal_atom_diff(A, B, gt, R).
+
 
 %% DBEC1 - StoppedIn(t1,f,t2)
 stoppedInSteps(S1, F, S2) :-
@@ -346,88 +359,89 @@ trajectoryBetweenSteps_Func(F1, F2, valueAtStep(F2, S), valueAtStep(F2, S+1), S,
 %-------------------------------------------------------------------------------
 
 % NOTE: using #show to translate steps to times using map/2
+% define a fact "debug_prints." to switch to debug prints instead of fancy prints
 
 #show.
 
 % show all events that come as facts in the narrative
-#show  happens(E, T) : happens(E, T).
+#show  happens(E, T) : happens(E, T), not debug_prints.
 % triggered events do not have a mapping of step to time
-#show  happens(E,timeAtStep(S)) : happensAtStep(E,S), not map(_, S).
+#show  happens(E,timeAtStep(S)) : happensAtStep(E,S), not map(_, S), not debug_prints.
 
 % discrete fluents have values between steps
-#show  holdsAt(F, (T1, "< T =<", T2)) :  holdsBetweenSteps(F, S, S+1), map(T1, S), map(T2, S+1).
+#show  holdsAt(F, (T1, "< T =<", T2)) :  holdsBetweenSteps(F, S, S+1), map(T1, S), map(T2, S+1), not debug_prints.
 % any of the steps might be free floating (triggered events)
-#show  holdsAt(F, (timeAtStep(S), "< T =<", T2)) :  holdsBetweenSteps(F, S, S+1), not map(_, S), map(T2, S+1), step(S+1).
-#show  holdsAt(F, (timeAtStep(S), "< T =<", T2)) :  holdsBetweenSteps(F, S, S+1), not map(_, S), map(T2, S+1), step(S+1).
-#show  holdsAt(F, (T1, "< T =<", timeAtStep(S+1))) :  holdsBetweenSteps(F, S, S+1), map(T1, S), not map(_, S+1), step(S+1).
-#show  holdsAt(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  holdsBetweenSteps(F, S, S+1), not map(_, S), not map(_, S+1), step(S+1).
+#show  holdsAt(F, (timeAtStep(S), "< T =<", T2)) :  holdsBetweenSteps(F, S, S+1), not map(_, S), map(T2, S+1), step(S+1), not debug_prints.
+#show  holdsAt(F, (timeAtStep(S), "< T =<", T2)) :  holdsBetweenSteps(F, S, S+1), not map(_, S), map(T2, S+1), step(S+1), not debug_prints.
+#show  holdsAt(F, (T1, "< T =<", timeAtStep(S+1))) :  holdsBetweenSteps(F, S, S+1), map(T1, S), not map(_, S+1), step(S+1), not debug_prints.
+#show  holdsAt(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  holdsBetweenSteps(F, S, S+1), not map(_, S), not map(_, S+1), step(S+1), not debug_prints.
 % discrete fluents have a value into infinity after the last step
-#show  holdsAt(F, ("T >", T1)) :  holdsBetweenSteps(F, maxstep, _), map(T1, maxstep).
+#show  holdsAt(F, ("T >", T1)) :  holdsBetweenSteps(F, maxstep, _), map(T1, maxstep), not debug_prints.
 % the last step might be free floating (triggered events)
-#show  holdsAt(F, ("T >", timeAtStep(maxstep))) :  holdsBetweenSteps(F, maxstep, _), not map(_, maxstep).
+#show  holdsAt(F, ("T >", timeAtStep(maxstep))) :  holdsBetweenSteps(F, maxstep, _), not map(_, maxstep), not debug_prints.
 
 % TODO any way to replace 'valueAtStep(F,S)' with its interpreted value? So that it is visible in the answer directly
 % functional fluents have values between steps
-#show holdsAt_Func(F, valueAtStep(F,S+1), (T1, "< T =<", T2)) : holdsBetweenSteps_Func(F, valueAtStep(F, S+1), S, S+1), map(T1, S), map(T2, S+1).
+#show holdsAt_Func(F, valueAtStep(F,S+1), (T1, "< T =<", T2)) : holdsBetweenSteps_Func(F, valueAtStep(F, S+1), S, S+1), map(T1, S), map(T2, S+1), not debug_prints.
 % any of the steps might be free floating (triggered events)
-#show holdsAt_Func(F, valueAtStep(F,S+1), (timeAtStep(S), "< T =<", T2)) : holdsBetweenSteps_Func(F, valueAtStep(F, S+1), S, S+1), not map(_, S), map(T2, S+1), step(S+1).
-#show holdsAt_Func(F, valueAtStep(F,S+1), (T1, "< T =<", timeAtStep(S+1))) : holdsBetweenSteps_Func(F, valueAtStep(F, S+1), S, S+1), map(T1, S), not map(_, S+1), step(S+1).
-#show holdsAt_Func(F, valueAtStep(F,S+1), (timeAtStep(S), "< T =<", timeAtStep(S+1))) : holdsBetweenSteps_Func(F, valueAtStep(F, S+1), S, S+1), not map(_, S), not map(_, S+1), step(S+1).
+#show holdsAt_Func(F, valueAtStep(F,S+1), (timeAtStep(S), "< T =<", T2)) : holdsBetweenSteps_Func(F, valueAtStep(F, S+1), S, S+1), not map(_, S), map(T2, S+1), step(S+1), not debug_prints.
+#show holdsAt_Func(F, valueAtStep(F,S+1), (T1, "< T =<", timeAtStep(S+1))) : holdsBetweenSteps_Func(F, valueAtStep(F, S+1), S, S+1), map(T1, S), not map(_, S+1), step(S+1), not debug_prints.
+#show holdsAt_Func(F, valueAtStep(F,S+1), (timeAtStep(S), "< T =<", timeAtStep(S+1))) : holdsBetweenSteps_Func(F, valueAtStep(F, S+1), S, S+1), not map(_, S), not map(_, S+1), step(S+1), not debug_prints.
 % functional fluents have a value into infinity after the last step
-#show holdsAt_Func(F, valueAtStep(F,S), ("T >", T1)) : holdsBetweenSteps_Func(F, valueAtStep(F, S), maxstep, S), map(T1, maxstep).
+#show holdsAt_Func(F, valueAtStep(F,S), ("T >", T1)) : holdsBetweenSteps_Func(F, valueAtStep(F, S), maxstep, S), map(T1, maxstep), not debug_prints.
 % the last step might be free floating (triggered events)
-#show holdsAt_Func(F, valueAtStep(F,S), ("T >", timeAtStep(maxstep))) : holdsBetweenSteps_Func(F, valueAtStep(F, S), maxstep, S), not map(_, maxstep).
+#show holdsAt_Func(F, valueAtStep(F,S), ("T >", timeAtStep(maxstep))) : holdsBetweenSteps_Func(F, valueAtStep(F, S), maxstep, S), not map(_, maxstep), not debug_prints.
 
 
 % functional fluents can be continuous with their value defined by a trajectory (continuous value between steps)
-#show holdsAt_Func_Cont(F, (valueAtStep(F, S), "->", valueAtStep(F, S+1)), (T1, "< T =<", T2)) : trajectoryBetweenSteps_Func(_, F, valueAtStep(F, S), valueAtStep(F, S+1), S, S+1), map(T1, S), map(T2, S+1).
+#show holdsAt_Func_Cont(F, (valueAtStep(F, S), "->", valueAtStep(F, S+1)), (T1, "< T =<", T2)) : trajectoryBetweenSteps_Func(_, F, valueAtStep(F, S), valueAtStep(F, S+1), S, S+1), map(T1, S), map(T2, S+1), not debug_prints.
 % any of the steps might be free floating (triggered events)
-#show holdsAt_Func_Cont(F, (valueAtStep(F, S), "->", valueAtStep(F, S+1)), (timeAtStep(S), "< T =<", T2)) : trajectoryBetweenSteps_Func(_, F, valueAtStep(F, S), valueAtStep(F, S+1), S, S+1), not map(_, S), map(T2, S+1), step(S+1).
-#show holdsAt_Func_Cont(F, (valueAtStep(F, S), "->", valueAtStep(F, S+1)), (T1, "< T =<", timeAtStep(S+1))) : trajectoryBetweenSteps_Func(_, F, valueAtStep(F, S), valueAtStep(F, S+1), S, S+1), map(T1, S), not map(_, S+1), step(S+1).
-#show holdsAt_Func_Cont(F, (valueAtStep(F, S), "->", valueAtStep(F, S+1)), (timeAtStep(S), "< T =<", timeAtStep(S+1))) : trajectoryBetweenSteps_Func(_, F, valueAtStep(F, S), valueAtStep(F, S+1), S, S+1), not map(_, S), not map(_, S+1), step(S+1).
+#show holdsAt_Func_Cont(F, (valueAtStep(F, S), "->", valueAtStep(F, S+1)), (timeAtStep(S), "< T =<", T2)) : trajectoryBetweenSteps_Func(_, F, valueAtStep(F, S), valueAtStep(F, S+1), S, S+1), not map(_, S), map(T2, S+1), step(S+1), not debug_prints.
+#show holdsAt_Func_Cont(F, (valueAtStep(F, S), "->", valueAtStep(F, S+1)), (T1, "< T =<", timeAtStep(S+1))) : trajectoryBetweenSteps_Func(_, F, valueAtStep(F, S), valueAtStep(F, S+1), S, S+1), map(T1, S), not map(_, S+1), step(S+1), not debug_prints.
+#show holdsAt_Func_Cont(F, (valueAtStep(F, S), "->", valueAtStep(F, S+1)), (timeAtStep(S), "< T =<", timeAtStep(S+1))) : trajectoryBetweenSteps_Func(_, F, valueAtStep(F, S), valueAtStep(F, S+1), S, S+1), not map(_, S), not map(_, S+1), step(S+1), not debug_prints.
 % functional fluents have a value into infinity after the last step
-#show holdsAt_Func_Cont(F, (valueAtStep(F, S), "-> X"), ("T >", T1)) : trajectoryBetweenSteps_Func(_, F, valueAtStep(F, maxstep), valueAtStep(F, S), maxstep, S), map(T1, maxstep).
+#show holdsAt_Func_Cont(F, (valueAtStep(F, S), "-> X"), ("T >", T1)) : trajectoryBetweenSteps_Func(_, F, valueAtStep(F, maxstep), valueAtStep(F, S), maxstep, S), map(T1, maxstep), not debug_prints.
 % the last step might be free floating (triggered events)
-#show holdsAt_Func_Cont(F,(valueAtStep(F, S), "-> X"), ("T >", timeAtStep(maxstep))) : trajectoryBetweenSteps_Func(_, F, valueAtStep(F, maxstep), valueAtStep(F, S), maxstep, S), not map(_, maxstep).
+#show holdsAt_Func_Cont(F,(valueAtStep(F, S), "-> X"), ("T >", timeAtStep(maxstep))) : trajectoryBetweenSteps_Func(_, F, valueAtStep(F, maxstep), valueAtStep(F, S), maxstep, S), not map(_, maxstep), not debug_prints.
 
 % discrete fluents can be released between steps
-#show  releasedAt(F, (T1, "< T =<", T2)) :  releasedBetweenSteps(F, S, S+1), map(T1, S), map(T2, S+1).
+#show  releasedAt(F, (T1, "< T =<", T2)) :  releasedBetweenSteps(F, S, S+1), map(T1, S), map(T2, S+1), not debug_prints.
 % any of the steps might be free floating (triggered events)
-#show  releasedAt(F, (timeAtStep(S), "< T =<", T2)) :  releasedBetweenSteps(F, S, S+1), not map(_, S), map(T2, S+1), step(S+1).
-#show  releasedAt(F, (timeAtStep(S), "< T =<", T2)) :  releasedBetweenSteps(F, S, S+1), not map(_, S), map(T2, S+1), step(S+1).
-#show  releasedAt(F, (T1, "< T =<", timeAtStep(S+1))) :  releasedBetweenSteps(F, S, S+1), map(T1, S), not map(_, S+1), step(S+1).
-#show  releasedAt(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  releasedBetweenSteps(F, S, S+1), not map(_, S), not map(_, S+1), step(S+1).
+#show  releasedAt(F, (timeAtStep(S), "< T =<", T2)) :  releasedBetweenSteps(F, S, S+1), not map(_, S), map(T2, S+1), step(S+1), not debug_prints.
+#show  releasedAt(F, (timeAtStep(S), "< T =<", T2)) :  releasedBetweenSteps(F, S, S+1), not map(_, S), map(T2, S+1), step(S+1), not debug_prints.
+#show  releasedAt(F, (T1, "< T =<", timeAtStep(S+1))) :  releasedBetweenSteps(F, S, S+1), map(T1, S), not map(_, S+1), step(S+1), not debug_prints.
+#show  releasedAt(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  releasedBetweenSteps(F, S, S+1), not map(_, S), not map(_, S+1), step(S+1), not debug_prints.
 % discrete fluents have a value into infinity after the last step
-#show  releasedAt(F, ("T >", T1)) :  releasedBetweenSteps(F, maxstep, _), map(T1, maxstep).
+#show  releasedAt(F, ("T >", T1)) :  releasedBetweenSteps(F, maxstep, _), map(T1, maxstep), not debug_prints.
 % the last step might be free floating (triggered events)
-#show  releasedAt(F, ("T >", timeAtStep(maxstep))) :  releasedBetweenSteps(F, maxstep, _), not map(_, maxstep).
+#show  releasedAt(F, ("T >", timeAtStep(maxstep))) :  releasedBetweenSteps(F, maxstep, _), not map(_, maxstep), not debug_prints.
 
 % functional fluents can be released between steps
-#show releasedAt_Func(F, (T1, "< T =<", T2)) : releasedBetweenSteps_Func(F, valueAtStep(F, S+1), S, S+1), map(T1, S), map(T2, S+1).
+#show releasedAt_Func(F, (T1, "< T =<", T2)) : releasedBetweenSteps_Func(F, valueAtStep(F, S+1), S, S+1), map(T1, S), map(T2, S+1), not debug_prints.
 % any of the steps might be free floating (triggered events)
-#show releasedAt_Func(F, (timeAtStep(S), "< T =<", T2)) : releasedBetweenSteps_Func(F, valueAtStep(F, S+1), S, S+1), not map(_, S), map(T2, S+1), step(S+1).
-#show releasedAt_Func(F, (T1, "< T =<", timeAtStep(S+1))) : releasedBetweenSteps_Func(F, valueAtStep(F, S+1), S, S+1), map(T1, S), not map(_, S+1), step(S+1).
-#show releasedAt_Func(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) : releasedBetweenSteps_Func(F, valueAtStep(F, S+1), S, S+1), not map(_, S), not map(_, S+1), step(S+1).
+#show releasedAt_Func(F, (timeAtStep(S), "< T =<", T2)) : releasedBetweenSteps_Func(F, valueAtStep(F, S+1), S, S+1), not map(_, S), map(T2, S+1), step(S+1), not debug_prints.
+#show releasedAt_Func(F, (T1, "< T =<", timeAtStep(S+1))) : releasedBetweenSteps_Func(F, valueAtStep(F, S+1), S, S+1), map(T1, S), not map(_, S+1), step(S+1), not debug_prints.
+#show releasedAt_Func(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) : releasedBetweenSteps_Func(F, valueAtStep(F, S+1), S, S+1), not map(_, S), not map(_, S+1), step(S+1), not debug_prints.
 % functional fluents have a value into infinity after the last step
-#show releasedAt_Func(F, ("T >", T1)) : releasedBetweenSteps_Func(F, valueAtStep(F, S), maxstep, S), map(T1, maxstep).
+#show releasedAt_Func(F, ("T >", T1)) : releasedBetweenSteps_Func(F, valueAtStep(F, S), maxstep, S), map(T1, maxstep), not debug_prints.
 % the last step might be free floating (triggered events)
-#show releasedAt_Func(F, ("T >", timeAtStep(maxstep))) : releasedBetweenSteps_Func(F, valueAtStep(F, S), maxstep, S), not map(_, maxstep).
+#show releasedAt_Func(F, ("T >", timeAtStep(maxstep))) : releasedBetweenSteps_Func(F, valueAtStep(F, S), maxstep, S), not map(_, maxstep), not debug_prints.
 
 
-%%% % show all for debug
-%%% #show  happensAtStep(E,S) : happensAtStep(E,S).
-%%% #show  holdsAtStep(F,S) : holdsAtStep(F,S).
-%%% #show  releasedAtStep(F,S) : releasedAtStep(F,S).
-%%% #show  holdsAtStep_Func(F,V,S) : holdsAtStep_Func(F,V,S).
-%%% #show  releasedAtStep_Func(F,V,S) : releasedAtStep_Func(F,V,S).
-%%% 
-%%% #show  holdsBetweenSteps(F, S1, S2) : holdsBetweenSteps(F, S1, S2).
-%%% #show  holdsBetweenSteps_Func(F, V, S1, S2) : holdsBetweenSteps_Func(F, V, S1, S2).
-%%% 
-%%% #show  map(T, S) : map(T, S).
-%%% 
-%%% #show trajectoryAtStep_Func(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2) : trajectoryAtStep_Func(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2).
-%%% #show trajectoryBetweenSteps_Func(F1, F2, valueAtStep(F2, S), valueAtStep(F2, S+1), S, S+1) : trajectoryBetweenSteps_Func(F1, F2, valueAtStep(F2, S), valueAtStep(F2, S+1), S, S+1).
+% show all for debug
+#show  happensAtStep(E,S) : happensAtStep(E,S), debug_prints.
+#show  holdsAtStep(F,S) : holdsAtStep(F,S), debug_prints.
+#show  releasedAtStep(F,S) : releasedAtStep(F,S), debug_prints.
+#show  holdsAtStep_Func(F,V,S) : holdsAtStep_Func(F,V,S), debug_prints.
+#show  releasedAtStep_Func(F,V,S) : releasedAtStep_Func(F,V,S), debug_prints.
+
+#show  holdsBetweenSteps(F, S1, S2) : holdsBetweenSteps(F, S1, S2), debug_prints.
+#show  holdsBetweenSteps_Func(F, V, S1, S2) : holdsBetweenSteps_Func(F, V, S1, S2), debug_prints.
+
+#show  map(T, S) : map(T, S), debug_prints.
+
+#show trajectoryAtStep_Func(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2) : trajectoryAtStep_Func(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2), debug_prints.
+#show trajectoryBetweenSteps_Func(F1, F2, valueAtStep(F2, S), valueAtStep(F2, S+1), S, S+1) : trajectoryBetweenSteps_Func(F1, F2, valueAtStep(F2, S), valueAtStep(F2, S+1), S, S+1), debug_prints.
 
 
 %-------------------------------------------------------------------------------
@@ -453,3 +467,6 @@ trajectoryBetweenSteps_Func(F1, F2, valueAtStep(F2, S), valueAtStep(F2, S+1), S,
 #defined releasesAtStep_Func/4.
 
 #defined trajectory_Func/5.
+
+
+#defined debug_prints/0.

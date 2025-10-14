@@ -8,8 +8,8 @@ fluent_Func(velocity).
 fluent(falling).
 fluent(rising).
 
-fluent_Func(constant_fall_rate).        % simplified to a constant fall rate instead of accelerating over time
-fluent_Func(velocity_loss_portion).     % ball looses a portion of velocity on each bounce
+fluent(constant_fall_rate(X)) :- initiallyP(constant_fall_rate(X)).         % simplified to a constant fall rate instead of accelerating over time
+fluent(velocity_loss_portion(X)) :- initiallyP(velocity_loss_portion(X)).   % ball looses a portion of velocity on each bounce
 
 % input events
 % event(drop).
@@ -66,13 +66,13 @@ terminatesAtStep_Func(stop_bouncing, velocity, valueAtStep(velocity, S), S) :- s
 trajectory_Func(falling, S1, height, valueAtStep(height, S2), S2) :- step(S1), stepMax(S2).
 &sum{ valueAtStep(height,S); Rate*timeAtStep(S); -Rate*timeAtStep(S+1) } = valueAtStep(height,S+1) :-
     trajectoryAtStep_Func(falling, _, height, valueAtStep(height,S+1), S+1),
-    initiallyP_Func(constant_fall_rate, Rate),
+    initiallyP(constant_fall_rate(Rate)),
     step(S), S < maxstep.
 
 trajectory_Func(falling, S1, velocity, valueAtStep(velocity, S2), S2) :- step(S1), stepMax(S2).
 &sum{ valueAtStep(velocity,S); -Rate*timeAtStep(S); Rate*timeAtStep(S+1) } = valueAtStep(velocity,S+1) :-
     trajectoryAtStep_Func(falling, _, velocity, valueAtStep(velocity,S+1), S+1),
-    initiallyP_Func(constant_fall_rate, Rate),
+    initiallyP(constant_fall_rate(Rate)),
     step(S), S < maxstep.
 
 
@@ -80,16 +80,17 @@ trajectory_Func(falling, S1, velocity, valueAtStep(velocity, S2), S2) :- step(S1
 trajectory_Func(rising, S1, height, valueAtStep(height, S2), S2) :- step(S1), stepMax(S2).
 &sum{ valueAtStep(height,S); -Rate*timeAtStep(S); Rate*timeAtStep(S+1) } = valueAtStep(height,S+1) :-
     trajectoryAtStep_Func(rising, _, height, valueAtStep(height,S+1), S+1),
-    initiallyP_Func(constant_fall_rate, Rate),
+    initiallyP(constant_fall_rate(Rate)),
     step(S), S < maxstep.
 
 trajectory_Func(rising, S1, velocity, valueAtStep(velocity, S2), S2) :- step(S1), stepMax(S2).
 &sum{ (1-LossPortion)*valueAtStep(velocity,S); Rate*timeAtStep(S); -Rate*timeAtStep(S+1) } = valueAtStep(velocity,S+1) :-
     trajectoryAtStep_Func(rising, _, velocity, valueAtStep(velocity,S+1), S+1),
-    initiallyP_Func(constant_fall_rate, Rate),
-    initiallyP_Func(velocity_loss_portion, LossPortion),
+    initiallyP(constant_fall_rate(Rate)),
+    initiallyP(velocity_loss_portion(LossPortion)),
     step(S), S < maxstep.
 
+minDuration(1).
 
 happens(fall_down, T) :- happens(drop, T).
 
@@ -100,36 +101,26 @@ comparison(valueAtStep(height, S), 0) :- step(S).
 
 happensAtStep(bounce_up, S) :- happensAtStep(hit_ground, S),
     holdsAtStep(falling, S),
-    normal_atom(valueAtStep(velocity, S), gt, 0).
+    % only bounce if the falling trajectory took some minimum duration
+    minDuration(MinDur),
+    trajectoryAtStep_Func(falling, S1, velocity, valueAtStep(velocity, S), S),
+    normal_atom_diff(timeAtStep(S), timeAtStep(S1), gt, MinDur),
+    normal_atom(valueAtStep(velocity, S), gt, 0),
+    step(S), step(S1).
 comparison(valueAtStep(velocity, S), 0) :- step(S).
+comparisonDiff(timeAtStep(S2), timeAtStep(S1), MinDur) :- minDuration(MinDur), trajectoryAtStep_Func(falling, S1, velocity, valueAtStep(velocity, S2), S2), step(S1), step(S2).
 
 happensAtStep(stop_bouncing, S) :- happensAtStep(hit_ground, S),
     holdsAtStep(falling, S),
-    normal_atom(valueAtStep(velocity, S), eq, 0).
+    % stop bouncing if the falling trajectory took shorter than some minimum duration
+    minDuration(MinDur),
+    trajectoryAtStep_Func(falling, S1, velocity, valueAtStep(velocity, S), S),
+    normal_atom_diff(timeAtStep(S), timeAtStep(S1), leq, MinDur),
+    step(S), step(S1).
 
 happensAtStep(reach_apex, S) :-
     holdsAtStep(rising, S),
     normal_atom(valueAtStep(velocity, S), eq, 0).
 
 happensAtStep(fall_down, S) :- happensAtStep(reach_apex, S).
-
-
-% ----- narrative & queries  -----
-
-initiallyP_Func(height, 10).
-initiallyP_Func(velocity, 0).
-initiallyP_Func(constant_fall_rate, 1).
-initiallyP_Func(velocity_loss_portion, "0.75").
-
-initiallyN(F) :- not initiallyP(F), fluent(F).
-
-happens(drop,                           10).
-
-%?- happens(hit_ground,                  T).     % 20, 25, 26.25, 26.40625,...
-
-%happens(catch,                          26).
-%    ?- holdsAt(height(X),               30).    % 0.25
-%    ?- holdsAt(velocity(X),             30).    % 0
-
-%?- happens(hit_ground,                  T).     % 20, 25
 
