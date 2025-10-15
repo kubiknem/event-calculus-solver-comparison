@@ -261,18 +261,6 @@ normal_atom(A, leq, B) :- normal_atom(A, eq, B).
 normal_atom(A, geq, B) :- normal_atom(A, eq, B).
 normal_atom(A, geq, B) :- normal_atom(A, gt, B).
 
-% 
-{ normal_atom_diff(A, B, (lt;eq;gt), R) } = 1 :- comparisonDiff(A, B, R).
-%
-&sum{ A - B } < R :- normal_atom_diff(A, B, lt, R).
-&sum{ A - B } = R :- normal_atom_diff(A, B, eq, R).
-&sum{ A - B } > R :- normal_atom_diff(A, B, gt, R).
-%
-normal_atom_diff(A, B, leq, R) :- normal_atom_diff(A, B, lt, R).
-normal_atom_diff(A, B, leq, R) :- normal_atom_diff(A, B, eq, R).
-normal_atom_diff(A, B, geq, R) :- normal_atom_diff(A, B, eq, R).
-normal_atom_diff(A, B, geq, R) :- normal_atom_diff(A, B, gt, R).
-
 
 %% DBEC1 - StoppedIn(t1,f,t2)
 stoppedInSteps(S1, F, S2) :-

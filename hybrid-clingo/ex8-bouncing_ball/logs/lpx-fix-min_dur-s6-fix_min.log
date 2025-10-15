@@ -5,7 +5,7 @@ clingo-lpx version 1.3.0
 Reading from ../axioms/bec_steps-clingo_lpx.lp ...
 Solving...
 Answer: 1
-(Time: 0.052s)
+(Time: 0.050s)
 happens(bounce_up,20)
 happens(bounce_up,25)
 happens(drop,10)
@@ -68,18 +68,46 @@ holdsAt_Func_Cont(velocity,(10,"->",0),(20,"< T =<",45/2))
 holdsAt_Func_Cont(velocity,(0,"->",5/2),(45/2,"< T =<",25))
 holdsAt_Func_Cont(velocity,(5/2,"->",0),(25,"< T =<",205/8))
 holdsAt_Func_Cont(velocity,(0,"->",5/8),(205/8,"< T =<",105/4))
+fallDurAtStep(2)=10
+fallDurAtStep(3)=0
+fallDurAtStep(4)=5/2
+fallDurAtStep(5)=0
+fallDurAtStep(6)=5/8
+timeAtStep(0)=0
+timeAtStep(1)=10
+timeAtStep(2)=20
+timeAtStep(3)=45/2
+timeAtStep(4)=25
+timeAtStep(5)=205/8
+timeAtStep(6)=105/4
+valueAtStep(height,0)=10
+valueAtStep(height,1)=10
+valueAtStep(height,2)=0
+valueAtStep(height,3)=5/2
+valueAtStep(height,4)=0
+valueAtStep(height,5)=5/8
+valueAtStep(height,6)=0
+valueAtStep(height,7)=0
+valueAtStep(velocity,0)=0
+valueAtStep(velocity,1)=0
+valueAtStep(velocity,2)=10
+valueAtStep(velocity,3)=0
+valueAtStep(velocity,4)=5/2
+valueAtStep(velocity,5)=0
+valueAtStep(velocity,6)=5/8
+valueAtStep(velocity,7)=0
 SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.053s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.037s
+Time         : 0.051s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.035s
 
 Command exited with non-zero status 30
 
   real      0:00.06
   real [s]  0.06
-  user [s]  0.02
-  sys  [s]  0.01
-  mem  [KB] 10752
+  user [s]  0.03
+  sys  [s]  0.00
+  mem  [KB] 10496
   avgm [KB] 0
