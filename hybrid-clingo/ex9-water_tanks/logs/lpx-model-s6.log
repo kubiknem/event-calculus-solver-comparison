@@ -5,7 +5,7 @@ clingo-lpx version 1.3.0
 Reading from ../axioms/bec_steps-clingo_lpx.lp ...
 Solving...
 Answer: 1
-(Time: 0.040s)
+(Time: 0.038s)
 happens(switch_left,25/2)
 happens(switch_left,145/8)
 happens(switch_left,625/32)
@@ -48,14 +48,14 @@ SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.041s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.028s
+Time         : 0.039s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.024s
 
 Command exited with non-zero status 30
 
-  real      0:00.05
-  real [s]  0.05
-  user [s]  0.03
-  sys  [s]  0.00
-  mem  [KB] 9728
+  real      0:00.04
+  real [s]  0.04
+  user [s]  0.01
+  sys  [s]  0.01
+  mem  [KB] 9344
   avgm [KB] 0

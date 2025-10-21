@@ -104,19 +104,23 @@ happensAtStep(bounce_up, S) :- happensAtStep(hit_ground, S),
     % only bounce if the falling trajectory took some minimum duration
     minDuration(MinDur),
     trajectoryAtStep_Func(falling, S1, velocity, valueAtStep(velocity, S), S),
-    normal_atom(fallDurAtStep(S), gt, MinDur),
+    normal_atom(aux__fallDurAtStep(S), gt, MinDur),
     normal_atom(valueAtStep(velocity, S), gt, 0),
     step(S), step(S1).
 comparison(valueAtStep(velocity, S), 0) :- step(S).
-&sum{timeAtStep(S2) - timeAtStep(S1)} = fallDurAtStep(S2) :- trajectoryAtStep_Func(falling, S1, velocity, valueAtStep(velocity, S2), S2), step(S1), step(S2).
-comparison(fallDurAtStep(S2), MinDur) :- minDuration(MinDur), trajectoryAtStep_Func(falling, S1, velocity, valueAtStep(velocity, S2), S2), step(S1), step(S2).
+comparison(aux__fallDurAtStep(S2), MinDur) :- minDuration(MinDur), step(S2).
+    %comparison(aux__fallDurAtStep(S2), MinDur) :- minDuration(MinDur), trajectoryAtStep_Func(falling, S1, velocity, valueAtStep(velocity, S2), S2), step(S1), step(S2).
+&sum{timeAtStep(S2) - timeAtStep(S1)} = aux__fallDurAtStep(S2) :- trajectoryAtStep_Func(falling, S1, velocity, valueAtStep(velocity, S2), S2), step(S1), step(S2).
+defined(aux__fallDurAtStep(S2)) :- trajectoryAtStep_Func(falling, S1, velocity, valueAtStep(velocity, S2), S2), step(S1), step(S2).
+&sum{0} = aux__fallDurAtStep(S2) :- not defined(aux__fallDurAtStep(S2)), step(S1), step(S2).
+
 
 happensAtStep(stop_bouncing, S) :- happensAtStep(hit_ground, S),
     holdsAtStep(falling, S),
     % stop bouncing if the falling trajectory took shorter than some minimum duration
     minDuration(MinDur),
     trajectoryAtStep_Func(falling, S1, velocity, valueAtStep(velocity, S), S),
-    normal_atom(fallDurAtStep(S), leq, MinDur),
+    normal_atom(aux__fallDurAtStep(S), leq, MinDur),
     step(S), step(S1).
 
 happensAtStep(reach_apex, S) :-

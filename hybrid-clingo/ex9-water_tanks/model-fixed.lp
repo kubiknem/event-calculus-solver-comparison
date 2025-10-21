@@ -52,36 +52,42 @@ happensAtStep(switch_left, S) :-
     holdsAtStep(right_filling, S),
     minDuration(MinDur),
     trajectoryAtStep_Func(right_filling, S1, water_left, valueAtStep(water_left, S), S),
-    normal_atom(rightFillDurAtStep(S), geq, MinDur),
+    normal_atom(aux__rightFillDurAtStep(S), geq, MinDur),
     normal_atom(valueAtStep(water_left, S), eq, 50). % target level
 % trigger exactly after the minimum duration if the level is below 50
 happensAtStep(switch_left, S) :-
     holdsAtStep(right_filling, S),
     minDuration(MinDur),
     trajectoryAtStep_Func(right_filling, S1, water_left, valueAtStep(water_left, S), S),
-    normal_atom(rightFillDurAtStep(S), eq, MinDur),
+    normal_atom(aux__rightFillDurAtStep(S), eq, MinDur),
     normal_atom(valueAtStep(water_left, S), lt, 50). % target level
 comparison(valueAtStep(water_left, S), 50) :- step(S).
-&sum{timeAtStep(S2) - timeAtStep(S1)} = rightFillDurAtStep(S2) :- trajectoryAtStep_Func(right_filling, S1, water_left, valueAtStep(water_left, S2), S2), step(S1), step(S2).
-comparison(rightFillDurAtStep(S2), MinDur) :- minDuration(MinDur), trajectoryAtStep_Func(right_filling, S1, water_left, valueAtStep(water_left, S2), S2), step(S1), step(S2).
+&sum{timeAtStep(S2) - timeAtStep(S1)} = aux__rightFillDurAtStep(S2) :- trajectoryAtStep_Func(right_filling, S1, water_left, valueAtStep(water_left, S2), S2), step(S1), step(S2).
+comparison(aux__rightFillDurAtStep(S2), MinDur) :- minDuration(MinDur), step(S2).
+    %comparison(aux__rightFillDurAtStep(S2), MinDur) :- minDuration(MinDur), trajectoryAtStep_Func(right_filling, S1, water_left, valueAtStep(water_left, S2), S2), step(S1), step(S2).
+defined(aux__rightFillDurAtStep(S2)) :- trajectoryAtStep_Func(right_filling, S1, water_left, valueAtStep(water_left, S2), S2), step(S1), step(S2).
+&sum{0} = aux__rightFillDurAtStep(S2) :- not defined(aux__rightFillDurAtStep(S2)), step(S2).
 
 % trigger exactly at 50 if the trajectory took at least the minimum duration
 happensAtStep(switch_right, S) :-
     holdsAtStep(left_filling, S),
     minDuration(MinDur),
     trajectoryAtStep_Func(left_filling, S1, water_right, valueAtStep(water_right, S), S),
-    normal_atom(leftFillDurAtStep(S), geq, MinDur),
+    normal_atom(aux__leftFillDurAtStep(S), geq, MinDur),
     normal_atom(valueAtStep(water_right, S), eq, 50). % target level
 % trigger exactly after the minimum duration if the level is below 50
 happensAtStep(switch_right, S) :-
     holdsAtStep(left_filling, S),
     minDuration(MinDur),
     trajectoryAtStep_Func(left_filling, S1, water_right, valueAtStep(water_right, S), S),
-    normal_atom(leftFillDurAtStep(S), eq, MinDur),
+    normal_atom(aux__leftFillDurAtStep(S), eq, MinDur),
     normal_atom(valueAtStep(water_right, S), lt, 50). % target level
 comparison(valueAtStep(water_right, S), 50) :- step(S).
-&sum{timeAtStep(S2) - timeAtStep(S1)} = leftFillDurAtStep(S2) :- trajectoryAtStep_Func(left_filling, S1, water_right, valueAtStep(water_right, S2), S2), step(S1), step(S2).
-comparison(leftFillDurAtStep(S2), MinDur) :- minDuration(MinDur), trajectoryAtStep_Func(left_filling, S1, water_right, valueAtStep(water_right, S2), S2), step(S1), step(S2).
+comparison(aux__leftFillDurAtStep(S2), MinDur) :- minDuration(MinDur), step(S2).
+    %comparison(aux__leftFillDurAtStep(S2), MinDur) :- minDuration(MinDur), trajectoryAtStep_Func(left_filling, S1, water_right, valueAtStep(water_right, S2), S2), step(S1), step(S2).
+&sum{timeAtStep(S2) - timeAtStep(S1)} = aux__leftFillDurAtStep(S2) :- trajectoryAtStep_Func(left_filling, S1, water_right, valueAtStep(water_right, S2), S2), step(S1), step(S2).
+defined(aux__leftFillDurAtStep(S2)) :- trajectoryAtStep_Func(left_filling, S1, water_right, valueAtStep(water_right, S2), S2), step(S1), step(S2).
+&sum{0} = aux__leftFillDurAtStep(S2) :- not defined(aux__leftFillDurAtStep(S2)), step(S2).
 
 %! this forces a step at exactly 50, which would not work for the zeno-free version
 % :- normal_atom(valueAtStep(water_left, S), gt, 50), normal_atom(valueAtStep(water_left, S+1), lt, 50), step(S).

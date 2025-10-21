@@ -5,7 +5,7 @@ clingo-lpx version 1.3.0
 Reading from ../axioms/bec_steps-clingo_lpx.lp ...
 Solving...
 Answer: 1
-(Time: 1.496s)
+(Time: 1.006s)
 happens(bounce_up,20)
 happens(bounce_up,25)
 happens(bounce_up,105/4)
@@ -515,14 +515,14 @@ SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 1.500s (Solving: 1.13s 1st Model: 1.13s Unsat: 0.00s)
-CPU Time     : 1.482s
+Time         : 1.008s (Solving: 0.73s 1st Model: 0.73s Unsat: 0.00s)
+CPU Time     : 0.988s
 
 Command exited with non-zero status 30
 
-  real      0:01.53
-  real [s]  1.53
-  user [s]  1.45
-  sys  [s]  0.06
-  mem  [KB] 30352
+  real      0:01.03
+  real [s]  1.03
+  user [s]  0.97
+  sys  [s]  0.03
+  mem  [KB] 25792
   avgm [KB] 0
