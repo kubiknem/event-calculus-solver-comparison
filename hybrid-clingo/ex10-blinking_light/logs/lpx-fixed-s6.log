@@ -1,0 +1,15 @@
+$ clingo-lpx --strict -n0 ../axioms/bec_steps-clingo_lpx.lp -c maxstep=6 ./fixed.lp | ../utils/replace_assignments.sh | ../utils/make-readable.sh
+
+
+
+*** ERROR: (clingo-lpx): './fixed.lp': could not open input file!
+*** Info : (clingo-lpx): Try '--help' for usage information
+Command exited with non-zero status 128
+
+  real      0:00.00
+  real [s]  0.00
+  user [s]  0.00
+  sys  [s]  0.00
+  mem  [KB] 6016
+  avgm [KB] 0
+sed: -e expression #1, char 0: no previous regular expression

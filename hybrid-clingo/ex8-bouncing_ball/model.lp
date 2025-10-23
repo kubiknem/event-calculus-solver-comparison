@@ -24,8 +24,8 @@ fluent(velocity_loss_portion(X)) :- initiallyP(velocity_loss_portion(X)).   % ba
 
 
 % start by dropping the ball
-releasesAtStep_Func(drop, height, valueAtStep(height, S+1), S) :- step(S).
-releasesAtStep_Func(drop, velocity, valueAtStep(velocity, S+1), S) :- step(S).
+releasesAtStep_Func(drop, height, valueAtStep(height, S+1), S) :- step(S), step(S+1).
+releasesAtStep_Func(drop, velocity, valueAtStep(velocity, S+1), S) :- step(S), step(S+1).
 
 
 % start by dropping the ball
@@ -44,51 +44,55 @@ terminatesAtStep(reach_apex, rising, S) :- step(S).
 terminatesAtStep(catch, falling, S) :- step(S).
 terminatesAtStep(catch, rising, S) :- step(S).
 
-initiatesAtStep_Func(catch, height, valueAtStep(height, S+1), S) :- step(S).
-&sum{valueAtStep(height,S+1)} = valueAtStep(height,S) :- initiatedByAtStep_Func(catch, height, valueAtStep(height,S+1), S).
+initiatesAtStep_Func(catch, height, valueAtStep(height, S+1), S) :- step(S), step(S+1).
+&sum{valueAtStep(height,S+1)} = valueAtStep(height,S) :-
+    initiatedByAtStep_Func(catch, height, valueAtStep(height,S+1), S).
 terminatesAtStep_Func(catch, height, valueAtStep(height, S), S) :- step(S).
 
-initiatesAtStep_Func(catch, velocity, valueAtStep(velocity, S+1), S) :- step(S).
-&sum{valueAtStep(velocity,S+1)} = 0 :- initiatedByAtStep_Func(catch, velocity, valueAtStep(velocity,S+1), S).
+initiatesAtStep_Func(catch, velocity, valueAtStep(velocity, S+1), S) :- step(S), step(S+1).
+&sum{valueAtStep(velocity,S+1)} = 0 :-
+    initiatedByAtStep_Func(catch, velocity, valueAtStep(velocity,S+1), S).
 terminatesAtStep_Func(catch, velocity, valueAtStep(velocity, S), S) :- step(S).
 
 % stop everything if the ball stops bouncing
-initiatesAtStep_Func(stop_bouncing, height, valueAtStep(height, S+1), S) :- step(S).
-&sum{valueAtStep(height,S+1)} = 0 :- initiatedByAtStep_Func(stop_bouncing, height, valueAtStep(height,S+1), S).
+initiatesAtStep_Func(stop_bouncing, height, valueAtStep(height, S+1), S) :- step(S), step(S+1).
+&sum{valueAtStep(height,S+1)} = 0 :-
+    initiatedByAtStep_Func(stop_bouncing, height, valueAtStep(height,S+1), S).
 terminatesAtStep_Func(stop_bouncing, height, valueAtStep(height, S), S) :- step(S).
 
-initiatesAtStep_Func(stop_bouncing, velocity, valueAtStep(velocity, S+1), S) :- step(S).
-&sum{valueAtStep(velocity,S+1)} = 0 :- initiatedByAtStep_Func(stop_bouncing, velocity, valueAtStep(velocity,S+1), S).
+initiatesAtStep_Func(stop_bouncing, velocity, valueAtStep(velocity, S+1), S) :- step(S), step(S+1).
+&sum{valueAtStep(velocity,S+1)} = 0 :-
+    initiatedByAtStep_Func(stop_bouncing, velocity, valueAtStep(velocity,S+1), S).
 terminatesAtStep_Func(stop_bouncing, velocity, valueAtStep(velocity, S), S) :- step(S).
 
 
 % falling 
-trajectory_Func(falling, S1, height, valueAtStep(height, S2), S2) :- step(S1), stepMax(S2).
+trajectory_Func(falling, S1, height, valueAtStep(height, S2), S2) :- step(S1), step(S2).
 &sum{ valueAtStep(height,S); Rate*timeAtStep(S); -Rate*timeAtStep(S+1) } = valueAtStep(height,S+1) :-
     trajectoryAtStep_Func(falling, _, height, valueAtStep(height,S+1), S+1),
     initiallyP(constant_fall_rate(Rate)),
-    step(S), S < maxstep.
+    step(S), step(S+1).
 
-trajectory_Func(falling, S1, velocity, valueAtStep(velocity, S2), S2) :- step(S1), stepMax(S2).
+trajectory_Func(falling, S1, velocity, valueAtStep(velocity, S2), S2) :- step(S1), step(S2).
 &sum{ valueAtStep(velocity,S); -Rate*timeAtStep(S); Rate*timeAtStep(S+1) } = valueAtStep(velocity,S+1) :-
     trajectoryAtStep_Func(falling, _, velocity, valueAtStep(velocity,S+1), S+1),
     initiallyP(constant_fall_rate(Rate)),
-    step(S), S < maxstep.
+    step(S), step(S+1).
 
 
 % rising
-trajectory_Func(rising, S1, height, valueAtStep(height, S2), S2) :- step(S1), stepMax(S2).
+trajectory_Func(rising, S1, height, valueAtStep(height, S2), S2) :- step(S1), step(S2).
 &sum{ valueAtStep(height,S); -Rate*timeAtStep(S); Rate*timeAtStep(S+1) } = valueAtStep(height,S+1) :-
     trajectoryAtStep_Func(rising, _, height, valueAtStep(height,S+1), S+1),
     initiallyP(constant_fall_rate(Rate)),
-    step(S), S < maxstep.
+    step(S), step(S+1).
 
-trajectory_Func(rising, S1, velocity, valueAtStep(velocity, S2), S2) :- step(S1), stepMax(S2).
+trajectory_Func(rising, S1, velocity, valueAtStep(velocity, S2), S2) :- step(S1), step(S2).
 &sum{ (1-LossPortion)*valueAtStep(velocity,S); Rate*timeAtStep(S); -Rate*timeAtStep(S+1) } = valueAtStep(velocity,S+1) :-
     trajectoryAtStep_Func(rising, _, velocity, valueAtStep(velocity,S+1), S+1),
     initiallyP(constant_fall_rate(Rate)),
     initiallyP(velocity_loss_portion(LossPortion)),
-    step(S), S < maxstep.
+    step(S), step(S+1).
 
 
 happens(fall_down, T) :- happens(drop, T).
@@ -96,12 +100,12 @@ happens(fall_down, T) :- happens(drop, T).
 happensAtStep(hit_ground, S) :- 
     holdsAtStep(falling, S),
     normal_atom(valueAtStep(height, S), eq, 0).
-comparison(valueAtStep(height, S), 0) :- step(S).
+%comparison(valueAtStep(height, S), 0) :- step(S).
 
 happensAtStep(bounce_up, S) :- happensAtStep(hit_ground, S),
     holdsAtStep(falling, S),
     normal_atom(valueAtStep(velocity, S), gt, 0).
-comparison(valueAtStep(velocity, S), 0) :- step(S).
+%comparison(valueAtStep(velocity, S), 0) :- step(S).
 
 happensAtStep(stop_bouncing, S) :- happensAtStep(hit_ground, S),
     holdsAtStep(falling, S),
@@ -112,3 +116,7 @@ happensAtStep(reach_apex, S) :-
     normal_atom(valueAtStep(velocity, S), eq, 0).
 
 happensAtStep(fall_down, S) :- happensAtStep(reach_apex, S).
+
+% TODO not needed for this example but is needed in general
+trigger_value(height, 0).
+trigger_value(velocity, 0).

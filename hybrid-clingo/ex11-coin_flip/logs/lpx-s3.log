@@ -1,42 +1,44 @@
-$ clingo-lpx --strict -n0 ./model.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=2 | ../utils/make-readable.sh
+$ clingo-lpx --strict -n0 ./model.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=3 | ../utils/make-readable.sh
 
 
 clingo-lpx version 1.3.0
 Reading from ./model.lp ...
 Solving...
 Answer: 1
-(Time: 0.025s)
+(Time: 0.029s)
+happens(check,timeAtStep(3))
 happens(land,timeAtStep(2))
 happens(toss,timeAtStep(1))
-holdsAt(up(heads),(timeAtStep(0),"< T =<",timeAtStep(1)))
-holdsAt(up(tails),("T >",timeAtStep(2)))
-holdsAt(up(tails),(timeAtStep(1),"< T =<",timeAtStep(2)))
-releasedAt(up(heads),(timeAtStep(1),"< T =<",timeAtStep(2)))
-releasedAt(up(tails),(timeAtStep(1),"< T =<",timeAtStep(2)))
-Assignment:
-timeAtStep(0)=0
-timeAtStep(1)=10
-timeAtStep(2)=20
-timeAtStep(3)=21
-Answer: 2
-(Time: 0.026s)
-happens(land,timeAtStep(2))
-happens(toss,timeAtStep(1))
-holdsAt(up(heads),("T >",timeAtStep(2)))
 holdsAt(up(heads),(timeAtStep(0),"< T =<",timeAtStep(1)))
 holdsAt(up(heads),(timeAtStep(1),"< T =<",timeAtStep(2)))
+holdsAt(up(heads),(timeAtStep(2),"< T =<",timeAtStep(3)))
 releasedAt(up(heads),(timeAtStep(1),"< T =<",timeAtStep(2)))
 releasedAt(up(tails),(timeAtStep(1),"< T =<",timeAtStep(2)))
 Assignment:
 timeAtStep(0)=0
 timeAtStep(1)=10
 timeAtStep(2)=20
-timeAtStep(3)=21
+timeAtStep(3)=30
+Answer: 2
+(Time: 0.030s)
+happens(check,timeAtStep(3))
+happens(land,timeAtStep(2))
+happens(toss,timeAtStep(1))
+holdsAt(up(heads),(timeAtStep(0),"< T =<",timeAtStep(1)))
+holdsAt(up(tails),(timeAtStep(1),"< T =<",timeAtStep(2)))
+holdsAt(up(tails),(timeAtStep(2),"< T =<",timeAtStep(3)))
+releasedAt(up(heads),(timeAtStep(1),"< T =<",timeAtStep(2)))
+releasedAt(up(tails),(timeAtStep(1),"< T =<",timeAtStep(2)))
+Assignment:
+timeAtStep(0)=0
+timeAtStep(1)=10
+timeAtStep(2)=20
+timeAtStep(3)=30
 SATISFIABLE
 
 Models       : 2
 Calls        : 1
-Time         : 0.026s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+Time         : 0.030s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
 CPU Time     : 0.013s
 
 Command exited with non-zero status 30
@@ -44,6 +46,6 @@ Command exited with non-zero status 30
   real      0:00.03
   real [s]  0.03
   user [s]  0.00
-  sys  [s]  0.01
-  mem  [KB] 8704
+  sys  [s]  0.00
+  mem  [KB] 8576
   avgm [KB] 0

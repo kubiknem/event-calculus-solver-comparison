@@ -20,38 +20,49 @@ initiatesAtStep(fade_out_end, fading_in, S) :- step(S).
 initiatesAtStep(turn_light_on,  light_on, S) :- step(S).
 initiatesAtStep(turn_light_on, fading_in, S) :- step(S).
 
-releasesAtStep_Func(turn_light_on, brightness, valueAtStep(brightness, S+1), S) :- step(S).
+releasesAtStep_Func(turn_light_on, brightness, valueAtStep(brightness, S+1), S) :- step(S), step(S+1).
 
 terminatesAtStep(turn_light_off, light_on, S) :- step(S).
 terminatesAtStep(turn_light_off, fading_in, S) :- holdsAtStep(fading_in, S).
 terminatesAtStep(turn_light_off, fading_out, S) :- holdsAtStep(fading_out, S).
 
-initiatesAtStep_Func(turn_light_off, brightness, valueAtStep(brightness, S+1), S) :- step(S).
+initiatesAtStep_Func(turn_light_off, brightness, valueAtStep(brightness, S+1), S) :- step(S), step(S+1).
 &sum{valueAtStep(brightness,S+1)} = 0 :-
     initiatedByAtStep_Func(turn_light_off, brightness, valueAtStep(brightness,S+1), S).
 terminatesAtStep_Func(turn_light_off, brightness, valueAtStep(brightness, S), S) :- step(S).
 
-trajectory_Func(fading_in, S1, brightness, valueAtStep(brightness,S2), S2) :- step(S1), stepMax(S2).
+trajectory_Func(fading_in, S1, brightness, valueAtStep(brightness,S2), S2) :- step(S1), step(S2).
 &sum{ valueAtStep(brightness,S); -timeAtStep(S); timeAtStep(S+1) } = valueAtStep(brightness,S+1) :-
     trajectoryAtStep_Func(fading_in, _, brightness, valueAtStep(brightness,S+1), S+1),
-    step(S), S < maxstep.
+    step(S), step(S+1).
 
-trajectory_Func(fading_out, S1, brightness, valueAtStep(brightness,S2), S2) :- step(S1), stepMax(S2).
+trajectory_Func(fading_out, S1, brightness, valueAtStep(brightness,S2), S2) :- step(S1), step(S2).
 &sum{ valueAtStep(brightness,S); timeAtStep(S); -timeAtStep(S+1) } = valueAtStep(brightness,S+1) :-
     trajectoryAtStep_Func(fading_out, _, brightness, valueAtStep(brightness,S+1), S+1),
-    step(S), S < maxstep.
+    step(S), step(S+1).
 
 
 happensAtStep(fade_in_end, S) :-
     holdsAtStep(fading_in, S),
     normal_atom(valueAtStep(brightness, S), eq, 10).
-comparison(valueAtStep(brightness, S), 10) :- step(S). 
-
+%comparison(valueAtStep(brightness, S), 10) :- step(S). 
 
 happensAtStep(fade_out_end, S) :-
     holdsAtStep(fading_out, S),
     normal_atom(valueAtStep(brightness, S), eq, 0).
-comparison(valueAtStep(brightness, S), 0) :- step(S). 
+%comparison(valueAtStep(brightness, S), 0) :- step(S). 
+
+% TODO this is not needed for this particular example, but is needed in general
+% TODO the usual formulation caused problems, had to break it down manually
+%trigger_value(brightness, 0).
+    comparison(valueAtStep(brightness, S), 0) :- step(S). 
+    :- normal_atom(valueAtStep(brightness, S), gt, 0), normal_atom(valueAtStep(brightness, S+1), lt, 0), step(S), step(S+1).
+    :- normal_atom(valueAtStep(brightness, S), lt, 0), normal_atom(valueAtStep(brightness, S+1), gt, 0), step(S), step(S+1).
+%trigger_value(brightness, 10).
+    comparison(valueAtStep(brightness, S), 10) :- step(S). 
+    :- normal_atom(valueAtStep(brightness, S), lt, 10), normal_atom(valueAtStep(brightness, S+1), gt, 10), step(S), step(S+1).
+    %! TODO this constraint would cause "no models" --> why?
+    %:- normal_atom(valueAtStep(brightness, S), gt, 10), normal_atom(valueAtStep(brightness, S+1), lt, 10), step(S), step(S+1).
 
 
 % ----- narrative & queries  -----

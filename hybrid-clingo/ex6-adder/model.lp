@@ -25,26 +25,41 @@ fluent(powered_on).
 %-------------------------------------------------------------------------------
 
 % initiates(add(Add),  result(Res2), T) :- Add .>. 0, holdsAt(result(Res1), T), Res2 = Res1 + Add, time(T).
-&sum{valueAtStep(result, S); Add} = valueAtStep(result, S+1) :- initiatedByAtStep_Func(add(Add), result, valueAtStep(result, S+1), S).
-initiatesAtStep_Func(add(Add), result, valueAtStep(result, S+1), S) :- Add > 0, holdsAtStep_Func(result, valueAtStep(result, S), S), addDomain(Add).
+&sum{valueAtStep(result, S); Add} = valueAtStep(result, S+1) :-
+    initiatedByAtStep_Func(add(Add), result, valueAtStep(result, S+1), S).
+initiatesAtStep_Func(add(Add), result, valueAtStep(result, S+1), S) :-
+    Add > 0,
+    holdsAtStep_Func(result, valueAtStep(result, S), S),
+    addDomain(Add), step(S), step(S+1).
 
 % terminates(add(Add), result(OldRes), T) :- Add .>. 0, holdsAt(OldRes, T), time(T).
-terminatesAtStep_Func(add(Add), result, valueAtStep(result, S), S) :- Add > 0, holdsAtStep_Func(result, valueAtStep(result, S), S), step(S), addDomain(Add).
+terminatesAtStep_Func(add(Add), result, valueAtStep(result, S), S) :-
+    Add > 0,
+    holdsAtStep_Func(result, valueAtStep(result, S), S),
+    addDomain(Add), step(S).
 
 
 % initiates(turn_on, powered_on, T) :- -holdsAt(powered_on, T), time(T).
-initiatesAtStep(turn_on, powered_on, S) :- not holdsAtStep(powered_on, S), step(S).
+initiatesAtStep(turn_on, powered_on, S) :-
+    not holdsAtStep(powered_on, S),
+    step(S).
 
 % terminates(turn_off, powered_on, T) :- holdsAt(powered_on, T), time(T).
-terminatesAtStep(turn_off, powered_on, S) :- holdsAtStep(powered_on, S).
+terminatesAtStep(turn_off, powered_on, S) :-
+    holdsAtStep(powered_on, S).
 
 
 % initiates(turn_on, result(0), T) :- time(T).
-&sum{valueAtStep(result, S+1)} = 0 :- initiatedByAtStep_Func(turn_on, result, valueAtStep(result, S+1), S).
-initiatesAtStep_Func(turn_on, result, valueAtStep(result, S+1), S) :- not holdsAtStep(powered_on, S), step(S).
+&sum{valueAtStep(result, S+1)} = 0 :-
+    initiatedByAtStep_Func(turn_on, result, valueAtStep(result, S+1), S).
+initiatesAtStep_Func(turn_on, result, valueAtStep(result, S+1), S) :-
+    not holdsAtStep(powered_on, S),
+    step(S), step(S+1).
 
 % terminates(turn_off, result(_), T) :- holdsAt(powered_on, T), time(T).
-terminatesAtStep_Func(turn_off, result, valueAtStep(result, S), S) :- holdsAtStep(powered_on, S), step(S).
+terminatesAtStep_Func(turn_off, result, valueAtStep(result, S), S) :-
+    holdsAtStep(powered_on, S),
+    step(S).
 
 
 %-------------------------------------------------------------------------------

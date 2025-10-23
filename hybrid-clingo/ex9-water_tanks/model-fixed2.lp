@@ -50,46 +50,30 @@ minDuration(1).
 % trigger exactly at 50 if the trajectory took at least the minimum duration
 happensAtStep(switch_left, S) :-
     holdsAtStep(right_filling, S),
-    minDuration(MinDur),
     trajectoryAtStep_Func(right_filling, S1, water_left, valueAtStep(water_left, S), S),
-    normal_atom(aux__rightFillDurAtStep(S), geq, MinDur),
+    happensAtStep(aux__endMinDurRightFilling(S1), S2), S1 < S2, S2 <= S,
     normal_atom(valueAtStep(water_left, S), eq, 50). % target level
 % trigger exactly after the minimum duration if the level is below 50
 happensAtStep(switch_left, S) :-
     holdsAtStep(right_filling, S),
-    minDuration(MinDur),
     trajectoryAtStep_Func(right_filling, S1, water_left, valueAtStep(water_left, S), S),
-    normal_atom(aux__rightFillDurAtStep(S), eq, MinDur),
+    happensAtStep(aux__endMinDurRightFilling(S1), S),
     normal_atom(valueAtStep(water_left, S), lt, 50). % target level
 %comparison(valueAtStep(water_left, S), 50) :- step(S).
-
-&sum{timeAtStep(S2) - timeAtStep(S1)} = aux__rightFillDurAtStep(S2) :- trajectoryAtStep_Func(right_filling, S1, water_left, valueAtStep(water_left, S2), S2), step(S1), step(S2).
-comparison(aux__rightFillDurAtStep(S2), MinDur) :- minDuration(MinDur), step(S2).
-    %comparison(aux__rightFillDurAtStep(S2), MinDur) :- minDuration(MinDur), trajectoryAtStep_Func(right_filling, S1, water_left, valueAtStep(water_left, S2), S2), step(S1), step(S2).
-defined(aux__rightFillDurAtStep(S2)) :- trajectoryAtStep_Func(right_filling, S1, water_left, valueAtStep(water_left, S2), S2), step(S1), step(S2).
-&sum{0} = aux__rightFillDurAtStep(S2) :- not defined(aux__rightFillDurAtStep(S2)), step(S2).
 
 % trigger exactly at 50 if the trajectory took at least the minimum duration
 happensAtStep(switch_right, S) :-
     holdsAtStep(left_filling, S),
-    minDuration(MinDur),
     trajectoryAtStep_Func(left_filling, S1, water_right, valueAtStep(water_right, S), S),
-    normal_atom(aux__leftFillDurAtStep(S), geq, MinDur),
+    happensAtStep(aux__endMinDurLeftFilling(S1), S2), S1 < S2, S2 <= S,
     normal_atom(valueAtStep(water_right, S), eq, 50). % target level
 % trigger exactly after the minimum duration if the level is below 50
 happensAtStep(switch_right, S) :-
     holdsAtStep(left_filling, S),
-    minDuration(MinDur),
     trajectoryAtStep_Func(left_filling, S1, water_right, valueAtStep(water_right, S), S),
-    normal_atom(aux__leftFillDurAtStep(S), eq, MinDur),
+    happensAtStep(aux__endMinDurLeftFilling(S1), S),
     normal_atom(valueAtStep(water_right, S), lt, 50). % target level
 %comparison(valueAtStep(water_right, S), 50) :- step(S).
-
-comparison(aux__leftFillDurAtStep(S2), MinDur) :- minDuration(MinDur), step(S2).
-    %comparison(aux__leftFillDurAtStep(S2), MinDur) :- minDuration(MinDur), trajectoryAtStep_Func(left_filling, S1, water_right, valueAtStep(water_right, S2), S2), step(S1), step(S2).
-&sum{timeAtStep(S2) - timeAtStep(S1)} = aux__leftFillDurAtStep(S2) :- trajectoryAtStep_Func(left_filling, S1, water_right, valueAtStep(water_right, S2), S2), step(S1), step(S2).
-defined(aux__leftFillDurAtStep(S2)) :- trajectoryAtStep_Func(left_filling, S1, water_right, valueAtStep(water_right, S2), S2), step(S1), step(S2).
-&sum{0} = aux__leftFillDurAtStep(S2) :- not defined(aux__leftFillDurAtStep(S2)), step(S2).
 
 
 % TODO had to break down the below manually because 50 is only significant in one direction (when draining the corresponding tank, not when filling)
@@ -109,13 +93,19 @@ happensAtStep(aux__no_switch_right, S) :- step(S), holdsAtStep(left_filling, S),
 happensAtStep(aux__no_switch_left, S) :- step(S), holdsAtStep(right_filling, S), normal_atom(valueAtStep(water_left, S), eq, 50), not happensAtStep(switch_left, S).
 
 
-% TODO this needs to be discussed -- we probably should have this constraint but it causes duplicate models 6 steps and "no models" at 7
-% TODO this does not work, this example might miss stepping exactly at the duration...
-%% :- holdsAtStep(right_filling, S+1), normal_atom(aux__rightFillDurAtStep(S), lt, MinDur), normal_atom(aux__rightFillDurAtStep(S+1), gt, MinDur), minDuration(MinDur), step(S), step(S+1).
-%% happensAtStep(aux__no_switch_left_dur, S) :- step(S), holdsAtStep(right_filling, S), normal_atom(aux__rightFillDurAtStep(S), eq, MinDur), minDuration(MinDur), not happensAtStep(switch_left, S).
-%% 
-%% :- holdsAtStep(left_filling, S+1), normal_atom(aux__leftFillDurAtStep(S), lt, MinDur), normal_atom(aux__leftFillDurAtStep(S+1), gt, MinDur), minDuration(MinDur), step(S), step(S+1).
-%% happensAtStep(aux__no_switch_right_dur, S) :- step(S), holdsAtStep(left_filling, S), normal_atom(aux__leftFillDurAtStep(S), eq, MinDur), minDuration(MinDur), not happensAtStep(switch_right, S).
+% TODO this needs to be discussed
+% TODO this works but requires steps to be incremented by 2 (model at N, no model at N+1, model at N+2)
+% trying to trigger an event MinDur time after switch_left/right happens
+{happensAtStep(aux__endMinDurRightFilling(S1), S2) : step(S2), S2 > S1} = 1 :- happensAtStep(switch_right, S1), S1 < maxstep.
+{happensAtStep(aux__endMinDurRightFilling(S1), S2) : step(S2), S2 > S1} = 1 :- happensAtStep(start(right), S1), S1 < maxstep.
+&sum{timeAtStep(S1) + MinDur} = timeAtStep(S2) :- minDuration(MinDur), happensAtStep(switch_right, S1), S1 < maxstep, happensAtStep(aux__endMinDurRightFilling(S1), S2).
+&sum{timeAtStep(S1) + MinDur} = timeAtStep(S2) :- minDuration(MinDur), happensAtStep(start(right), S1), S1 < maxstep, happensAtStep(aux__endMinDurRightFilling(S1), S2).
+
+{happensAtStep(aux__endMinDurLeftFilling(S1), S2) : step(S2), S2 > S1} = 1 :- happensAtStep(switch_left, S1), S1 < maxstep.
+{happensAtStep(aux__endMinDurLeftFilling(S1), S2) : step(S2), S2 > S1} = 1 :- happensAtStep(start(left), S1), S1 < maxstep.
+&sum{timeAtStep(S1) + MinDur} = timeAtStep(S2) :- minDuration(MinDur), happensAtStep(switch_left, S1), S1 < maxstep, happensAtStep(aux__endMinDurLeftFilling(S1), S2).
+&sum{timeAtStep(S1) + MinDur} = timeAtStep(S2) :- minDuration(MinDur), happensAtStep(start(left), S1), S1 < maxstep, happensAtStep(aux__endMinDurLeftFilling(S1), S2).
+
 
 % ----- narrative & queries  -----
 

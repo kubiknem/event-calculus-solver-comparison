@@ -11,7 +11,6 @@ happens(drop(nathan,apple),10)
 holdsAt(falling(apple),(10,"< T =<",12))
 releasedAt_Func(height(apple),(10,"< T =<",12))
 holdsAt_Func(height(apple),4,(0,"< T =<",10))
-holdsAt_Func(height(apple),0,("T >",12))
 holdsAt_Func_Cont(height(apple),(4,"->",0),(10,"< T =<",12))
 SATISFIABLE
 
@@ -24,7 +23,7 @@ Command exited with non-zero status 30
 
   real      0:00.03
   real [s]  0.03
-  user [s]  0.00
+  user [s]  0.01
   sys  [s]  0.01
-  mem  [KB] 8704
+  mem  [KB] 8576
   avgm [KB] 0

@@ -1,0 +1,101 @@
+$ clingo-lpx --strict -n0 ../axioms/bec_steps-clingo_lpx.lp -c maxstep=13 ./model-fixed2.lp | ../utils/replace_assignments.sh | ../utils/make-readable.sh
+
+
+clingo-lpx version 1.3.0
+Reading from ../axioms/bec_steps-clingo_lpx.lp ...
+Solving...
+Answer: 1
+(Time: 0.223s)
+happens(aux__no_switch_left,157/8)
+happens(aux__no_switch_right,305/16)
+happens(aux__no_switch_right,329/16)
+happens(switch_left,25/2)
+happens(switch_left,145/8)
+happens(switch_left,161/8)
+happens(switch_right,65/4)
+happens(switch_right,153/8)
+happens(switch_right,169/8)
+happens(aux__endMinDurLeftFilling(3),27/2)
+happens(aux__endMinDurLeftFilling(7),153/8)
+happens(aux__endMinDurLeftFilling(11),169/8)
+happens(aux__endMinDurRightFilling(1),11)
+happens(aux__endMinDurRightFilling(5),69/4)
+happens(aux__endMinDurRightFilling(9),161/8)
+happens(start(right),10)
+holdsAt(left_filling,(25/2,"< T =<",27/2))
+holdsAt(left_filling,(27/2,"< T =<",65/4))
+holdsAt(left_filling,(145/8,"< T =<",305/16))
+holdsAt(left_filling,(305/16,"< T =<",153/8))
+holdsAt(left_filling,(161/8,"< T =<",329/16))
+holdsAt(left_filling,(329/16,"< T =<",169/8))
+holdsAt(right_filling,(10,"< T =<",11))
+holdsAt(right_filling,(11,"< T =<",25/2))
+holdsAt(right_filling,(65/4,"< T =<",69/4))
+holdsAt(right_filling,(69/4,"< T =<",145/8))
+holdsAt(right_filling,(153/8,"< T =<",157/8))
+holdsAt(right_filling,(157/8,"< T =<",161/8))
+releasedAt_Func(water_left,(10,"< T =<",11))
+releasedAt_Func(water_left,(11,"< T =<",25/2))
+releasedAt_Func(water_left,(25/2,"< T =<",27/2))
+releasedAt_Func(water_left,(27/2,"< T =<",65/4))
+releasedAt_Func(water_left,(65/4,"< T =<",69/4))
+releasedAt_Func(water_left,(69/4,"< T =<",145/8))
+releasedAt_Func(water_left,(145/8,"< T =<",305/16))
+releasedAt_Func(water_left,(305/16,"< T =<",153/8))
+releasedAt_Func(water_left,(153/8,"< T =<",157/8))
+releasedAt_Func(water_left,(157/8,"< T =<",161/8))
+releasedAt_Func(water_left,(161/8,"< T =<",329/16))
+releasedAt_Func(water_left,(329/16,"< T =<",169/8))
+releasedAt_Func(water_right,(10,"< T =<",11))
+releasedAt_Func(water_right,(11,"< T =<",25/2))
+releasedAt_Func(water_right,(25/2,"< T =<",27/2))
+releasedAt_Func(water_right,(27/2,"< T =<",65/4))
+releasedAt_Func(water_right,(65/4,"< T =<",69/4))
+releasedAt_Func(water_right,(69/4,"< T =<",145/8))
+releasedAt_Func(water_right,(145/8,"< T =<",305/16))
+releasedAt_Func(water_right,(305/16,"< T =<",153/8))
+releasedAt_Func(water_right,(153/8,"< T =<",157/8))
+releasedAt_Func(water_right,(157/8,"< T =<",161/8))
+releasedAt_Func(water_right,(161/8,"< T =<",329/16))
+releasedAt_Func(water_right,(329/16,"< T =<",169/8))
+holdsAt_Func(water_left,100,(0,"< T =<",10))
+holdsAt_Func(water_right,100,(0,"< T =<",10))
+holdsAt_Func_Cont(water_left,(100,"->",80),(10,"< T =<",11))
+holdsAt_Func_Cont(water_left,(80,"->",50),(11,"< T =<",25/2))
+holdsAt_Func_Cont(water_left,(50,"->",60),(25/2,"< T =<",27/2))
+holdsAt_Func_Cont(water_left,(60,"->",175/2),(27/2,"< T =<",65/4))
+holdsAt_Func_Cont(water_left,(175/2,"->",135/2),(65/4,"< T =<",69/4))
+holdsAt_Func_Cont(water_left,(135/2,"->",50),(69/4,"< T =<",145/8))
+holdsAt_Func_Cont(water_left,(50,"->",475/8),(145/8,"< T =<",305/16))
+holdsAt_Func_Cont(water_left,(475/8,"->",60),(305/16,"< T =<",153/8))
+holdsAt_Func_Cont(water_left,(60,"->",50),(153/8,"< T =<",157/8))
+holdsAt_Func_Cont(water_left,(50,"->",40),(157/8,"< T =<",161/8))
+holdsAt_Func_Cont(water_left,(40,"->",355/8),(161/8,"< T =<",329/16))
+holdsAt_Func_Cont(water_left,(355/8,"->",50),(329/16,"< T =<",169/8))
+holdsAt_Func_Cont(water_right,(100,"->",110),(10,"< T =<",11))
+holdsAt_Func_Cont(water_right,(110,"->",125),(11,"< T =<",25/2))
+holdsAt_Func_Cont(water_right,(125,"->",105),(25/2,"< T =<",27/2))
+holdsAt_Func_Cont(water_right,(105,"->",50),(27/2,"< T =<",65/4))
+holdsAt_Func_Cont(water_right,(50,"->",60),(65/4,"< T =<",69/4))
+holdsAt_Func_Cont(water_right,(60,"->",275/4),(69/4,"< T =<",145/8))
+holdsAt_Func_Cont(water_right,(275/4,"->",50),(145/8,"< T =<",305/16))
+holdsAt_Func_Cont(water_right,(50,"->",195/4),(305/16,"< T =<",153/8))
+holdsAt_Func_Cont(water_right,(195/4,"->",215/4),(153/8,"< T =<",157/8))
+holdsAt_Func_Cont(water_right,(215/4,"->",235/4),(157/8,"< T =<",161/8))
+holdsAt_Func_Cont(water_right,(235/4,"->",50),(161/8,"< T =<",329/16))
+holdsAt_Func_Cont(water_right,(50,"->",155/4),(329/16,"< T =<",169/8))
+SATISFIABLE
+
+Models       : 1
+Calls        : 1
+Time         : 0.224s (Solving: 0.15s 1st Model: 0.15s Unsat: 0.00s)
+CPU Time     : 0.209s
+
+Command exited with non-zero status 30
+
+  real      0:00.23
+  real [s]  0.23
+  user [s]  0.20
+  sys  [s]  0.01
+  mem  [KB] 11776
+  avgm [KB] 0

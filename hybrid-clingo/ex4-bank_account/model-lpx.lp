@@ -53,8 +53,7 @@ initiatesAtStep_Func(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balanc
     holdsAtStep_Func(balance(A2), valueAtStep(balance(A2), S), S),
     holdsAtStep_Func(balance(A1), valueAtStep(balance(A1), S), S),
     normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
-    account(A2),
-    step(S).
+    account(A2), step(S), step(S+1).
 
 %*
 %% terminate old balance of A2
@@ -71,8 +70,7 @@ terminatesAtStep_Func(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balan
     holdsAtStep_Func(balance(A2), valueAtStep(balance(A2), S), S),
     holdsAtStep_Func(balance(A1), valueAtStep(balance(A1), S), S),
     normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
-    account(A2),
-    step(S).
+    account(A2), step(S).
 
 
 %*
@@ -92,8 +90,7 @@ initiatesAtStep_Func(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balanc
     holdsAtStep_Func(balance(A2), valueAtStep(balance(A2), S), S),
     holdsAtStep_Func(balance(A1), valueAtStep(balance(A1), S), S),
     normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
-    account(A2),
-    step(S).
+    account(A2), step(S), step(S+1).
 
 %*
 %% terminate old balance of A1
@@ -110,10 +107,8 @@ terminatesAtStep_Func(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balan
     holdsAtStep_Func(balance(A2), valueAtStep(balance(A2), S), S),
     holdsAtStep_Func(balance(A1), valueAtStep(balance(A1), S), S),
     normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
-    account(A2),
-    step(S).
+    account(A2), step(S).
 
-% TODO this IS needed
 comparison(valueAtStep(balance(A1),S), TransM12) :- 
     TransM12 > 0,
     happensAtStep(transfer(A1, A2, TransM12), S),
@@ -129,15 +124,14 @@ happensAtStep(monthlyReset(A), S) :- normal_atom(timeAtStep(S), eq, T), endOfMon
 
 terminatesAtStep(monthlyReset(A), serviceFeeCharged(A), S):- account(A), step(S).
 
-% TODO the below seems to not quite work as intended
-%  - still allows answers without the event and with one  of these steps: timeAtStep(1)=10+-1*e ; timeAtStep(2)=10+e ; timeAtStep(3)=20+e
+% TODO this is not needed for this particular example, but is needed in general
 % restrict that there must exist a state with its timeAtStep exactly equal to endOfMonth
 % (by saying that there cannot be two subsequent states in which one is lt/gt and the next gt/lt, i.e. there is no state with exactly eq)
-% :- normal_atom(timeAtStep(S), gt, T), normal_atom(timeAtStep(S+1), lt, T), endOfMonth(T), step(S).
-% :- normal_atom(timeAtStep(S), lt, T), normal_atom(timeAtStep(S+1), gt, T), endOfMonth(T), step(S).
-
-comparison(timeAtStep(S), T) :- endOfMonth(T), step(S).
-% comparison(timeAtStep(S-1), T) :- endOfMonth(T), step(S).
+trigger_time(T) :- endOfMonth(T).
+    % :- normal_atom(timeAtStep(S), lt, T), normal_atom(timeAtStep(S+1), gt, T), endOfMonth(T), step(S), step(S+1).
+    % :- normal_atom(timeAtStep(S), gt, T), normal_atom(timeAtStep(S+1), lt, T), endOfMonth(T), step(S), step(S+1).
+    %
+    % comparison(timeAtStep(S), T) :- endOfMonth(T), step(S).
 
 
 % if a service fee is charged, then the balance of the account is decreased
@@ -151,7 +145,7 @@ comparison(timeAtStep(S), T) :- endOfMonth(T), step(S).
 &sum{ valueAtStep(balance(A),S); -valueAtStep(serviceFee(A),S) } = valueAtStep(balance(A),S+1) :-
     initiatedByAtStep_Func(chargeServiceFee(A), balance(A), valueAtStep(balance(A),S+1), S).
 initiatesAtStep_Func(chargeServiceFee(A), balance(A), valueAtStep(balance(A), S+1), S) :-
-    step(S), S > 0, account(A).
+    step(S), step(S+1), account(A).
 
 %*
 %% terminate old balance
@@ -160,7 +154,7 @@ initiatesAtStep_Func(chargeServiceFee(A), balance(A), valueAtStep(balance(A), S+
 %    account(A), time(T), money(OldM).
 *%
 terminatesAtStep_Func(chargeServiceFee(A), balance(A), valueAtStep(balance(A), S), S) :-
-    step(S), S > 0, account(A).
+    step(S), account(A).
 
 
 %-------------------------------------------------------------------------------
@@ -180,6 +174,8 @@ terminatesAtStep_Func(chargeServiceFee(A), balance(A), valueAtStep(balance(A), S
 %M1=M2 :- holdsAt(serviceFee(A, M1), T), holdsAt(serviceFee(A, M2), T),
 %    account(A), time(T), money(M1), money(M2).
 *%
+% TODO these state constraints are not needed since lpx only allows one value at a time for functional fluents
+
 
 %-------------------------------------------------------------------------------
 % triggered events
@@ -195,28 +191,26 @@ terminatesAtStep_Func(chargeServiceFee(A), balance(A), valueAtStep(balance(A), S
 %    account(A), time(T), money(AccM), money(MinM).
 *%
 
-%// happensAtStep(chargeServiceFee(account1), 3).
-%// happens(chargeServiceFee(account1), 21).
 happensAtStep(chargeServiceFee(A), S) :-
     % &sum{ (balance(A),S-1) } < (minimumBalance(A),S-1), 
     holdsAtStep_Func(balance(A), valueAtStep(balance(A),S), S),
     holdsAtStep_Func(minimumBalance(A), valueAtStep(minimumBalance(A),S), S),
     normal_atom(valueAtStep(balance(A),S), lt, valueAtStep(minimumBalance(A),S)), 
     not holdsAtStep(serviceFeeCharged(A), S),
-    account(A), step(S), S > 0.
+    account(A), step(S).
     
 comparison(valueAtStep(balance(A),S), valueAtStep(minimumBalance(A),S)) :- 
     account(A), step(S).
 
 % time epsilon to trigger chargeServiceFee(A)
+% TODO what if some other event happened in between S and S+1? --- probably need to ensure that epsilon is "small enough"?
 epsilon("1.1"). % valid with clingo-lpx
 &sum{ timeAtStep(S+1); -timeAtStep(S) } = E :- epsilon(E),
     % &sum{ (balance(A),S-1) } < (minimumBalance(A),S-1), 
     normal_atom(valueAtStep(balance(A),S+1), lt, valueAtStep(minimumBalance(A),S+1)), 
     not holdsAtStep(serviceFeeCharged(A), S+1),
     happensAtStep(chargeServiceFee(A), S+1),
-    account(A), step(S), S > 0,
-    S < maxstep. % TODO not sure why this is needed (otherwise there will be one more timeAtStep in the answer)
+    account(A), step(S), step(S+1).
 
 
 %-------------------------------------------------------------------------------

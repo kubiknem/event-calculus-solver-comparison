@@ -5,7 +5,7 @@ clingo-lpx version 1.3.0
 Reading from ../axioms/bec_steps-clingo_lpx.lp ...
 Solving...
 Answer: 1
-(Time: 1.006s)
+(Time: 2.307s)
 happens(bounce_up,20)
 happens(bounce_up,25)
 happens(bounce_up,105/4)
@@ -131,7 +131,6 @@ holdsAt(falling,(58640620148045/2199023255552,"< T =<",29320310074025/1099511627
 holdsAt(falling,(234562480592205/8796093022208,"< T =<",117281240296105/4398046511104))
 holdsAt(falling,(938249922368845/35184372088832,"< T =<",469124961184425/17592186044416))
 holdsAt(falling,(3752999689475405/140737488355328,"< T =<",1876499844737705/70368744177664))
-holdsAt(rising,("T >",1876499844737705/70368744177664))
 holdsAt(rising,(20,"< T =<",45/2))
 holdsAt(rising,(25,"< T =<",205/8))
 holdsAt(rising,(105/4,"< T =<",845/32))
@@ -156,7 +155,6 @@ holdsAt(rising,(7330077518505/274877906944,"< T =<",58640620148045/2199023255552
 holdsAt(rising,(29320310074025/1099511627776,"< T =<",234562480592205/8796093022208))
 holdsAt(rising,(117281240296105/4398046511104,"< T =<",938249922368845/35184372088832))
 holdsAt(rising,(469124961184425/17592186044416,"< T =<",3752999689475405/140737488355328))
-holdsAt(constant_fall_rate(1),("T >",1876499844737705/70368744177664))
 holdsAt(constant_fall_rate(1),(0,"< T =<",10))
 holdsAt(constant_fall_rate(1),(10,"< T =<",20))
 holdsAt(constant_fall_rate(1),(20,"< T =<",45/2))
@@ -207,7 +205,6 @@ holdsAt(constant_fall_rate(1),(117281240296105/4398046511104,"< T =<",9382499223
 holdsAt(constant_fall_rate(1),(938249922368845/35184372088832,"< T =<",469124961184425/17592186044416))
 holdsAt(constant_fall_rate(1),(469124961184425/17592186044416,"< T =<",3752999689475405/140737488355328))
 holdsAt(constant_fall_rate(1),(3752999689475405/140737488355328,"< T =<",1876499844737705/70368744177664))
-holdsAt(constant_velocity_loss_bounce(1),("T >",1876499844737705/70368744177664))
 holdsAt(constant_velocity_loss_bounce(1),(0,"< T =<",10))
 holdsAt(constant_velocity_loss_bounce(1),(10,"< T =<",20))
 holdsAt(constant_velocity_loss_bounce(1),(20,"< T =<",45/2))
@@ -258,7 +255,6 @@ holdsAt(constant_velocity_loss_bounce(1),(117281240296105/4398046511104,"< T =<"
 holdsAt(constant_velocity_loss_bounce(1),(938249922368845/35184372088832,"< T =<",469124961184425/17592186044416))
 holdsAt(constant_velocity_loss_bounce(1),(469124961184425/17592186044416,"< T =<",3752999689475405/140737488355328))
 holdsAt(constant_velocity_loss_bounce(1),(3752999689475405/140737488355328,"< T =<",1876499844737705/70368744177664))
-holdsAt(velocity_loss_portion("0.75"),("T >",1876499844737705/70368744177664))
 holdsAt(velocity_loss_portion("0.75"),(0,"< T =<",10))
 holdsAt(velocity_loss_portion("0.75"),(10,"< T =<",20))
 holdsAt(velocity_loss_portion("0.75"),(20,"< T =<",45/2))
@@ -309,7 +305,6 @@ holdsAt(velocity_loss_portion("0.75"),(117281240296105/4398046511104,"< T =<",93
 holdsAt(velocity_loss_portion("0.75"),(938249922368845/35184372088832,"< T =<",469124961184425/17592186044416))
 holdsAt(velocity_loss_portion("0.75"),(469124961184425/17592186044416,"< T =<",3752999689475405/140737488355328))
 holdsAt(velocity_loss_portion("0.75"),(3752999689475405/140737488355328,"< T =<",1876499844737705/70368744177664))
-releasedAt_Func(height,("T >",1876499844737705/70368744177664))
 releasedAt_Func(height,(10,"< T =<",20))
 releasedAt_Func(height,(20,"< T =<",45/2))
 releasedAt_Func(height,(45/2,"< T =<",25))
@@ -359,7 +354,6 @@ releasedAt_Func(height,(117281240296105/4398046511104,"< T =<",938249922368845/3
 releasedAt_Func(height,(938249922368845/35184372088832,"< T =<",469124961184425/17592186044416))
 releasedAt_Func(height,(469124961184425/17592186044416,"< T =<",3752999689475405/140737488355328))
 releasedAt_Func(height,(3752999689475405/140737488355328,"< T =<",1876499844737705/70368744177664))
-releasedAt_Func(velocity,("T >",1876499844737705/70368744177664))
 releasedAt_Func(velocity,(10,"< T =<",20))
 releasedAt_Func(velocity,(20,"< T =<",45/2))
 releasedAt_Func(velocity,(45/2,"< T =<",25))
@@ -411,7 +405,6 @@ releasedAt_Func(velocity,(469124961184425/17592186044416,"< T =<",37529996894754
 releasedAt_Func(velocity,(3752999689475405/140737488355328,"< T =<",1876499844737705/70368744177664))
 holdsAt_Func(height,10,(0,"< T =<",10))
 holdsAt_Func(velocity,0,(0,"< T =<",10))
-holdsAt_Func_Cont(height,(0,"-> X"),("T >",1876499844737705/70368744177664))
 holdsAt_Func_Cont(height,(10,"->",0),(10,"< T =<",20))
 holdsAt_Func_Cont(height,(0,"->",5/2),(20,"< T =<",45/2))
 holdsAt_Func_Cont(height,(5/2,"->",0),(45/2,"< T =<",25))
@@ -461,7 +454,6 @@ holdsAt_Func_Cont(height,(0,"->",5/35184372088832),(117281240296105/439804651110
 holdsAt_Func_Cont(height,(5/35184372088832,"->",0),(938249922368845/35184372088832,"< T =<",469124961184425/17592186044416))
 holdsAt_Func_Cont(height,(0,"->",5/140737488355328),(469124961184425/17592186044416,"< T =<",3752999689475405/140737488355328))
 holdsAt_Func_Cont(height,(5/140737488355328,"->",0),(3752999689475405/140737488355328,"< T =<",1876499844737705/70368744177664))
-holdsAt_Func_Cont(velocity,(0,"-> X"),("T >",1876499844737705/70368744177664))
 holdsAt_Func_Cont(velocity,(0,"->",10),(10,"< T =<",20))
 holdsAt_Func_Cont(velocity,(10,"->",0),(20,"< T =<",45/2))
 holdsAt_Func_Cont(velocity,(0,"->",5/2),(45/2,"< T =<",25))
@@ -515,14 +507,14 @@ SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 1.008s (Solving: 0.73s 1st Model: 0.73s Unsat: 0.00s)
-CPU Time     : 0.988s
+Time         : 2.311s (Solving: 1.28s 1st Model: 1.28s Unsat: 0.00s)
+CPU Time     : 2.290s
 
 Command exited with non-zero status 30
 
-  real      0:01.03
-  real [s]  1.03
-  user [s]  0.97
-  sys  [s]  0.03
-  mem  [KB] 25792
+  real      0:02.35
+  real [s]  2.35
+  user [s]  2.22
+  sys  [s]  0.09
+  mem  [KB] 65200
   avgm [KB] 0
