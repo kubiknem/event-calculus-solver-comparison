@@ -1,4 +1,7 @@
 % Robot walking and moving a box on one-dimensional grid
+% In this extended version i try to let abduction find me the best
+% order of moves for the robot to take to transport box from starting position
+% to goal position. TODO: try #minimaze (and other optimisations)
 
 %-------------------------------------------------------------------------------
 % sorts
@@ -13,8 +16,8 @@ object(box).
 gridLen(grid_param).
 
 % robot and box has position, robot can hold the box
-fluentF(position(A)) :- agent(A).
-fluentF(position(O)) :- object(O).
+fluent_Func(position(A)) :- agent(A).
+fluent_Func(position(O)) :- object(O).
 fluent(holding(A, O)) :- agent(A), object(O).
 
 % event(move_left(A, MoveLen)) :- agent(A).
@@ -32,17 +35,13 @@ event(letgooff(A, O)) :- agent(A), object(O).
 % robot move_right
 
 &sum{ valueAtStep(position(A),S); MoveLen } = valueAtStep(position(A),S+1) :- 
+    initiatedByAtStep_Func(move_right(A, MoveLen), position(A), valueAtStep(position(A), S+1), S).
+initiatesAtStep_Func(move_right(A, MoveLen), position(A), valueAtStep(position(A), S+1), S) :- 
     MoveLen > 0,
+    happensAtStep(move_right(A, MoveLen), S),
+    holdsAtStep_Func(position(A), valueAtStep(position(A), S), S),
     normal_atom(valueAtStep(position(A),S), leq, Boundary-MoveLen),
     gridLen(Boundary), % escaping grid forbidden
-    happensAtStep(move_right(A, MoveLen), S),
-    step(S), agent(A).
-
-defined(valueAtStep(position(A),S+1)) :- 
-    MoveLen > 0,
-    normal_atom(valueAtStep(position(A),S), leq, Boundary-MoveLen),
-    gridLen(Boundary), % escaping grid forbidden
-    happensAtStep(move_right(A, MoveLen), S),
     step(S), agent(A).
 
 comparison(valueAtStep(position(A),S), Boundary-MoveLen) :- 
@@ -51,24 +50,44 @@ comparison(valueAtStep(position(A),S), Boundary-MoveLen) :-
     gridLen(Boundary),
     step(S), agent(A).
 
+terminatesAtStep_Func(move_right(A, MoveLen), position(A), valueAtStep(position(A), S), S) :- 
+    MoveLen > 0,
+    happensAtStep(move_right(A, MoveLen), S),
+    holdsAtStep_Func(position(A), valueAtStep(position(A), S), S),
+    normal_atom(valueAtStep(position(A),S), leq, Boundary-MoveLen),
+    gridLen(Boundary), % escaping grid forbidden
+    step(S), agent(A).
+
 % robot move_left
 
 &sum{ valueAtStep(position(A),S); -MoveLen } = valueAtStep(position(A),S+1) :- 
+    initiatedByAtStep_Func(move_left(A, MoveLen), position(A), valueAtStep(position(A), S+1), S).
+initiatesAtStep_Func(move_left(A, MoveLen), position(A), valueAtStep(position(A), S+1), S) :- 
     MoveLen > 0,
-    normal_atom(valueAtStep(position(A),S), geq, MoveLen),
     happensAtStep(move_left(A, MoveLen), S),
+    holdsAtStep_Func(position(A), valueAtStep(position(A), S), S),
+    normal_atom(valueAtStep(position(A),S), geq, MoveLen),  % escaping grid forbidden
     step(S), agent(A).
 
-defined(valueAtStep(position(A),S+1)) :- 
-    MoveLen > 0,
-    normal_atom(valueAtStep(position(A),S), geq, MoveLen),
-    happensAtStep(move_left(A, MoveLen), S),
-    step(S), agent(A).
+% defined(valueAtStep(position(A),S+1)) :- 
+%     MoveLen > 0,
+%     normal_atom(valueAtStep(position(A),S), geq, MoveLen),
+%     happensAtStep(move_left(A, MoveLen), S),
+%     step(S), agent(A).
 
 comparison(valueAtStep(position(A),S), MoveLen) :- 
     MoveLen > 0,
     happensAtStep(move_left(A, MoveLen), S),
     step(S), agent(A).
+
+terminatesAtStep_Func(move_left(A, MoveLen), position(A), valueAtStep(position(A), S), S) :- 
+    MoveLen > 0,
+    happensAtStep(move_left(A, MoveLen), S),
+    holdsAtStep_Func(position(A), valueAtStep(position(A), S), S),
+    normal_atom(valueAtStep(position(A),S), geq, MoveLen),  % escaping grid forbidden
+    step(S), agent(A).
+
+%% TODO: add energy and speed...
 
 % robot can hold a box
 
@@ -78,19 +97,30 @@ terminatesAtStep(letgooff(A, O), holding(A, O), S) :- agent(A), object(O), step(
 
 % implementation of box moving with the robot
 
-agentChangePosition(A, S) :- agent(A), happensAtStep(move_left(A, MoveLen), S).
-agentChangePosition(A, S) :- agent(A), happensAtStep(move_right(A, MoveLen), S).
+happensAtStep(agentChangePosition(A, S), S) :- agent(A), happensAtStep(move_left(A, MoveLen), S).
+happensAtStep(agentChangePosition(A, S), S) :- agent(A), happensAtStep(move_right(A, MoveLen), S).
+
+% agentChangePosition(A, S), S :- agent(A), happensAtStep(move_left(A, MoveLen), S).
+% agentChangePosition(A, S), S :- agent(A), happensAtStep(move_right(A, MoveLen), S).
 
 &sum{ valueAtStep(position(O), S+1) } = valueAtStep(position(A),S+1) :-
-    holdsAtStep(holding(A, O), S),
-    agentChangePosition(A, S),
-    agent(A),step(S), object(O).
+    initiatedByAtStep_Func(agentChangePosition(A, S), position(O), valueAtStep(position(O), S+1), S).
 
-defined(valueAtStep(position(O), S+1)) :-
+initiatesAtStep_Func(agentChangePosition(A, S), position(O), valueAtStep(position(O), S+1), S) :-
     holdsAtStep(holding(A, O), S),
-    agentChangePosition(A, S),
-    agent(A),step(S), object(O).
+    holdsAtStep_Func(position(O), valueAtStep(position(O), S), S),
+    agent(A), step(S), object(O).
 
+terminatesAtStep_Func(agentChangePosition(A, S), position(O), valueAtStep(position(O), S), S) :-
+    holdsAtStep(holding(A, O), S),
+    holdsAtStep_Func(position(O), valueAtStep(position(O), S), S),
+    agent(A), step(S), object(O).
+
+
+% defined(valueAtStep(position(O), S+1)) :-
+%     holdsAtStep(holding(A, O), S),
+%     agentChangePosition(A, S),
+%     agent(A),step(S), object(O).
 
 
 %-------------------------------------------------------------------------------
@@ -111,8 +141,9 @@ comparison(valueAtStep(position(O), S), valueAtStep(position(A), S)) :-
 % observations
 %-------------------------------------------------------------------------------
      
-initiallyF(position(my_robot), 6).
-initiallyF(position(box), 10).
+initiallyP_Func(position(my_robot), 6).
+initiallyP_Func(position(box), 10).
+initiallyN(holding(A, O)) :- agent(A), object(O).
 
 %-------------------------------------------------------------------------------
 % narrative 
@@ -122,10 +153,36 @@ happens(move_left(my_robot, 2), 10).
 happens(move_right(my_robot, 6), 20).
 happens(pickUp(my_robot, box), 30).
 happens(move_right(my_robot, 4), 40).
+happens(move_right(my_robot, 4), 50).
+happens(letgooff(my_robot, box), 60).
+happens(move_left(my_robot, 5), 70).
+happens(move_left(my_robot, 1), 80).
+
+% debug_prints.
+
+% moveLen(0..grid_param).
+% happens(move_left(my_robot, MoveLen), 10) :- moveLen(MoveLen).
+
+% happens(move_right(my_robot, MoveLen), 20) :- moveLen(MoveLen).
+% happens(pickUp(my_robot, box), 30) :- moveLen(MoveLen).
+% happens(move_right(my_robot, MoveLen), 40) :- moveLen(MoveLen).
+% happens(move_left(my_robot, MoveLen), 50) :- moveLen(MoveLen).
+
+% #const goal=33.
+% :- step(maxstep), step(S), object(O), not normal_atom(valueAtStep(position(O), S), eq, 0).
+
+% comparison(valueAtStep(position(O), S), 0) :-
+%     object(O), step(S).
 % happens(move_left(my_robot, 1), 3).
 % initiallyN(F) :- not initiallyP(F), fluent(F).
 
-% --> conclude that
-%   the robot and the box will be at position 14 at time >40
+% --> conclude all possible ways to transfer the box from START to GOAl
+%   then try to optimize it, (currently not working)
+%   TODO: finish script for multiple answer sets
+%   TODO: add more functionality: energy, speed, acceleration, 2D grid...
 % run-by:
-% clingo-lpx --strict -n0 ./model-lpx.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=4 | ../utils/replace_assignments.sh | ../utils/make-readable.sh
+% clingo-lpx --strict -n1 ./model-lpx-extended.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=5
+% or (with make-readable scripts)
+% clingo-lpx --strict -n1 ./model-lpx-extended.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=5 | ../utils/replace_assignments.sh | ../utils/make-readable.sh
+
+% pohrat si s show
