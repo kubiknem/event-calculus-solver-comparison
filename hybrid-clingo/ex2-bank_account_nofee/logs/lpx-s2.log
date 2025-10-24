@@ -5,27 +5,25 @@ clingo-lpx version 1.3.0
 Reading from ./model-lpx.lp ...
 Solving...
 Answer: 1
-(Time: 0.063s)
+(Time: 0.027s)
 happens(transfer(account1,account2,2),10)
 happens(transfer(account1,account2,4),20)
 holdsAt_Func(balance(account1),10,(0,"< T =<",10))
 holdsAt_Func(balance(account1),8,(10,"< T =<",20))
-holdsAt_Func(balance(account1),4,("T >",20))
 holdsAt_Func(balance(account2),10,(0,"< T =<",10))
 holdsAt_Func(balance(account2),12,(10,"< T =<",20))
-holdsAt_Func(balance(account2),16,("T >",20))
 SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.063s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.028s
+Time         : 0.027s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.015s
 
 Command exited with non-zero status 30
 
-  real      0:00.07
-  real [s]  0.07
-  user [s]  0.02
+  real      0:00.03
+  real [s]  0.03
+  user [s]  0.01
   sys  [s]  0.00
-  mem  [KB] 8832
+  mem  [KB] 8960
   avgm [KB] 0

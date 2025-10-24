@@ -106,7 +106,6 @@ terminatesAtStep_Func(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balan
     account(A2),
     step(S).
 
-% TODO this IS needed
 comparison(valueAtStep(balance(A1),S), TransM12) :- 
     TransM12 > 0,
     happensAtStep(transfer(A1, A2, TransM12), S),

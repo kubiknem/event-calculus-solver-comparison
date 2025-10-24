@@ -11,14 +11,14 @@ There are examples for Clingo and s(CASP) including execution logs for different
 
 
 ## TODO / QUESTIONS for clingo-lpx
-- Still need to add trajectories
+- ? Querying values of fluents at an arbitrary timepoint is cumbersome. Currently hacked by introducing check events. Any better way to do this?
 - ? Any way to map interpreted values into the answer using #show? (Place things from "Assignment:" directly into "Answer:" in the output)
 - ? Any way to say steps with `[+-*]e` are not allowed? -- might help with the triggered events problem
 
 ## TODO
-- add more examples (rest of ICLP25 paper and any other ones)
 - comparison between hybrid-clingo and scasp (maybe examples with growing number of events/steps?)
 - ? better benchmarking (currently just very basic one run, no averaging, no timeouts, ...)
+- add even more examples?
 
 
 ## Notes about the examples
@@ -36,3 +36,17 @@ There are examples for Clingo and s(CASP) including execution logs for different
    - Requires special techniques or remodeling to avoid zeno-like behavior (infinitely fast response / event occurrence infinitely close to a non-inclusive bound) in continuous time.
 5) ex5-light_toggle
    - Very similar to ex1. Uses context dependent event effects via initiates/terminates with a body.
+6) e6-adder
+   - Testing functional fluents. 
+7) ex7-pulsing_light 
+   - Circular trajectories
+8) ex8-bouncing_ball
+   - Zeno behavior
+9) ex9-water_tanks
+   - Zeno behavior
+10) ex10-blinking_light
+   - Trivial zeno behavior (infinitely fast frequency)
+11) ex11-coin_flip
+   - Non-deterministic discrete fluent
+12) ex12-dice_roll
+   - Non-deterministic functional fluent

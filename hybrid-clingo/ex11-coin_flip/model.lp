@@ -43,5 +43,6 @@ initiallyN(F) :- not initiallyP(F), fluent(F).
 
 happens(toss,      10).
 happens(land,      20). % TODO could be triggered
+happens(check,     30). % just to see the value after
 
 % --> two models heads or tails

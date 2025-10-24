@@ -1,8 +1,8 @@
 
 % ----- domain model -----
 
-fluentF(water_left).
-fluentF(water_right).
+fluent_Func(water_left).
+fluent_Func(water_right).
 fluent(left_filling).
 fluent(right_filling).  % replaced left_draining
 
@@ -13,8 +13,8 @@ event(start(right)).
 
 initiatesAtStep(start(left), left_filling, S) :- step(S).
 initiatesAtStep(start(right), right_filling, S) :- step(S).
-releasesAtStepF(start(LR), water_left, valueAtStep(water_left, S+1), S) :- step(S), event(start(LR)).
-releasesAtStepF(start(LR), water_right, valueAtStep(water_right, S+1), S) :- step(S), event(start(LR)).
+releasesAtStep_Func(start(LR), water_left, valueAtStep(water_left, S+1), S) :- step(S), step(S+1), event(start(LR)).
+releasesAtStep_Func(start(LR), water_right, valueAtStep(water_right, S+1), S) :- step(S), step(S+1), event(start(LR)).
 
 initiatesAtStep(switch_left, left_filling, S) :- step(S).
 terminatesAtStep(switch_left, right_filling, S) :- step(S).
@@ -22,49 +22,49 @@ terminatesAtStep(switch_left, right_filling, S) :- step(S).
 terminatesAtStep(switch_right, left_filling, S) :- step(S).
 initiatesAtStep(switch_right, right_filling, S) :- step(S).
 
-trajectory(left_filling, S1, water_left, valueAtStep(water_left, S2), S2) :- step(S1), stepMax(S2).
+trajectory_Func(left_filling, S1, water_left, valueAtStep(water_left, S2), S2) :- step(S1), step(S2).
 &sum{ valueAtStep(water_left,S); -TotalFlow*timeAtStep(S); TotalFlow*timeAtStep(S+1) } = valueAtStep(water_left,S+1) :-
-    trajectoryAtStep(left_filling, _, water_left, valueAtStep(water_left,S+1), S+1),
+    trajectoryAtStep_Func(left_filling, _, water_left, valueAtStep(water_left,S+1), S+1),
     TotalFlow = 30 - 20, % in rate 30, out rate 20
-    step(S), S < maxstep.
+    step(S), step(S+1).
 
-trajectory(right_filling, S1, water_left, valueAtStep(water_left, S2), S2) :- step(S1), stepMax(S2).
+trajectory_Func(right_filling, S1, water_left, valueAtStep(water_left, S2), S2) :- step(S1), step(S2).
 &sum{ valueAtStep(water_left,S); TotalFlow*timeAtStep(S); -TotalFlow*timeAtStep(S+1) } = valueAtStep(water_left,S+1) :-
-    trajectoryAtStep(right_filling, _, water_left, valueAtStep(water_left,S+1), S+1),
+    trajectoryAtStep_Func(right_filling, _, water_left, valueAtStep(water_left,S+1), S+1),
     TotalFlow = 20, % out rate 20
-    step(S), S < maxstep.
+    step(S), step(S+1).
 
-trajectory(right_filling, S1, water_right, valueAtStep(water_right, S2), S2) :- step(S1), stepMax(S2).
+trajectory_Func(right_filling, S1, water_right, valueAtStep(water_right, S2), S2) :- step(S1), step(S2).
 &sum{ valueAtStep(water_right,S); -TotalFlow*timeAtStep(S); TotalFlow*timeAtStep(S+1) } = valueAtStep(water_right,S+1) :-
-    trajectoryAtStep(right_filling, _, water_right, valueAtStep(water_right,S+1), S+1),
+    trajectoryAtStep_Func(right_filling, _, water_right, valueAtStep(water_right,S+1), S+1),
     TotalFlow = 30 - 20, % in rate 30, out rate 20
-    step(S), S < maxstep.
+    step(S), step(S+1).
 
-trajectory(left_filling, S1, water_right, valueAtStep(water_right, S2), S2) :- step(S1), stepMax(S2).
+trajectory_Func(left_filling, S1, water_right, valueAtStep(water_right, S2), S2) :- step(S1), step(S2).
 &sum{ valueAtStep(water_right,S); TotalFlow*timeAtStep(S); -TotalFlow*timeAtStep(S+1) } = valueAtStep(water_right,S+1) :-
-    trajectoryAtStep(left_filling, _, water_right, valueAtStep(water_right,S+1), S+1),
+    trajectoryAtStep_Func(left_filling, _, water_right, valueAtStep(water_right,S+1), S+1),
     TotalFlow = 20, % out rate 20
-    step(S), S < maxstep.
+    step(S), step(S+1).
 
 happensAtStep(switch_left, S) :-
     holdsAtStep(right_filling, S),
     normal_atom(valueAtStep(water_left, S), leq, 50). % target level
-comparison(valueAtStep(water_left, S), 50) :- step(S).
+%comparison(valueAtStep(water_left, S), 50) :- step(S).
 
 happensAtStep(switch_right, S) :-
     holdsAtStep(left_filling, S),
     normal_atom(valueAtStep(water_right, S), leq, 50). % target level
-comparison(valueAtStep(water_right, S), 50) :- step(S).
+%comparison(valueAtStep(water_right, S), 50) :- step(S).
 
 % this is needed bc of the leq above
-:- normal_atom(valueAtStep(water_left, S), gt, 50), normal_atom(valueAtStep(water_left, S+1), lt, 50), step(S).
-:- normal_atom(valueAtStep(water_right, S), gt, 50), normal_atom(valueAtStep(water_right, S+1), lt, 50), step(S).
+trigger_value(water_left, 50).
+trigger_value(water_right, 50).
 
 
 % ----- narrative & queries  -----
 
-initiallyPF(water_left, 100).
-initiallyPF(water_right, 100).
+initiallyP_Func(water_left, 100).
+initiallyP_Func(water_right, 100).
 initiallyN(F) :- not initiallyP(F), fluent(F).
 
 happens(start(right),           10).

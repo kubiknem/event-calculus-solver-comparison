@@ -11,20 +11,19 @@ happens(drop(nathan,apple),10)
 holdsAt(falling(apple),(10,"< T =<",170))
 releasedAt_Func(height(apple),(10,"< T =<",170))
 holdsAt_Func(height(apple),320,(0,"< T =<",10))
-holdsAt_Func(height(apple),0,("T >",170))
 holdsAt_Func_Cont(height(apple),(320,"->",0),(10,"< T =<",170))
 SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.030s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.017s
+Time         : 0.029s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.014s
 
 Command exited with non-zero status 30
 
-  real      0:00.04
-  real [s]  0.04
+  real      0:00.03
+  real [s]  0.03
   user [s]  0.01
   sys  [s]  0.00
-  mem  [KB] 9088
+  mem  [KB] 8576
   avgm [KB] 0

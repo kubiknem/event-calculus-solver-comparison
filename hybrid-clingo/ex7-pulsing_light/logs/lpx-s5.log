@@ -5,7 +5,7 @@ clingo-lpx version 1.3.0
 Reading from ./model.lp ...
 Solving...
 Answer: 1
-(Time: 0.080s)
+(Time: 0.034s)
 happens(fade_in_end,20)
 happens(fade_in_end,40)
 happens(fade_out_end,30)
@@ -23,8 +23,6 @@ releasedAt_Func(brightness,(10,"< T =<",20))
 releasedAt_Func(brightness,(20,"< T =<",30))
 releasedAt_Func(brightness,(30,"< T =<",40))
 releasedAt_Func(brightness,(40,"< T =<",45))
-holdsAt_Func(brightness,0,(0,"< T =<",10))
-holdsAt_Func(brightness,0,("T >",45))
 holdsAt_Func_Cont(brightness,(0,"->",10),(10,"< T =<",20))
 holdsAt_Func_Cont(brightness,(10,"->",0),(20,"< T =<",30))
 holdsAt_Func_Cont(brightness,(0,"->",10),(30,"< T =<",40))
@@ -33,14 +31,14 @@ SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.080s (Solving: 0.01s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.045s
+Time         : 0.034s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.019s
 
 Command exited with non-zero status 30
 
-  real      0:00.09
-  real [s]  0.09
-  user [s]  0.03
-  sys  [s]  0.02
+  real      0:00.04
+  real [s]  0.04
+  user [s]  0.01
+  sys  [s]  0.00
   mem  [KB] 9344
   avgm [KB] 0

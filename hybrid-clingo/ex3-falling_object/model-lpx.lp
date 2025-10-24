@@ -35,7 +35,7 @@ fGravity(2).
 initiatesAtStep(drop(A,O), falling(O), S) :- agent(A), object(O), step(S).
 
 % [effect + CLoI]
-releasesAtStep_Func(drop(A,O), height(O), valueAtStep(height(O), S+1), S) :- agent(A), object(O), step(S).
+releasesAtStep_Func(drop(A,O), height(O), valueAtStep(height(O), S+1), S) :- agent(A), object(O), step(S), step(S+1).
 
 % [triggered event]
 % an object hits the ground when its falling and its height becomes zero
@@ -46,17 +46,17 @@ happensAtStep(hitGround(O), S) :-
     step(S).
 
 
-% TODO the below seems to not quite work as intended
-%  - still allows answers without the event and with one of these steps: timeAtStep(1)=10+-1*e ; timeAtStep(2)=20+-1/2*e
+% TODO this is not needed for this particular example, but is needed in general
 % capture when height(O) = 0
 % restrict that there must exist a state where height is exactly equal to zero
 % (by saying that there cannot be two subsequent states in which one is lt/gt and the next gt/lt, i.e. there is no state with exactly eq)
-%:- normal_atom(valueAtStep(height(O), S), gt, 0), normal_atom(valueAtStep(height(O), S+1), lt, 0), 
-%   step(S).
-%:- normal_atom(valueAtStep(height(O), S), lt, 0), normal_atom(valueAtStep(height(O), S+1), gt, 0), 
-%   step(S).
-    
-comparison(valueAtStep(height(O),S  ), 0) :- object(O), step(S). 
+trigger_value(height(O), 0) :- object(O).
+    % :- normal_atom(valueAtStep(height(O), S), gt, 0), normal_atom(valueAtStep(height(O), S+1), lt, 0), 
+    %    step(S), step(S+1).
+    % :- normal_atom(valueAtStep(height(O), S), lt, 0), normal_atom(valueAtStep(height(O), S+1), gt, 0), 
+    %    step(S), step(S+1).
+    % 
+    % comparison(valueAtStep(height(O),S  ), 0) :- object(O), step(S). 
 
 
 % [effect]
@@ -67,7 +67,9 @@ terminatesAtStep(hitGround(O), falling(O), S) :- object(O), step(S).
 % if an object hits the ground then its height will no longer be released from CLoI
 &sum{valueAtStep(height(O),S)} = valueAtStep(height(O),S+1) :-
     initiatedByAtStep_Func(hitGround(O), height(O), valueAtStep(height(O),S+1), S).
-initiatesAtStep_Func(hitGround(O), height(O), valueAtStep(height(O), S+1), S) :- step(S), object(O).
+&sum{valueAtStep(height(O),S)} = valueBetweenSteps(height(O),timeBetweenSteps(S, S+1)) :-
+    initiatedByAtStep_Func(hitGround(O), height(O), valueAtStep(height(O),S+1), S).
+initiatesAtStep_Func(hitGround(O), height(O), valueAtStep(height(O), S+1), S) :- step(S), step(S+1), object(O).
 
 
 
@@ -86,6 +88,7 @@ initiatesAtStep_Func(hitGround(O), height(O), valueAtStep(height(O), S+1), S) :-
 % an object only has one unique height at a time
 % H1 = H2 :- holdsAt(height(O,H1), T), holdsAt(height(O,H2), T),
 %     agent(A), object(O), fHeight(H1), fHeight(H2), time(T).
+% TODO not needed since clingo lpx only allows one functional value at a time
 
 % motion of an object from the moment it is dropped to the moment it hits the ground
 %*
@@ -96,9 +99,8 @@ initiatesAtStep_Func(hitGround(O), height(O), valueAtStep(height(O), S+1), S) :-
 *%
 &sum{ valueAtStep(height(O),S); G*timeAtStep(S); -G*timeAtStep(S+1) } = valueAtStep(height(O),S+1) :-
     trajectoryAtStep_Func(falling(O), _, height(O), valueAtStep(height(O),S+1), S+1),
-    fGravity(G), step(S),
-    S < maxstep.
-trajectory_Func(falling(O), S1, height(O), valueAtStep(height(O), S2), S2) :- object(O), step(S1), stepMax(S2).
+    fGravity(G), step(S), step(S+1).
+trajectory_Func(falling(O), S1, height(O), valueAtStep(height(O), S2), S2) :- object(O), step(S1), step(S2).
 
 
 %-------------------------------------------------------------------------------
@@ -116,7 +118,7 @@ happens(drop(nathan,apple), 10).                 % nathan drop the apple at time
 % --> conclude that the apple will hit the ground at time (initHeight/2) + 10
 
 
-% TODO not sure what these are for --- probably a way to workaround the event trigger?
+% TODO not sure what these were for --- probably a way to workaround the event trigger?
 %&sum{ valueAtStep(height(O),S) }  = 0 :- object(O), S=maxstep.
 % &sum{ (height(O),S) } != 0 :- object(O), S=0..maxstep-1. % comparison != is not allowed in clingo-lpx
 % comparison(valueAtStep(height(O),S), 0) :- object(O), S=0..maxstep-1.
