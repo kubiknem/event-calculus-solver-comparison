@@ -282,7 +282,8 @@ persistsToStep_Func(F, valueAtStep(F, S), S+1) :-
   step(S+1).
 trajectoryAtStep_Func(F1, S1, F2, valueAtStep(F2, S2), S2) :-
   S1 < S2,
-  happensInitiatesAtStep(F1, S1),
+  initiatesAtStep(E, F1, S1),
+  happensAtStep(E, S1),
   trajectory_Func(F1, S1, F2, valueAtStep(F2, S2), S2),
   not stoppedInSteps(S1, F1, S2),
   step(S2).

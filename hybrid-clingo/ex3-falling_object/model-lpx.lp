@@ -67,8 +67,6 @@ terminatesAtStep(hitGround(O), falling(O), S) :- object(O), step(S).
 % if an object hits the ground then its height will no longer be released from CLoI
 &sum{valueAtStep(height(O),S)} = valueAtStep(height(O),S+1) :-
     initiatedByAtStep_Func(hitGround(O), height(O), valueAtStep(height(O),S+1), S).
-&sum{valueAtStep(height(O),S)} = valueBetweenSteps(height(O),timeBetweenSteps(S, S+1)) :-
-    initiatedByAtStep_Func(hitGround(O), height(O), valueAtStep(height(O),S+1), S).
 initiatesAtStep_Func(hitGround(O), height(O), valueAtStep(height(O), S+1), S) :- step(S), step(S+1), object(O).
 
 
