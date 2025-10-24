@@ -17,9 +17,9 @@ account(account2).
 % fluent(balance(A, M)) :- account(A), money(M).
 % fluent(minimumBalance(A, M)) :- account(A), money(M).
 % fluent(serviceFee(A, M)) :- account(A), money(M).
-fluentF(         balance(A)) :- account(A).
-fluentF(  minimumBalance(A)) :- account(A).
-fluentF(      serviceFee(A)) :- account(A).
+fluent_Func(         balance(A)) :- account(A).
+fluent_Func(  minimumBalance(A)) :- account(A).
+fluent_Func(      serviceFee(A)) :- account(A).
 fluent(serviceFeeCharged(A)) :- account(A).
 
 event(transfer(A1, A2)) :- account(A1), account(A2).
@@ -44,6 +44,19 @@ event(monthlyReset(A)) :- account(A).
 %    TransM12 > 0,
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
+*%
+&sum{valueAtStep(balance(A2),S); TransM12} = valueAtStep(balance(A2),S+1) :-
+    initiatedByAtStep_Func(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balance(A2),S+1), S).
+initiatesAtStep_Func(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balance(A2), S+1), S) :-
+    TransM12 > 0,
+    % &sum{ (balance(A1),S-1) } >= TransM12, 
+    holdsAtStep_Func(balance(A2), valueAtStep(balance(A2), S), S),
+    holdsAtStep_Func(balance(A1), valueAtStep(balance(A1), S), S),
+    normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
+    account(A2),
+    step(S).
+
+%*
 %% terminate old balance of A2
 %terminates(transfer(A1, A2, TransM12), balance(A2, DstM2), T) :-
 %    holdsAt(balance(A2, DstM2), T),
@@ -52,19 +65,15 @@ event(monthlyReset(A)) :- account(A).
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
 *%
-&sum{ valueAtStep(balance(A2),S); TransM12 } = valueAtStep(balance(A2),S+1) :- 
+terminatesAtStep_Func(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balance(A2), S), S) :-
     TransM12 > 0,
     % &sum{ (balance(A1),S-1) } >= TransM12, 
+    holdsAtStep_Func(balance(A2), valueAtStep(balance(A2), S), S),
+    holdsAtStep_Func(balance(A1), valueAtStep(balance(A1), S), S),
     normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
-    happensAtStep(transfer(A1, A2, TransM12), S),
+    account(A2),
     step(S).
 
-defined(valueAtStep(balance(A2),S+1)) :- 
-    TransM12 > 0,
-    % &sum{ (balance(A1),S-1) } >= TransM12, 
-    normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
-    happensAtStep(transfer(A1, A2, TransM12), S),
-    step(S).
 
 %*
 %% new balance of A1 (sends payment)
@@ -74,6 +83,19 @@ defined(valueAtStep(balance(A2),S+1)) :-
 %    TransM12 > 0,
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
+*%
+&sum{valueAtStep(balance(A1),S); -TransM12} = valueAtStep(balance(A1),S+1) :-
+    initiatedByAtStep_Func(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balance(A1),S+1), S).
+initiatesAtStep_Func(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balance(A1), S+1), S) :-
+    TransM12 > 0,
+    % &sum{ (balance(A1),S-1) } >= TransM12, 
+    holdsAtStep_Func(balance(A2), valueAtStep(balance(A2), S), S),
+    holdsAtStep_Func(balance(A1), valueAtStep(balance(A1), S), S),
+    normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
+    account(A2),
+    step(S).
+
+%*
 %% terminate old balance of A1
 %terminates(transfer(A1, A2, TransM12), balance(A1, SrcM1), T) :-
 %    holdsAt(balance(A2, DstM2), T),
@@ -82,21 +104,16 @@ defined(valueAtStep(balance(A2),S+1)) :-
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
 *%
-
-&sum{ valueAtStep(balance(A1),S); -TransM12 } = valueAtStep(balance(A1),S+1) :- 
+terminatesAtStep_Func(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balance(A1), S), S) :-
     TransM12 > 0,
     % &sum{ (balance(A1),S-1) } >= TransM12, 
+    holdsAtStep_Func(balance(A2), valueAtStep(balance(A2), S), S),
+    holdsAtStep_Func(balance(A1), valueAtStep(balance(A1), S), S),
     normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
-    happensAtStep(transfer(A1, A2, TransM12), S),
+    account(A2),
     step(S).
 
-defined(valueAtStep(balance(A1),S+1)) :- 
-    TransM12 > 0,
-    % &sum{ (balance(A1),S-1) } >= TransM12, 
-    normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
-    happensAtStep(transfer(A1, A2, TransM12), S),
-    step(S).
-    
+% TODO this IS needed
 comparison(valueAtStep(balance(A1),S), TransM12) :- 
     TransM12 > 0,
     happensAtStep(transfer(A1, A2, TransM12), S),
@@ -110,20 +127,18 @@ initiatesAtStep(chargeServiceFee(A), serviceFeeCharged(A), S) :- account(A), ste
 % happensAtStep(monthlyReset(A), S) :- &sum{ time(S) } = T, endOfMonth(T), account(A), step(S).
 happensAtStep(monthlyReset(A), S) :- normal_atom(timeAtStep(S), eq, T), endOfMonth(T), account(A), step(S).
 
-% TODO the floating step needs to be bound to something
-% a monthly reset must happen on all accounts
-:- not happensAtStep(monthlyReset(A), _), account(A).
+terminatesAtStep(monthlyReset(A), serviceFeeCharged(A), S):- account(A), step(S).
 
 % TODO the below seems to not quite work as intended
 %  - still allows answers without the event and with one  of these steps: timeAtStep(1)=10+-1*e ; timeAtStep(2)=10+e ; timeAtStep(3)=20+e
 % restrict that there must exist a state with its timeAtStep exactly equal to endOfMonth
 % (by saying that there cannot be two subsequent states in which one is lt/gt and the next gt/lt, i.e. there is no state with exactly eq)
-:- normal_atom(timeAtStep(S), gt, T), normal_atom(timeAtStep(S+1), lt, T), endOfMonth(T), step(S).
-:- normal_atom(timeAtStep(S), lt, T), normal_atom(timeAtStep(S+1), gt, T), endOfMonth(T), step(S).
+% :- normal_atom(timeAtStep(S), gt, T), normal_atom(timeAtStep(S+1), lt, T), endOfMonth(T), step(S).
+% :- normal_atom(timeAtStep(S), lt, T), normal_atom(timeAtStep(S+1), gt, T), endOfMonth(T), step(S).
 
-comparison(timeAtStep(S  ), T) :- endOfMonth(T), step(S).
+comparison(timeAtStep(S), T) :- endOfMonth(T), step(S).
+% comparison(timeAtStep(S-1), T) :- endOfMonth(T), step(S).
 
-terminatesAtStep(monthlyReset(A), serviceFeeCharged(A), S):- account(A), step(S).
 
 % if a service fee is charged, then the balance of the account is decreased
 % new balance
@@ -132,18 +147,21 @@ terminatesAtStep(monthlyReset(A), serviceFeeCharged(A), S):- account(A), step(S)
 %    holdsAt(balance(A, OldM), T),
 %    holdsAt(serviceFee(A, FeeM), T),
 %    account(A), time(T), money(OldM), money(FeeM).
+*%
+&sum{ valueAtStep(balance(A),S); -valueAtStep(serviceFee(A),S) } = valueAtStep(balance(A),S+1) :-
+    initiatedByAtStep_Func(chargeServiceFee(A), balance(A), valueAtStep(balance(A),S+1), S).
+initiatesAtStep_Func(chargeServiceFee(A), balance(A), valueAtStep(balance(A), S+1), S) :-
+    step(S), S > 0, account(A).
+
+%*
 %% terminate old balance
 %terminates(chargeServiceFee(A), balance(A, OldM), T) :-
 %    holdsAt(balance(A, OldM), T),
 %    account(A), time(T), money(OldM).
 *%
-&sum{ valueAtStep(balance(A),S); -valueAtStep(serviceFee(A),S) } = valueAtStep(balance(A),S+1) :- 
-    happensAtStep(chargeServiceFee(A), S),
-    step(S), S > 0.
+terminatesAtStep_Func(chargeServiceFee(A), balance(A), valueAtStep(balance(A), S), S) :-
+    step(S), S > 0, account(A).
 
-defined(valueAtStep(balance(A),S+1)) :- 
-    happensAtStep(chargeServiceFee(A), S),
-    step(S), S > 0.
 
 %-------------------------------------------------------------------------------
 % state constraints
@@ -177,58 +195,28 @@ defined(valueAtStep(balance(A),S+1)) :-
 %    account(A), time(T), money(AccM), money(MinM).
 *%
 
+%// happensAtStep(chargeServiceFee(account1), 3).
+%// happens(chargeServiceFee(account1), 21).
 happensAtStep(chargeServiceFee(A), S) :-
     % &sum{ (balance(A),S-1) } < (minimumBalance(A),S-1), 
+    holdsAtStep_Func(balance(A), valueAtStep(balance(A),S), S),
+    holdsAtStep_Func(minimumBalance(A), valueAtStep(minimumBalance(A),S), S),
     normal_atom(valueAtStep(balance(A),S), lt, valueAtStep(minimumBalance(A),S)), 
-    -holdsAtStep(serviceFeeCharged(A), S),
+    not holdsAtStep(serviceFeeCharged(A), S),
     account(A), step(S), S > 0.
     
 comparison(valueAtStep(balance(A),S), valueAtStep(minimumBalance(A),S)) :- 
     account(A), step(S).
-
-
-% TODO the floating step needs to be bound to something
-
-% chargeServiceFee must happen at two different steps for any two accounts
-:- happensAtStep(chargeServiceFee(_), S), step(S), not charged_at_some_other_step(S).
-charged_at_some_other_step(S) :- happensAtStep(chargeServiceFee(A), S1), S1 != S, step(S), account(A).
-
-    % TODO older versions
-    
-    %% chargeServiceFee must happen at two different steps for the same account
-    %:- happensAtStep(chargeServiceFee(A), S), step(S), not charged_at_some_other_step(A, S), account(A).
-    %charged_at_some_other_step(A, S) :- happensAtStep(chargeServiceFee(A), S1), S1 != S, step(S), account(A).
-
-    % TODO older versions (for narrative with one fee charge and no resets)
-
-    % it is impossible that the fee has not been charged to an account that was below the minimum
-    %:- not charged_fee_to_any_account_that_was_below_min.
-    %charged_fee_to_any_account_that_was_below_min :- happensAtStep(chargeServiceFee(A), _), account(A), normal_atom(valueAtStep(balance(A),S), lt, valueAtStep(minimumBalance(A),S)), step(S).
-
-    %% it is impossible for the fee to not be charged for account1
-    %:- not happensAtStep(chargeServiceFee(account1), _).
-
-    %% it is impossible that the fee has not been charged to any account
-    %:- not charged_fee_to_any_account.
-    %charged_fee_to_any_account :- happensAtStep(chargeServiceFee(A), _), account(A).
-
-    % TODO version below does not work 
-    %% it is impossible for the balance of A to be below the minimum at S while the serviceFeeCharged flag is false at S
-    %:- normal_atom(valueAtStep(balance(A),S), lt, valueAtStep(minimumBalance(A),S)), -holdsAtStep(serviceFeeCharged(A), S), step(S), account(A).
-
 
 % time epsilon to trigger chargeServiceFee(A)
 epsilon("1.1"). % valid with clingo-lpx
 &sum{ timeAtStep(S+1); -timeAtStep(S) } = E :- epsilon(E),
     % &sum{ (balance(A),S-1) } < (minimumBalance(A),S-1), 
     normal_atom(valueAtStep(balance(A),S+1), lt, valueAtStep(minimumBalance(A),S+1)), 
-    -holdsAtStep(serviceFeeCharged(A), S+1),
+    not holdsAtStep(serviceFeeCharged(A), S+1),
     happensAtStep(chargeServiceFee(A), S+1),
     account(A), step(S), S > 0,
     S < maxstep. % TODO not sure why this is needed (otherwise there will be one more timeAtStep in the answer)
-
-    
-
 
 
 %-------------------------------------------------------------------------------
@@ -246,12 +234,12 @@ initiallyN(serviceFeeCharged(account2)).
 %initiallyP(serviceFee(account1, 1)).    
 %initiallyP(serviceFee(account2, 1)).    
 *%
-initiallyF(       balance(account1), 10).      
-initiallyF(       balance(account2), 10).      
-initiallyF(minimumBalance(account1),  5).
-initiallyF(minimumBalance(account2),  5).
-initiallyF(    serviceFee(account1),  1).    
-initiallyF(    serviceFee(account2),  1).    
+initiallyP_Func(       balance(account1), 10).      
+initiallyP_Func(       balance(account2), 10).      
+initiallyP_Func(minimumBalance(account1),  5).
+initiallyP_Func(minimumBalance(account2),  5).
+initiallyP_Func(    serviceFee(account1),  1).    
+initiallyP_Func(    serviceFee(account2),  1).    
 initiallyN(F) :- not initiallyP(F), fluent(F).
 
 %-------------------------------------------------------------------------------

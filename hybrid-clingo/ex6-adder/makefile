@@ -3,13 +3,10 @@ TIME=/usr/bin/time -f "\n  real      %E\n  real [s]  %e\n  user [s]  %U\n  sys  
 
 #-----------------------------------------------------------------------------------------------------------------------
 # base
-CON_CMD=clingcon -n0 ./model-con.lp ../axioms/bec_steps-clingcon.lp -c maxstep=$$MAXSTEP
-LPX_CMD=clingo-lpx --strict -n0 ./model-lpx.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=$$MAXSTEP
-run-clingcon:
-	MAXSTEP=6; ${TIME} ${CON_CMD}
+LPX_CMD=clingo-lpx --strict -n0 ./model.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=$$MAXSTEP
 
 run-lpx:
-	MAXSTEP=5; ${TIME} ${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh
+	MAXSTEP=4; ${TIME} ${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh
 
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -21,6 +18,4 @@ run-lpx:
 
 # TODO how to check scaling? (maybe number of events --> steps?)
 log:
-#	MAXSTEP=6;  ../../scripts/maketrace.sh "${CON_CMD}" ./logs/con-s$$MAXSTEP.log ; exit 0
-	
-	MAXSTEP=5;  ../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx-s$$MAXSTEP.log ; exit 0
+	MAXSTEP=4;  ../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx-s$$MAXSTEP.log ; exit 0

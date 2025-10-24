@@ -37,19 +37,6 @@ fluent_Func(balance(A)) :- account(A).
 %    TransM12 > 0,
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
-*%
-&sum{valueAtStep(balance(A2),S); TransM12} = valueAtStep(balance(A2),S+1) :-
-    initiatedByAtStep_Func(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balance(A2),S+1), S).
-initiatesAtStep_Func(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balance(A2), S+1), S) :-
-    TransM12 > 0,
-    % &sum{ (balance(A1),S-1) } >= TransM12, 
-    holdsAtStep_Func(balance(A2), valueAtStep(balance(A2), S), S),
-    holdsAtStep_Func(balance(A1), valueAtStep(balance(A1), S), S),
-    normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
-    account(A2),
-    step(S).
-
-%*
 %% terminate old balance of A2
 %terminates(transfer(A1, A2, TransM12), balance(A2, DstM2), T) :-
 %    holdsAt(balance(A2, DstM2), T),
@@ -58,15 +45,17 @@ initiatesAtStep_Func(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balanc
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
 *%
-terminatesAtStep_Func(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balance(A2), S), S) :-
+&sum{ (balance(A2),S-1); TransM12 } = (balance(A2),S) :- 
     TransM12 > 0,
     % &sum{ (balance(A1),S-1) } >= TransM12, 
-    holdsAtStep_Func(balance(A2), valueAtStep(balance(A2), S), S),
-    holdsAtStep_Func(balance(A1), valueAtStep(balance(A1), S), S),
-    normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
-    account(A2),
-    step(S).
+    normal_atom((balance(A1),S-1), geq, TransM12),
+    happens_state(transfer(A1, A2, TransM12), S).
 
+defined((balance(A2),S)) :- 
+    TransM12 > 0,
+    % &sum{ (balance(A1),S-1) } >= TransM12, 
+    normal_atom((balance(A1),S-1), geq, TransM12),
+    happens_state(transfer(A1, A2, TransM12), S).
 
 %*
 %% new balance of A1 (sends payment)
@@ -76,19 +65,6 @@ terminatesAtStep_Func(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balan
 %    TransM12 > 0,
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
-*%
-&sum{valueAtStep(balance(A1),S); -TransM12} = valueAtStep(balance(A1),S+1) :-
-    initiatedByAtStep_Func(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balance(A1),S+1), S).
-initiatesAtStep_Func(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balance(A1), S+1), S) :-
-    TransM12 > 0,
-    % &sum{ (balance(A1),S-1) } >= TransM12, 
-    holdsAtStep_Func(balance(A2), valueAtStep(balance(A2), S), S),
-    holdsAtStep_Func(balance(A1), valueAtStep(balance(A1), S), S),
-    normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
-    account(A2),
-    step(S).
-
-%*
 %% terminate old balance of A1
 %terminates(transfer(A1, A2, TransM12), balance(A1, SrcM1), T) :-
 %    holdsAt(balance(A2, DstM2), T),
@@ -97,21 +73,22 @@ initiatesAtStep_Func(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balanc
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
 *%
-terminatesAtStep_Func(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balance(A1), S), S) :-
+
+&sum{ (balance(A1),S-1); -TransM12 } = (balance(A1),S) :- 
     TransM12 > 0,
     % &sum{ (balance(A1),S-1) } >= TransM12, 
-    holdsAtStep_Func(balance(A2), valueAtStep(balance(A2), S), S),
-    holdsAtStep_Func(balance(A1), valueAtStep(balance(A1), S), S),
-    normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
-    account(A2),
-    step(S).
+    normal_atom((balance(A1),S-1), geq, TransM12),
+    happens_state(transfer(A1, A2, TransM12), S).
 
-% TODO this IS needed
-comparison(valueAtStep(balance(A1),S), TransM12) :- 
+defined((balance(A1),S)) :- 
     TransM12 > 0,
-    happensAtStep(transfer(A1, A2, TransM12), S),
-    step(S).
-
+    % &sum{ (balance(A1),S-1) } >= TransM12, 
+    normal_atom((balance(A1),S-1), geq, TransM12),
+    happens_state(transfer(A1, A2, TransM12), S).
+    
+comparison((balance(A1),S-1), TransM12) :- 
+    TransM12 > 0,
+    happens_state(transfer(A1, A2, TransM12), S).
 
 %-------------------------------------------------------------------------------
 % state constraints
@@ -132,17 +109,26 @@ comparison(valueAtStep(balance(A1),S), TransM12) :-
 
 % initiallyP(balance(account1, 10)).      
 % initiallyP(balance(account2, 10)).      
-initiallyP_Func(balance(account1), 10).      
-initiallyP_Func(balance(account2), 10).      
+initially_Func(balance(account1), 100).      
+initially_Func(balance(account2), 100).      
 
 
 %-------------------------------------------------------------------------------
 % narrative 
 %-------------------------------------------------------------------------------
 
-happens(transfer(account1, account2, 2), 10).
-happens(transfer(account1, account2, 4), 20).
+happens(transfer(account1, account2, 2), 1).
+happens(transfer(account1, account2, 2), 2).
+happens(transfer(account1, account2, 2), 3).
+happens(transfer(account1, account2, 2), 4).
+happens(transfer(account1, account2, 2), 5).
+happens(transfer(account1, account2, 2), 6).    
+
+% happens(transfer(account1, account2, 2), 7).
+% happens(transfer(account1, account2, 2), 8).
+% happens(transfer(account1, account2, 2), 9).
+% happens(transfer(account1, account2, 2), 10).
 % initiallyN(F) :- not initiallyP(F), fluent(F).
 
 % --> conclude that
-%   the balance of account1 will be 4 at time 3
+%   the balance of account1 will be ...

@@ -5,27 +5,26 @@ clingo-lpx version 1.3.0
 Reading from ./model-lpx.lp ...
 Solving...
 Answer: 1
-(Time: 0.028s)
+(Time: 0.030s)
 happens(hitGround(apple),23/2)
 happens(drop(nathan,apple),10)
 holdsAt(falling(apple),(10,"< T =<",23/2))
-holdsAt((height(apple),3),(0,"< T =<",10))
-holdsAt((height(apple),0),(10,"< T =<",23/2))
-holdsAt((height(apple),0),("T >",23/2))
--holdsAt(falling(apple),("T >",23/2))
--holdsAt(falling(apple),(0,"< T =<",10))
+releasedAt_Func(height(apple),(10,"< T =<",23/2))
+holdsAt_Func(height(apple),3,(0,"< T =<",10))
+holdsAt_Func(height(apple),0,("T >",23/2))
+holdsAt_Func_Cont(height(apple),(3,"->",0),(10,"< T =<",23/2))
 SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.028s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.013s
+Time         : 0.030s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.018s
 
 Command exited with non-zero status 30
 
-  real      0:00.03
-  real [s]  0.03
-  user [s]  0.00
-  sys  [s]  0.01
-  mem  [KB] 8320
+  real      0:00.04
+  real [s]  0.04
+  user [s]  0.01
+  sys  [s]  0.00
+  mem  [KB] 8960
   avgm [KB] 0
