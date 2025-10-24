@@ -1,11 +1,12 @@
-$ clingo-lpx --strict -n0 ./model-lpx.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=5 | ../utils/replace_assignments.sh | ../utils/make-readable.sh
+$ clingo-lpx --strict -n0 ./model-lpx.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=6 | ../utils/replace_assignments.sh | ../utils/make-readable.sh
 
 
 clingo-lpx version 1.3.0
 Reading from ./model-lpx.lp ...
 Solving...
 Answer: 1
-(Time: 0.043s)
+(Time: 0.047s)
+happens(check,100)
 happens(chargeServiceFee(account1),211/10)
 happens(chargeServiceFee(account1),511/10)
 happens(monthlyReset(account1),50)
@@ -13,48 +14,55 @@ happens(monthlyReset(account2),50)
 happens(transfer(account1,account2,2),10)
 happens(transfer(account1,account2,4),20)
 holdsAt(serviceFeeCharged(account1),(211/10,"< T =<",50))
+holdsAt(serviceFeeCharged(account1),(511/10,"< T =<",100))
 holdsAt_Func(balance(account1),10,(0,"< T =<",10))
 holdsAt_Func(balance(account1),8,(10,"< T =<",20))
 holdsAt_Func(balance(account1),4,(20,"< T =<",211/10))
 holdsAt_Func(balance(account1),3,(211/10,"< T =<",50))
 holdsAt_Func(balance(account1),3,(50,"< T =<",511/10))
+holdsAt_Func(balance(account1),2,(511/10,"< T =<",100))
 holdsAt_Func(balance(account2),10,(0,"< T =<",10))
 holdsAt_Func(balance(account2),12,(10,"< T =<",20))
 holdsAt_Func(balance(account2),16,(20,"< T =<",211/10))
 holdsAt_Func(balance(account2),16,(211/10,"< T =<",50))
 holdsAt_Func(balance(account2),16,(50,"< T =<",511/10))
+holdsAt_Func(balance(account2),16,(511/10,"< T =<",100))
 holdsAt_Func(minimumBalance(account1),5,(0,"< T =<",10))
 holdsAt_Func(minimumBalance(account1),5,(10,"< T =<",20))
 holdsAt_Func(minimumBalance(account1),5,(20,"< T =<",211/10))
 holdsAt_Func(minimumBalance(account1),5,(211/10,"< T =<",50))
 holdsAt_Func(minimumBalance(account1),5,(50,"< T =<",511/10))
+holdsAt_Func(minimumBalance(account1),5,(511/10,"< T =<",100))
 holdsAt_Func(minimumBalance(account2),5,(0,"< T =<",10))
 holdsAt_Func(minimumBalance(account2),5,(10,"< T =<",20))
 holdsAt_Func(minimumBalance(account2),5,(20,"< T =<",211/10))
 holdsAt_Func(minimumBalance(account2),5,(211/10,"< T =<",50))
 holdsAt_Func(minimumBalance(account2),5,(50,"< T =<",511/10))
+holdsAt_Func(minimumBalance(account2),5,(511/10,"< T =<",100))
 holdsAt_Func(serviceFee(account1),1,(0,"< T =<",10))
 holdsAt_Func(serviceFee(account1),1,(10,"< T =<",20))
 holdsAt_Func(serviceFee(account1),1,(20,"< T =<",211/10))
 holdsAt_Func(serviceFee(account1),1,(211/10,"< T =<",50))
 holdsAt_Func(serviceFee(account1),1,(50,"< T =<",511/10))
+holdsAt_Func(serviceFee(account1),1,(511/10,"< T =<",100))
 holdsAt_Func(serviceFee(account2),1,(0,"< T =<",10))
 holdsAt_Func(serviceFee(account2),1,(10,"< T =<",20))
 holdsAt_Func(serviceFee(account2),1,(20,"< T =<",211/10))
 holdsAt_Func(serviceFee(account2),1,(211/10,"< T =<",50))
 holdsAt_Func(serviceFee(account2),1,(50,"< T =<",511/10))
+holdsAt_Func(serviceFee(account2),1,(511/10,"< T =<",100))
 SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.044s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.028s
+Time         : 0.048s (Solving: 0.01s 1st Model: 0.01s Unsat: 0.00s)
+CPU Time     : 0.034s
 
 Command exited with non-zero status 30
 
   real      0:00.05
   real [s]  0.05
   user [s]  0.02
-  sys  [s]  0.01
-  mem  [KB] 9600
+  sys  [s]  0.00
+  mem  [KB] 9856
   avgm [KB] 0

@@ -1,15 +1,15 @@
-$ clingo-lpx --strict -n0 ./model.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=3 | ../utils/make-readable.sh
+$ clingo-lpx --strict -n0 ./model-merged.lp ../axioms/bec_steps-clingo_lpx-merged.lp -c maxstep=3 | ../utils/make-readable.sh
 
 
 clingo-lpx version 1.3.0
-Reading from ./model.lp ...
+Reading from ./model-merged.lp ...
 Solving...
 Answer: 1
-(Time: 0.033s)
+(Time: 0.038s)
 happens(check,timeAtStep(3))
 happens(land,timeAtStep(2))
 happens(roll,timeAtStep(1))
-releasedAt_Func(sideUp,(timeAtStep(1),"< T =<",timeAtStep(2)))
+releasedAt(sideUp,(timeAtStep(1),"< T =<",timeAtStep(2)))
 holdsAt_Func(sideUp,valueAtStep(sideUp,1),(timeAtStep(0),"< T =<",timeAtStep(1)))
 holdsAt_Func(sideUp,valueAtStep(sideUp,2),(timeAtStep(1),"< T =<",timeAtStep(2)))
 holdsAt_Func(sideUp,valueAtStep(sideUp,3),(timeAtStep(2),"< T =<",timeAtStep(3)))
@@ -20,14 +20,14 @@ timeAtStep(2)=20
 timeAtStep(3)=30
 valueAtStep(sideUp,0)=1
 valueAtStep(sideUp,1)=1
-valueAtStep(sideUp,2)=1
-valueAtStep(sideUp,3)=1
+valueAtStep(sideUp,2)=2
+valueAtStep(sideUp,3)=2
 Answer: 2
-(Time: 0.033s)
+(Time: 0.038s)
 happens(check,timeAtStep(3))
 happens(land,timeAtStep(2))
 happens(roll,timeAtStep(1))
-releasedAt_Func(sideUp,(timeAtStep(1),"< T =<",timeAtStep(2)))
+releasedAt(sideUp,(timeAtStep(1),"< T =<",timeAtStep(2)))
 holdsAt_Func(sideUp,valueAtStep(sideUp,1),(timeAtStep(0),"< T =<",timeAtStep(1)))
 holdsAt_Func(sideUp,valueAtStep(sideUp,2),(timeAtStep(1),"< T =<",timeAtStep(2)))
 holdsAt_Func(sideUp,valueAtStep(sideUp,3),(timeAtStep(2),"< T =<",timeAtStep(3)))
@@ -41,11 +41,11 @@ valueAtStep(sideUp,1)=1
 valueAtStep(sideUp,2)=4
 valueAtStep(sideUp,3)=4
 Answer: 3
-(Time: 0.033s)
+(Time: 0.038s)
 happens(check,timeAtStep(3))
 happens(land,timeAtStep(2))
 happens(roll,timeAtStep(1))
-releasedAt_Func(sideUp,(timeAtStep(1),"< T =<",timeAtStep(2)))
+releasedAt(sideUp,(timeAtStep(1),"< T =<",timeAtStep(2)))
 holdsAt_Func(sideUp,valueAtStep(sideUp,1),(timeAtStep(0),"< T =<",timeAtStep(1)))
 holdsAt_Func(sideUp,valueAtStep(sideUp,2),(timeAtStep(1),"< T =<",timeAtStep(2)))
 holdsAt_Func(sideUp,valueAtStep(sideUp,3),(timeAtStep(2),"< T =<",timeAtStep(3)))
@@ -59,11 +59,11 @@ valueAtStep(sideUp,1)=1
 valueAtStep(sideUp,2)=3
 valueAtStep(sideUp,3)=3
 Answer: 4
-(Time: 0.033s)
+(Time: 0.038s)
 happens(check,timeAtStep(3))
 happens(land,timeAtStep(2))
 happens(roll,timeAtStep(1))
-releasedAt_Func(sideUp,(timeAtStep(1),"< T =<",timeAtStep(2)))
+releasedAt(sideUp,(timeAtStep(1),"< T =<",timeAtStep(2)))
 holdsAt_Func(sideUp,valueAtStep(sideUp,1),(timeAtStep(0),"< T =<",timeAtStep(1)))
 holdsAt_Func(sideUp,valueAtStep(sideUp,2),(timeAtStep(1),"< T =<",timeAtStep(2)))
 holdsAt_Func(sideUp,valueAtStep(sideUp,3),(timeAtStep(2),"< T =<",timeAtStep(3)))
@@ -77,11 +77,11 @@ valueAtStep(sideUp,1)=1
 valueAtStep(sideUp,2)=6
 valueAtStep(sideUp,3)=6
 Answer: 5
-(Time: 0.033s)
+(Time: 0.038s)
 happens(check,timeAtStep(3))
 happens(land,timeAtStep(2))
 happens(roll,timeAtStep(1))
-releasedAt_Func(sideUp,(timeAtStep(1),"< T =<",timeAtStep(2)))
+releasedAt(sideUp,(timeAtStep(1),"< T =<",timeAtStep(2)))
 holdsAt_Func(sideUp,valueAtStep(sideUp,1),(timeAtStep(0),"< T =<",timeAtStep(1)))
 holdsAt_Func(sideUp,valueAtStep(sideUp,2),(timeAtStep(1),"< T =<",timeAtStep(2)))
 holdsAt_Func(sideUp,valueAtStep(sideUp,3),(timeAtStep(2),"< T =<",timeAtStep(3)))
@@ -95,11 +95,11 @@ valueAtStep(sideUp,1)=1
 valueAtStep(sideUp,2)=5
 valueAtStep(sideUp,3)=5
 Answer: 6
-(Time: 0.033s)
+(Time: 0.038s)
 happens(check,timeAtStep(3))
 happens(land,timeAtStep(2))
 happens(roll,timeAtStep(1))
-releasedAt_Func(sideUp,(timeAtStep(1),"< T =<",timeAtStep(2)))
+releasedAt(sideUp,(timeAtStep(1),"< T =<",timeAtStep(2)))
 holdsAt_Func(sideUp,valueAtStep(sideUp,1),(timeAtStep(0),"< T =<",timeAtStep(1)))
 holdsAt_Func(sideUp,valueAtStep(sideUp,2),(timeAtStep(1),"< T =<",timeAtStep(2)))
 holdsAt_Func(sideUp,valueAtStep(sideUp,3),(timeAtStep(2),"< T =<",timeAtStep(3)))
@@ -110,14 +110,14 @@ timeAtStep(2)=20
 timeAtStep(3)=30
 valueAtStep(sideUp,0)=1
 valueAtStep(sideUp,1)=1
-valueAtStep(sideUp,2)=2
-valueAtStep(sideUp,3)=2
+valueAtStep(sideUp,2)=1
+valueAtStep(sideUp,3)=1
 SATISFIABLE
 
 Models       : 6
 Calls        : 1
-Time         : 0.033s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.017s
+Time         : 0.038s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.018s
 
 Command exited with non-zero status 30
 
@@ -125,5 +125,5 @@ Command exited with non-zero status 30
   real [s]  0.04
   user [s]  0.01
   sys  [s]  0.00
-  mem  [KB] 8832
+  mem  [KB] 8576
   avgm [KB] 0

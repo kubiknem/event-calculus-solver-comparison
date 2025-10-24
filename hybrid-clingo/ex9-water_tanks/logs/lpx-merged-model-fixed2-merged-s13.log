@@ -1,11 +1,11 @@
-$ clingo-lpx --strict -n0 ../axioms/bec_steps-clingo_lpx.lp -c maxstep=13 ./model-fixed2.lp | ../utils/replace_assignments.sh | ../utils/make-readable.sh
+$ clingo-lpx --strict -n0 ../axioms/bec_steps-clingo_lpx-merged.lp -c maxstep=13 ./model-fixed2-merged.lp | ../utils/replace_assignments.sh | ../utils/make-readable.sh
 
 
 clingo-lpx version 1.3.0
-Reading from ../axioms/bec_steps-clingo_lpx.lp ...
+Reading from .../axioms/bec_steps-clingo_lpx-merged.lp ...
 Solving...
 Answer: 1
-(Time: 0.210s)
+(Time: 0.198s)
 happens(aux__no_switch_left,157/8)
 happens(aux__no_switch_right,305/16)
 happens(aux__no_switch_right,329/16)
@@ -34,30 +34,30 @@ holdsAt(right_filling,(65/4,"< T =<",69/4))
 holdsAt(right_filling,(69/4,"< T =<",145/8))
 holdsAt(right_filling,(153/8,"< T =<",157/8))
 holdsAt(right_filling,(157/8,"< T =<",161/8))
-releasedAt_Func(water_left,(10,"< T =<",11))
-releasedAt_Func(water_left,(11,"< T =<",25/2))
-releasedAt_Func(water_left,(25/2,"< T =<",27/2))
-releasedAt_Func(water_left,(27/2,"< T =<",65/4))
-releasedAt_Func(water_left,(65/4,"< T =<",69/4))
-releasedAt_Func(water_left,(69/4,"< T =<",145/8))
-releasedAt_Func(water_left,(145/8,"< T =<",305/16))
-releasedAt_Func(water_left,(305/16,"< T =<",153/8))
-releasedAt_Func(water_left,(153/8,"< T =<",157/8))
-releasedAt_Func(water_left,(157/8,"< T =<",161/8))
-releasedAt_Func(water_left,(161/8,"< T =<",329/16))
-releasedAt_Func(water_left,(329/16,"< T =<",169/8))
-releasedAt_Func(water_right,(10,"< T =<",11))
-releasedAt_Func(water_right,(11,"< T =<",25/2))
-releasedAt_Func(water_right,(25/2,"< T =<",27/2))
-releasedAt_Func(water_right,(27/2,"< T =<",65/4))
-releasedAt_Func(water_right,(65/4,"< T =<",69/4))
-releasedAt_Func(water_right,(69/4,"< T =<",145/8))
-releasedAt_Func(water_right,(145/8,"< T =<",305/16))
-releasedAt_Func(water_right,(305/16,"< T =<",153/8))
-releasedAt_Func(water_right,(153/8,"< T =<",157/8))
-releasedAt_Func(water_right,(157/8,"< T =<",161/8))
-releasedAt_Func(water_right,(161/8,"< T =<",329/16))
-releasedAt_Func(water_right,(329/16,"< T =<",169/8))
+releasedAt(water_left,(10,"< T =<",11))
+releasedAt(water_left,(11,"< T =<",25/2))
+releasedAt(water_left,(25/2,"< T =<",27/2))
+releasedAt(water_left,(27/2,"< T =<",65/4))
+releasedAt(water_left,(65/4,"< T =<",69/4))
+releasedAt(water_left,(69/4,"< T =<",145/8))
+releasedAt(water_left,(145/8,"< T =<",305/16))
+releasedAt(water_left,(305/16,"< T =<",153/8))
+releasedAt(water_left,(153/8,"< T =<",157/8))
+releasedAt(water_left,(157/8,"< T =<",161/8))
+releasedAt(water_left,(161/8,"< T =<",329/16))
+releasedAt(water_left,(329/16,"< T =<",169/8))
+releasedAt(water_right,(10,"< T =<",11))
+releasedAt(water_right,(11,"< T =<",25/2))
+releasedAt(water_right,(25/2,"< T =<",27/2))
+releasedAt(water_right,(27/2,"< T =<",65/4))
+releasedAt(water_right,(65/4,"< T =<",69/4))
+releasedAt(water_right,(69/4,"< T =<",145/8))
+releasedAt(water_right,(145/8,"< T =<",305/16))
+releasedAt(water_right,(305/16,"< T =<",153/8))
+releasedAt(water_right,(153/8,"< T =<",157/8))
+releasedAt(water_right,(157/8,"< T =<",161/8))
+releasedAt(water_right,(161/8,"< T =<",329/16))
+releasedAt(water_right,(329/16,"< T =<",169/8))
 holdsAt_Func(water_left,100,(0,"< T =<",10))
 holdsAt_Func(water_right,100,(0,"< T =<",10))
 holdsAt_Func_Cont(water_left,(100,"->",80),(10,"< T =<",11))
@@ -88,14 +88,14 @@ SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.211s (Solving: 0.14s 1st Model: 0.14s Unsat: 0.00s)
-CPU Time     : 0.198s
+Time         : 0.199s (Solving: 0.13s 1st Model: 0.13s Unsat: 0.00s)
+CPU Time     : 0.184s
 
 Command exited with non-zero status 30
 
-  real      0:00.23
-  real [s]  0.23
-  user [s]  0.20
+  real      0:00.20
+  real [s]  0.20
+  user [s]  0.18
   sys  [s]  0.01
-  mem  [KB] 12032
+  mem  [KB] 11648
   avgm [KB] 0

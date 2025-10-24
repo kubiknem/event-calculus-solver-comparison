@@ -46,14 +46,22 @@ event(monthlyReset(A)) :- account(A).
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
 *%
 &sum{valueAtStep(balance(A2),S); TransM12} = valueAtStep(balance(A2),S+1) :-
-    initiatedByAtStep_Func(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balance(A2),S+1), S).
-initiatesAtStep_Func(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balance(A2), S+1), S) :-
+    initiatedValueByAtStep(transfer(A1, A2, TransM12), balance(A2), S),
+    step(S+1).
+initiatesValueAtStep(transfer(A1, A2, TransM12), balance(A2), S) :-
     TransM12 > 0,
     % &sum{ (balance(A1),S-1) } >= TransM12, 
-    holdsAtStep_Func(balance(A2), valueAtStep(balance(A2), S), S),
-    holdsAtStep_Func(balance(A1), valueAtStep(balance(A1), S), S),
+    holdsAtStep(balance(A2), S),
+    holdsAtStep(balance(A1), S),
     normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
-    account(A2), step(S), step(S+1).
+    account(A2),
+    step(S).
+
+% needed for normal_atom
+comparison(valueAtStep(balance(A1),S), TransM12) :- 
+    TransM12 > 0,
+    happensAtStep(transfer(A1, A2, TransM12), S),
+    step(S).
 
 %*
 %% terminate old balance of A2
@@ -64,14 +72,7 @@ initiatesAtStep_Func(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balanc
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
 *%
-terminatesAtStep_Func(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balance(A2), S), S) :-
-    TransM12 > 0,
-    % &sum{ (balance(A1),S-1) } >= TransM12, 
-    holdsAtStep_Func(balance(A2), valueAtStep(balance(A2), S), S),
-    holdsAtStep_Func(balance(A1), valueAtStep(balance(A1), S), S),
-    normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
-    account(A2), step(S).
-
+% TODO this is meant to terminate the old functional value (break its inertia), this is already done by initiatesValueAtStep
 
 %*
 %% new balance of A1 (sends payment)
@@ -83,14 +84,20 @@ terminatesAtStep_Func(transfer(A1, A2, TransM12), balance(A2), valueAtStep(balan
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
 *%
 &sum{valueAtStep(balance(A1),S); -TransM12} = valueAtStep(balance(A1),S+1) :-
-    initiatedByAtStep_Func(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balance(A1),S+1), S).
-initiatesAtStep_Func(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balance(A1), S+1), S) :-
+    initiatedValueByAtStep(transfer(A1, A2, TransM12), balance(A1), S),
+    step(S+1).
+initiatesValueAtStep(transfer(A1, A2, TransM12), balance(A1), S) :-
     TransM12 > 0,
     % &sum{ (balance(A1),S-1) } >= TransM12, 
-    holdsAtStep_Func(balance(A2), valueAtStep(balance(A2), S), S),
-    holdsAtStep_Func(balance(A1), valueAtStep(balance(A1), S), S),
+    holdsAtStep(balance(A2), S),
+    holdsAtStep(balance(A1), S),
     normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
-    account(A2), step(S), step(S+1).
+    account(A2),
+    step(S).
+
+% already defined with the initiates above
+%comparison(valueAtStep(balance(A1),S), TransM12) :-  ...
+
 
 %*
 %% terminate old balance of A1
@@ -101,18 +108,8 @@ initiatesAtStep_Func(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balanc
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
 *%
-terminatesAtStep_Func(transfer(A1, A2, TransM12), balance(A1), valueAtStep(balance(A1), S), S) :-
-    TransM12 > 0,
-    % &sum{ (balance(A1),S-1) } >= TransM12, 
-    holdsAtStep_Func(balance(A2), valueAtStep(balance(A2), S), S),
-    holdsAtStep_Func(balance(A1), valueAtStep(balance(A1), S), S),
-    normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
-    account(A2), step(S).
+% TODO this is meant to terminate the old functional value (break its inertia), this is already done by initiatesValueAtStep
 
-comparison(valueAtStep(balance(A1),S), TransM12) :- 
-    TransM12 > 0,
-    happensAtStep(transfer(A1, A2, TransM12), S),
-    step(S).
 
 
 % when a service fee is charged, then a note is made to avoid repeated charging
@@ -143,9 +140,10 @@ trigger_time(T) :- endOfMonth(T).
 %    account(A), time(T), money(OldM), money(FeeM).
 *%
 &sum{ valueAtStep(balance(A),S); -valueAtStep(serviceFee(A),S) } = valueAtStep(balance(A),S+1) :-
-    initiatedByAtStep_Func(chargeServiceFee(A), balance(A), valueAtStep(balance(A),S+1), S).
-initiatesAtStep_Func(chargeServiceFee(A), balance(A), valueAtStep(balance(A), S+1), S) :-
-    step(S), step(S+1), account(A).
+    initiatedValueByAtStep(chargeServiceFee(A), balance(A), S),
+    step(S+1).
+initiatesValueAtStep(chargeServiceFee(A), balance(A), S) :-
+    step(S), account(A).
 
 %*
 %% terminate old balance
@@ -153,8 +151,7 @@ initiatesAtStep_Func(chargeServiceFee(A), balance(A), valueAtStep(balance(A), S+
 %    holdsAt(balance(A, OldM), T),
 %    account(A), time(T), money(OldM).
 *%
-terminatesAtStep_Func(chargeServiceFee(A), balance(A), valueAtStep(balance(A), S), S) :-
-    step(S), account(A).
+% TODO this is meant to terminate the old functional value (break its inertia), this is already done by initiatesValueAtStep
 
 
 %-------------------------------------------------------------------------------
@@ -193,8 +190,8 @@ terminatesAtStep_Func(chargeServiceFee(A), balance(A), valueAtStep(balance(A), S
 
 happensAtStep(chargeServiceFee(A), S) :-
     % &sum{ (balance(A),S-1) } < (minimumBalance(A),S-1), 
-    holdsAtStep_Func(balance(A), valueAtStep(balance(A),S), S),
-    holdsAtStep_Func(minimumBalance(A), valueAtStep(minimumBalance(A),S), S),
+    holdsAtStep(balance(A), S),
+    holdsAtStep(minimumBalance(A), S),
     normal_atom(valueAtStep(balance(A),S), lt, valueAtStep(minimumBalance(A),S)), 
     not holdsAtStep(serviceFeeCharged(A), S),
     account(A), step(S).
@@ -234,7 +231,7 @@ initiallyP_Func(minimumBalance(account1),  5).
 initiallyP_Func(minimumBalance(account2),  5).
 initiallyP_Func(    serviceFee(account1),  1).    
 initiallyP_Func(    serviceFee(account2),  1).    
-initiallyN(F) :- not initiallyP(F), fluent(F).
+initiallyN(F) :- not initiallyP(F), not initiallyP_Func(F, _), fluent(F).
 
 %-------------------------------------------------------------------------------
 % narrative 

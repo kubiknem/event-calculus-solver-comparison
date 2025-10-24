@@ -1,0 +1,53 @@
+$ clingo-lpx --strict -n0 ./model-merged.lp ../axioms/bec_steps-clingo_lpx-merged.lp -c maxstep=6 | ../utils/replace_assignments.sh | ../utils/make-readable.sh
+
+
+clingo-lpx version 1.3.0
+Reading from ./model-merged.lp ...
+Solving...
+Answer: 1
+(Time: 0.027s)
+happens(check,1)
+happens(check,30)
+happens(turn_off,25)
+happens(turn_on,5)
+happens(add(5),10)
+happens(add(1000000),20)
+holdsAt(powered_on,(5,"< T =<",10))
+holdsAt(powered_on,(10,"< T =<",20))
+holdsAt(powered_on,(20,"< T =<",25))
+holdsAt_Func(result,0,(5,"< T =<",10))
+holdsAt_Func(result,5,(10,"< T =<",20))
+holdsAt_Func(result,1000005,(20,"< T =<",25))
+-holdsAt(powered_on,(0,"< T =<",1))
+-holdsAt(powered_on,(1,"< T =<",5))
+-holdsAt(powered_on,(25,"< T =<",30))
+-holdsAt(result,(0,"< T =<",1))
+-holdsAt(result,(1,"< T =<",5))
+-holdsAt(result,(25,"< T =<",30))
+-releasedAt(powered_on,(0,"< T =<",1))
+-releasedAt(powered_on,(1,"< T =<",5))
+-releasedAt(powered_on,(5,"< T =<",10))
+-releasedAt(powered_on,(10,"< T =<",20))
+-releasedAt(powered_on,(20,"< T =<",25))
+-releasedAt(powered_on,(25,"< T =<",30))
+-releasedAt(result,(0,"< T =<",1))
+-releasedAt(result,(1,"< T =<",5))
+-releasedAt(result,(5,"< T =<",10))
+-releasedAt(result,(10,"< T =<",20))
+-releasedAt(result,(20,"< T =<",25))
+-releasedAt(result,(25,"< T =<",30))
+SATISFIABLE
+
+Models       : 1
+Calls        : 1
+Time         : 0.028s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.014s
+
+Command exited with non-zero status 30
+
+  real      0:00.03
+  real [s]  0.03
+  user [s]  0.01
+  sys  [s]  0.00
+  mem  [KB] 8576
+  avgm [KB] 0

@@ -26,17 +26,15 @@ fluent(powered_on).
 
 % initiates(add(Add),  result(Res2), T) :- Add .>. 0, holdsAt(result(Res1), T), Res2 = Res1 + Add, time(T).
 &sum{valueAtStep(result, S); Add} = valueAtStep(result, S+1) :-
-    initiatedByAtStep_Func(add(Add), result, valueAtStep(result, S+1), S).
-initiatesAtStep_Func(add(Add), result, valueAtStep(result, S+1), S) :-
+    initiatedValueByAtStep(add(Add), result, S),
+    step(S+1).
+initiatesValueAtStep(add(Add), result, S) :-
     Add > 0,
-    holdsAtStep_Func(result, valueAtStep(result, S), S),
-    addDomain(Add), step(S), step(S+1).
+    holdsAtStep(result, S),
+    addDomain(Add), step(S).
 
 % terminates(add(Add), result(OldRes), T) :- Add .>. 0, holdsAt(OldRes, T), time(T).
-terminatesAtStep_Func(add(Add), result, valueAtStep(result, S), S) :-
-    Add > 0,
-    holdsAtStep_Func(result, valueAtStep(result, S), S),
-    addDomain(Add), step(S).
+% TODO this is meant to terminate the old functional value (break its inertia), this is already done by initiatesValueAtStep
 
 
 % initiates(turn_on, powered_on, T) :- -holdsAt(powered_on, T), time(T).
@@ -51,13 +49,14 @@ terminatesAtStep(turn_off, powered_on, S) :-
 
 % initiates(turn_on, result(0), T) :- time(T).
 &sum{valueAtStep(result, S+1)} = 0 :-
-    initiatedByAtStep_Func(turn_on, result, valueAtStep(result, S+1), S).
-initiatesAtStep_Func(turn_on, result, valueAtStep(result, S+1), S) :-
+    initiatedValueByAtStep(turn_on, result, S),
+    step(S+1).
+initiatesValueAtStep(turn_on, result, S) :-
     not holdsAtStep(powered_on, S),
-    step(S), step(S+1).
+    step(S).
 
 % terminates(turn_off, result(_), T) :- holdsAt(powered_on, T), time(T).
-terminatesAtStep_Func(turn_off, result, valueAtStep(result, S), S) :-
+terminatesAtStep(turn_off, result, S) :-
     holdsAtStep(powered_on, S),
     step(S).
 
@@ -67,7 +66,7 @@ terminatesAtStep_Func(turn_off, result, valueAtStep(result, S), S) :-
 %-------------------------------------------------------------------------------
 
 initiallyN(powered_on).
-initiallyN_Func(result).
+initiallyN(result).
 
 
 %-------------------------------------------------------------------------------
@@ -82,3 +81,6 @@ happens(turn_off,       25).
 happens(check,          30).
 
 % conclude that result will be 1000005 after time 20
+
+% also show -holdsAt
+negated_prints.

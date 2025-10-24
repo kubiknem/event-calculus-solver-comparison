@@ -5,15 +5,20 @@ TIME=/usr/bin/time -f "\n  real      %E\n  real [s]  %e\n  user [s]  %U\n  sys  
 # base
 CON_CMD=clingcon -n0 ./model-con.lp ../axioms/bec_steps-clingcon.lp -c maxstep=$$MAXSTEP
 LPX_CMD=clingo-lpx --strict -n0 ./model-lpx.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=$$MAXSTEP
+LPX_CMD_M=clingo-lpx --strict -n0 ./model-lpx-merged.lp ../axioms/bec_steps-clingo_lpx-merged.lp -c maxstep=$$MAXSTEP
 run-clingcon:
 	MAXSTEP=6; ${TIME} ${CON_CMD}
 
 run-lpx:
-	MAXSTEP=5; ${TIME} ${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh
+	MAXSTEP=6; ${TIME} ${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh
 
 
 #-----------------------------------------------------------------------------------------------------------------------
 # alternatives (fixes / improvements)
+
+# uses a new version of the axioms where discrete and functional fluents are merged together
+run-lpx-merged:
+	MAXSTEP=6; ${TIME} ${LPX_CMD_M} | ../utils/replace_assignments.sh | ../utils/make-readable.sh
 
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -23,4 +28,5 @@ run-lpx:
 log:
 #	MAXSTEP=6;  ../../scripts/maketrace.sh "${CON_CMD}" ./logs/con-s$$MAXSTEP.log ; exit 0
 	
-	MAXSTEP=5;  ../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx-s$$MAXSTEP.log ; exit 0
+	MAXSTEP=6;  ../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx-s$$MAXSTEP.log ; exit 0
+	MAXSTEP=6;  ../../scripts/maketrace.sh "${LPX_CMD_M} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx-merged-s$$MAXSTEP.log ; exit 0

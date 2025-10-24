@@ -1,0 +1,51 @@
+$ clingo-lpx --strict -n0 ./model.lp ../axioms/bec_steps-clingo_lpx-merged.lp -c maxstep=3 | ../utils/make-readable.sh
+
+
+clingo-lpx version 1.3.0
+Reading from ./model.lp ...
+Solving...
+Answer: 1
+(Time: 0.027s)
+happens(check,timeAtStep(3))
+happens(land,timeAtStep(2))
+happens(toss,timeAtStep(1))
+holdsAt(up(heads),(timeAtStep(0),"< T =<",timeAtStep(1)))
+holdsAt(up(heads),(timeAtStep(1),"< T =<",timeAtStep(2)))
+holdsAt(up(heads),(timeAtStep(2),"< T =<",timeAtStep(3)))
+releasedAt(up(heads),(timeAtStep(1),"< T =<",timeAtStep(2)))
+releasedAt(up(tails),(timeAtStep(1),"< T =<",timeAtStep(2)))
+Assignment:
+timeAtStep(0)=0
+timeAtStep(1)=10
+timeAtStep(2)=20
+timeAtStep(3)=30
+Answer: 2
+(Time: 0.028s)
+happens(check,timeAtStep(3))
+happens(land,timeAtStep(2))
+happens(toss,timeAtStep(1))
+holdsAt(up(heads),(timeAtStep(0),"< T =<",timeAtStep(1)))
+holdsAt(up(tails),(timeAtStep(1),"< T =<",timeAtStep(2)))
+holdsAt(up(tails),(timeAtStep(2),"< T =<",timeAtStep(3)))
+releasedAt(up(heads),(timeAtStep(1),"< T =<",timeAtStep(2)))
+releasedAt(up(tails),(timeAtStep(1),"< T =<",timeAtStep(2)))
+Assignment:
+timeAtStep(0)=0
+timeAtStep(1)=10
+timeAtStep(2)=20
+timeAtStep(3)=30
+SATISFIABLE
+
+Models       : 2
+Calls        : 1
+Time         : 0.028s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.012s
+
+Command exited with non-zero status 30
+
+  real      0:00.03
+  real [s]  0.03
+  user [s]  0.01
+  sys  [s]  0.00
+  mem  [KB] 8448
+  avgm [KB] 0
