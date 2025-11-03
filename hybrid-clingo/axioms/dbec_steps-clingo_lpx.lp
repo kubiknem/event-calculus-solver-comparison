@@ -4,6 +4,7 @@
 %     initiallyP(F)
 %     initiallyN(F)
 %     initiallyP_Func(F, V)
+%     initiallyN_Func(F)
 %
 %   input domain:
 %     fluent(F)
@@ -13,20 +14,31 @@
 %     terminatesAtStep(E, F, S)
 %     releasesAtStep(E, F, S)
 %
-%     initiatesValueAtStep(E, F, S)
+%     initiatesAtStep_Func(E, F, V@S+1, S)
+%     terminatesAtStep_Func(E, F, V@S, S)
+%     releasesAtStep_Func(E, F, V@S+1, S)
 %
-%     trajectory(F1, S1, F2, S2)
+%     trajectory_Func(F1, S1, F2, V@S2, S2)
 %     trigger_value(F, Val)
 %     trigger_time(T)
 %
 %   general predicates:
 %     happensAtStep(E, S): event S happens at state S                                                                              
 %     holdsAtStep(F, S): fluent F holds (is true) at step S
+%     holdsAtStep_Func(F, V@S, S) = V: functional fluent F at step S has value V
 %
 %   utility predicates
 %     happensInitiatesAtStep(F, S)
 %     happensTerminatesAtStep(F, S)
 %     happensReleasesAtStep(F, S)
+%
+%     happensInitiatesAtStep_Func(F, V@S+1, S)
+%     happensTerminatesAtStep_Func(F, V@S, S)
+%     happensReleasesAtStep_Func(F, V@S+1, S)
+%
+%     initiatedByAtStep_Func(E, F, V@S+1, S)
+%     trajectoryAtStep_Func(F1, S1, F2, V@S2, S2)
+%     persistsToStep_Func(F, V@S, S+1)
 %
 %   output predicates:
 %     happens(E, T)
@@ -34,6 +46,7 @@
 %     holdsAt_Func(F, V, T)
 %     holdsAt_Func_Cont(F, (V1 -> V2), T)
 %     releasedAt(F, T)
+%     releasedAt_Func(F, T)
 
 % OVERVIEW OF HOW IT WORKS:
 %   there is a fixed number of discrete steps (grounded)
@@ -61,18 +74,17 @@
 %      operate the same as normal
 %      have ground values at ground steps
 %   functional fluents are more complicated
-%      functional fluents are discrete fluents with an associate interpreted (non-ground) value 
-%      the value is only relevant when the fluent holds as a discrete fluent
-%      a initiatedAtStep(F, S) needs to also be paired with a "&sum{ ... } = valueAtStep(F, S+1) :- ..."
-%      there are 3 new predicates
-%         fluent_Func(F) -- designating fluents as functional
-%         initiallyP_Func(F, Value) -- for functional fluents that hold with a given value at time zero
-%         initiatesValueAtStep(E, F, S) -- sets a new value and also breaks inertia of the old one, to be used instead of initiates+terminates for cases where only the func. value changes
+%      the general idea is the same as with discrete (being set by events, having inertia, ...)
+%      have interpreted values (non-ground) associated with them
+%      instead of saying holdsAtStep(F, S) we say holdsAtStep(F, valueAtStep(F, S), S)
+%      instead of initiatedAtStep(F, S) we say initiatedAtStep_Func(F, valueAtStep(F, S+1), S), similar for terminates and releases
+%      a initiatedAtStep_Func(F, valueAtStep(F, S+1), S) needs to also be paired with a "&sum{ ... } = valueAtStep(F, S+1) :- ..."
 %      valueAtStep(F, S) is the name of the symbol that will then be interpreted later
 %      these symbols can be compared using normal_atom(X, ..., Y), but their their comparison must also be defined using comparison(X,Y)
 %
 % TODO
 %  - functional value zero now represents no value
+%  - releasedAtStepF and terminatesAtStepF maybe dont need the value argument (only makes sense for initiatesAtStepF?)
 %  - defining the number of steps currently works like this (assume a model with N narrative events and M triggered events)
 %     - steps = N + M   --> correct model
 %     - steps > N + M   --> no model
@@ -86,21 +98,13 @@
 %  - integrating assignments into the model in the output (currently using a post-processing script)
 %  - might also need functional events?
 %  - what if a fluent should have two functional values?
-%  - should we model -holdsAt explicitly? (instead of saying ":- holdsAt" or "not holdsAt")
 
 
 %-------------------------------------------------------------------------------
-% constants and other declarations
+% expected constants
 %-------------------------------------------------------------------------------
 
 % maxstep -- number of distinct timepoints at which events occur
-
-% holdsAtStep can be anything when released
-0{holdsAtStep(F, S)}1 :- releasedAtStep(F, S), fluent(F), step(S).  
-
-% TODO this would usually be part of the domain encoding
-% nothing is initially released from inertia
-:- releasedAtStep(F,0), fluent(F).
 
 
 %-------------------------------------------------------------------------------
@@ -143,11 +147,8 @@ comparison(timeAtStep(S), timeAtStep(S+1)) :- step(S), S < maxstep.
 
 
 %-------------------------------------------------------------------------------
-% Discrete Basic Event Calculus Axioms
+% discrete fluents -- without a interpreted value (fully grounded)
 %-------------------------------------------------------------------------------
-% axioms are almost one to one, except that
-%   - they use steps instead of time
-%   - there are a few additions for functional values of fluents (in the next section)
 
 %% utility predicates for negations
 happensInitiatesAtStep(F, S) :- happensAtStep(E, S), initiatesAtStep(E, F, S).
@@ -166,27 +167,21 @@ stoppedInSteps(S1, F, S2) :-
     happensAtStep(E, S),
     step(S1), step(S2).
 
-% TODO was not needed so far
 %% DBEC2 - StartedIn(t1,f,t2)
-%startedInSteps(S1, F, S2) :-
-%    S1 < S, S < S2,
-%    initiatesAtStep(E, F, S),
-%    happensAtStep(E, S),
-%    step(S1), step(S2).
-%startedInSteps(S1, F, S2) :-
-%    S1 < S, S < S2,
-%    releasesAtStep(E, F, S),
-%    happensAtStep(E, S),
-%    step(S1), step(S2).
+startedInSteps(S1, F, S2) :-
+    S1 < S, S < S2,
+    initiatesAtStep(E, F, S),
+    happensAtStep(E, S),
+    step(S1), step(S2).
+startedInSteps(S1, F, S2) :-
+    S1 < S, S < S2,
+    releasesAtStep(E, F, S),
+    happensAtStep(E, S),
+    step(S1), step(S2).
 
 %% DBEC3 - HoldsAt(f,t) trajectory
-holdsAtStep(F2, S2) :-
-  S1 < S2,
-  initiatesAtStep(E, F1, S),
-  happensAtStep(E, S),
-  trajectory(F1, S1, F2, S2),
-  not stoppedInSteps(S1, F1, S2),
-  step(S2).
+% TODO only makes sense for functional fluents?
+% TODO but could also add a discrete version ...
 
 %% DBEC4* - HoldsAt(f,t)
 % fluent F holds (is true) at step zero
@@ -212,17 +207,17 @@ holdsAtStep(F, S+1) :-
 %% DBEC7* - not HoldsAt(f,t)
 % event effects: events can terminate discrete fluents
 :- holdsAtStep(F, S+1),
-  happensAtStep(E, S),
   terminatesAtStep(E, F, S),
+  happensAtStep(E, S),
   step(S+1).
 % inertia: value of fluents persists unless changed
 :- holdsAtStep(F, S+1),
   not holdsAtStep(F, S),
-  not happensInitiatesAtStep(F, S),
   not releasedAtStep(F, S+1),
+  not happensInitiatesAtStep(F, S),
   step(S), step(S+1).
 
-%% DBEC8
+%% new DBEC8
 % inertia of release
 releasedAtStep(F, S+1) :-
   releasedAtStep(F, S),
@@ -230,20 +225,20 @@ releasedAtStep(F, S+1) :-
   not happensTerminatesAtStep(F, S),
   step(S+1).
 
-%% DBEC9
+%% new DBEC9
 % negative inertia of release
 :- releasedAtStep(F, S+1),
   not releasedAtStep(F, S),
   not happensReleasesAtStep(F, S),
   step(S), step(S+1).
 
-%% DBEC10
+%% new DBEC10
 releasedAtStep(F, S+1) :-
   releasesAtStep(E, F, S),
   happensAtStep(E, S),
   step(S+1).
 
-%% DBEC11
+%% new DBEC11
 :- releasedAtStep(F, S+1),
   initiatesAtStep(E, F, S),
   happensAtStep(E, S),
@@ -253,72 +248,145 @@ releasedAtStep(F, S+1) :-
   happensAtStep(E, S),
   step(S+1).
 
+% holdsAtStep can be anything when released
+0{holdsAtStep(F, S)}1 :- releasedAtStep(F, S), fluent(F), step(S).  
+
+% TODO this would usually be part of the domain encoding
+% nothing is initially released from inertia
+:- releasedAtStep(F,0), fluent(F).
+
 
 %-------------------------------------------------------------------------------
-% axioms for functional values of fluents
+% functional fluents -- with an interpreted value (have a grounding-free value)
 %-------------------------------------------------------------------------------
 
-% - designated using fluent_Func(X).
-% - a functional fluent is subject to the same axioms for holdsAtStep as normal fluent
-% - but when the func. fluent holds, then a valueAtStep(F,S) associated with it which is then interpreted to a non-ground value
-% - when the effect of an event is to only change the value of the func. fluent then use initiatesValueAtStep/3 instead
-%   of a combination of initiatesAtStep/3 and terminatesAtStep/3 -- this will set the new value and break inertia of the old value
-% - the transformation from discrete to functional looks like this:
-%       discrete: height(X) ... holdsAtStep(height(X), S)
-%           e.g.: holdsAtStep(height(5), 2)
-%     functional: height    ... holdsAtStep(height, S) and  {valueAtStep(height, S) = X}
-%           e.g.: holdsAtStep(height, 2) and  {valueAtStep(height, 2) = 5}
+% designated using fluent_Func(X).
+% they holdAtStep_Func in the same way as discrete fluents using their own axioms/predicates
+% but also have a valueAtStep(F,S) associated with them which is then interpreted do a non-ground value
+% the transformation from discrete to functional looks like this:
+%     discrete: height(X) ... holdsAtStep(height(X), S)
+%         e.g.: holdsAtStep(height(5), 2)
+%   functional: height    ... holdsAtStep(height, X, S) ... holdsAtStep(height, valueAtStep(height, S), S)
+%         e.g.: holdsAtStep(height, valueAtStep(height, 2), 2) where valueAtStep(height, 2) = 5
+%
+% holdsAtStep_Func(F, valueAtStep(F, S), S) reads as "fluent F holds at step S and its value at step S is represented by the theory atom valueAtStep(F, S)"
 
-%% functional fluents are also fluents
-fluent(F) :- fluent_Func(F).
-%% initially positive functional also means initially positive discrete
-initiallyP(F) :- initiallyP_Func(F, _).
-%% initiating a value also initiates the fluent as a whole
-initiatesAtStep(E, F, S) :- initiatesValueAtStep(E, F, S).
+%% shorthand predicate
+initiatedByAtStep_Func(E, F, valueAtStep(F, S1), S) :-
+  happensAtStep(E, S),
+  initiatesAtStep_Func(E, F, valueAtStep(F, S1), S).
+persistsToStep_Func(F, valueAtStep(F, S), S+1) :-
+  holdsAtStep_Func(F, valueAtStep(F, S), S),
+  not happensTerminatesAtStep_Func(F, valueAtStep(F, S), S),
+  not releasedAtStep_Func(F, valueAtStep(F, S+1), S+1),
+  step(S+1).
+trajectoryAtStep_Func(F1, S1, F2, valueAtStep(F2, S2), S2) :-
+  S1 < S2,
+  initiatesAtStep(E, F1, S1),
+  happensAtStep(E, S1),
+  trajectory_Func(F1, S1, F2, valueAtStep(F2, S2), S2),
+  not stoppedInSteps(S1, F1, S2),
+  step(S2).
 
 %% utility predicates for negations
-happensInitiatesValueAtStep(F, S) :- happensAtStep(E, S), initiatesValueAtStep(E, F, S).
+happensInitiatesAtStep_Func(F, valueAtStep(F, S1), S) :- happensAtStep(E, S), initiatesAtStep_Func(E, F, valueAtStep(F, S1), S).
+happensTerminatesAtStep_Func(F, valueAtStep(F, S1), S) :- happensAtStep(E, S), terminatesAtStep_Func(E, F, valueAtStep(F, S1), S).
+happensReleasesAtStep_Func(F, valueAtStep(F, S1), S) :- happensAtStep(E, S), releasesAtStep_Func(E, F, valueAtStep(F, S1), S).
 
-%% new DBEC12
-% functional value of a fluent at step zero
-&sum{ valueAtStep(F,0) } = V :- initiallyP_Func(F, V), fluent_Func(F).
+%% DBEC1 - StoppedIn(t1,f,t2)
+% TODO so far was not needed
 
-%% new DBEC13
-% event effects: events can initiate functional values of fluents
-% TODO this currently needs to be specified inside of the domain model of the example
-% &sum{valueAtStep(F,S); X ; -Y; ...} = valueAtStep(F,S+1)
+%% DBEC2 - StartedIn(t1,f,t2)
+% TODO so far was not needed
 
-% inertia: functional value of a fluent persists unless the fluent is terminated/released or a new value is set
-&sum{ valueAtStep(F,S+1) } = valueAtStep(F,S) :-
-  holdsAtStep(F, S),
-  not happensTerminatesAtStep(F, S),
-  not releasedAtStep(F, S+1),
-  not happensInitiatesValueAtStep(F, S),  % additionally check that the value was not changed
-  fluent_Func(F),
+%% DBEC3 - HoldsAt(f,t) trajectory
+holdsAtStep_Func(F2, valueAtStep(F2, S2), S2) :-
+  S1 < S2,
+  initiatesAtStep(E, F1, S),
+  happensAtStep(E, S),
+  trajectory_Func(F1, S1, F2, valueAtStep(F2, S2), S2),
+  not stoppedInSteps(S1, F1, S2),
+  step(S2).
+
+%% DBEC4* - HoldsAt_Func(f,t)
+% fluent F holds (is true) at step zero
+holdsAtStep_Func(F, valueAtStep(F, 0), 0) :- initiallyP_Func(F, V).
+&sum{ valueAtStep(F,0) } = V :- initiallyP_Func(F, V).
+
+%% DBEC5* - not HoldsAt_Func(f,t)
+:- holdsAtStep_Func(F, _, 0), initiallyN_Func(F).
+
+%% DBEC6* - HoldsAt(f,t)
+% event effects: events can initiate functional fluents
+holdsAtStep_Func(F, valueAtStep(F, S+1), S+1) :- 
+  initiatesAtStep_Func(E, F, valueAtStep(F, S+1), S),
+  happensAtStep(E, S),
   step(S+1).
+% inertia: value of fluents persists unless changed
+holdsAtStep_Func(F, valueAtStep(F, S+1), S+1) :-
+  holdsAtStep_Func(F, valueAtStep(F, S), S),
+  not happensTerminatesAtStep_Func(F, valueAtStep(F, S), S),
+  not releasedAtStep_Func(F, valueAtStep(F, S+1), S+1),
+  step(S+1).
+&sum{ valueAtStep(F,S+1) } = valueAtStep(F,S) :-
+  persistsToStep_Func(F, valueAtStep(F, S), S+1). % TODO copy pasted body
 
+%% DBEC7* - not HoldsAt(f,t)
+%% event effects: events can terminate functional fluents
+%% TODO this is rule would be useless? -- old valueAtStep does not need to be terminated since it will be replaced by the new one automatically, and happensTerminates will break positive inertia 
+%:- holdsAtStep_Func(F, valueAtStep(F, S), S+1),
+%  happensTerminatesAtStep_Func(F, valueAtStep(F, S), S),
+%  step(S+1).
+%% inertia: value of fluents persists unless changed
+:- holdsAtStep_Func(F, _, S+1),
+  not holdsAtStep_Func(F, _, S),
+  not happensInitiatesAtStep_Func(F, valueAtStep(F, S+1), S),
+  not releasedAtStep_Func(F, valueAtStep(F, S+1), S+1),
+  step(S), step(S+1).
 
 % when a functional fluent is false, then its value is zero
 % NOTE: when released from inertia the fluent might either not hold and then have value zero, or it might hold as a derived/non-deterministic fluent with some other value (unaffected by this zero)
 % TODO this is a trick to avoid listing of all possible values
-%&sum{ valueAtStep(F,S) } = 0 :- not holdsAtStep(F, S), step(S).
+&sum{ valueAtStep(F,S) } = 0 :- not holdsAtStep_Func(F, valueAtStep(F, S), S), fluent_Func(F), step(S).
 
-%% shorthand predicate
-initiatedValueByAtStep(E, F, S) :-
+%% new DBEC8
+% inertia of release
+releasedAtStep_Func(F, valueAtStep(F, S+1), S+1) :-
+  releasedAtStep_Func(F, valueAtStep(F, S), S),
+  not happensInitiatesAtStep_Func(F, valueAtStep(F, S+1), S),
+  not happensTerminatesAtStep_Func(F, valueAtStep(F, S), S),
+  step(S+1).
+
+%% new DBEC9
+% negative inertia of release
+:- releasedAtStep_Func(F, valueAtStep(F, S+1), S+1),
+  not releasedAtStep_Func(F, valueAtStep(F, S), S),
+  not happensReleasesAtStep_Func(F, valueAtStep(F, S+1), S),
+  step(S+1).
+
+%% new DBEC10
+releasedAtStep_Func(F, valueAtStep(F, S+1), S+1) :-
+  releasesAtStep_Func(E, F, valueAtStep(F, S+1), S),
   happensAtStep(E, S),
-  initiatesValueAtStep(E, F, S).
-trajectoryAtStep(F1, S1, F2, S2) :-
-  S1 < S2,
-  initiatesAtStep(E, F1, S1),
-  happensAtStep(E, S1),
-  trajectory(F1, S1, F2, S2),
-  not stoppedInSteps(S1, F1, S2),
-  step(S2).
+  step(S+1).
 
+%% new DBEC11
+:- releasedAtStep_Func(F, valueAtStep(F, S+1), S+1),
+  initiatesAtStep_Func(E, F, valueAtStep(F, S+1), S),
+  happensAtStep(E, S),
+  step(S+1).
+:- releasedAtStep_Func(F, valueAtStep(F, S+1), S+1), 
+  terminatesAtStep_Func(E, F, valueAtStep(F, S), S),
+  happensAtStep(E, S),
+  step(S+1).
 
-%-------------------------------------------------------------------------------
-% comparing functional values
-%-------------------------------------------------------------------------------
+% holdsAtStep can be anything when released
+0{holdsAtStep_Func(F, valueAtStep(F, S), S)}1 :- releasedAtStep_Func(F, valueAtStep(F, S), S), fluent_Func(F).  
+
+% TODO this would usually be part of the domain encoding
+% nothing is initially released from inertia
+:- releasedAtStep_Func(F, valueAtStep(F, 0), 0), fluent_Func(F).
+
 
 % TODO the comparison(...) is done manually in the model of each domain --- why would we need this here in the axioms?
 % This generates a comparison(A,B) for each interpreted value of fluents at adjacent steps
@@ -353,38 +421,44 @@ comparison(timeAtStep(S), T) :- trigger_time(T), step(S).
 % Show
 %-------------------------------------------------------------------------------
 
+%% NOTE: using #show to translate steps to times using map/2
 %% define a fact "debug_prints." to switch to debug prints instead of fancy prints
 %debug_prints.
-
-%% define a fact "negated_prints." to show negated versions of fluent values
-%negated_prints.
 
 #show.
 
 #show happens(E,timeAtStep(S)) : happensAtStep(E,S), not debug_prints.
 
 %% discrete fluents have values between steps
-#show holdsAt(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  holdsAtStep(F, S+1), not fluent_Func(F), step(S), step(S+1), not debug_prints.
-#show -holdsAt(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  not holdsAtStep(F, S+1), step(S), step(S+1), fluent(F), not debug_prints, negated_prints.
+#show holdsAt(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  holdsAtStep(F, S+1), step(S), step(S+1), not debug_prints.
+%#show -holdsAt(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  not holdsAtStep(F, S+1), step(S), step(S+1), fluent(F), not debug_prints.
 
 %%% discrete fluents can be released between steps
 #show releasedAt(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  releasedAtStep(F, S+1), step(S), step(S+1), not debug_prints.
-#show -releasedAt(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  not releasedAtStep(F, S+1), step(S), step(S+1), fluent(F), not debug_prints, negated_prints.
+%#show -releasedAt(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  not releasedAtStep(F, S+1), step(S), step(S+1), fluent(F), not debug_prints.
 
 %% functional fluents have values between steps
-#show holdsAt_Func(F, valueAtStep(F,S+1), (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  holdsAtStep(F, S+1), not trajectoryAtStep(_, _, F, S+1), fluent_Func(F), step(S), step(S+1), not debug_prints.
+#show holdsAt_Func(F, valueAtStep(F,S+1), (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  holdsAtStep_Func(F, valueAtStep(F, S+1), S+1), not trajectoryAtStep_Func(_, _, F, valueAtStep(F, S+1), S+1), step(S), step(S+1), not debug_prints.
+%#show -holdsAt_Func(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) : not holdsAtStep_Func(F, _, S+1), fluent_Func(F), step(S), step(S+1), not debug_prints.
 
 %% functional fluents can be continuous with their value defined by a trajectory (continuous value between steps)
-#show holdsAt_Func_Cont(F, (valueAtStep(F, S), "->", valueAtStep(F, S+1)), (timeAtStep(S), "< T =<", timeAtStep(S+1))) : trajectoryAtStep(_, _, F, S+1), step(S), step(S+1), not debug_prints.
+#show holdsAt_Func_Cont(F, (valueAtStep(F, S), "->", valueAtStep(F, S+1)), (timeAtStep(S), "< T =<", timeAtStep(S+1))) : trajectoryAtStep_Func(_, _, F, valueAtStep(F, S+1), S+1), step(S), step(S+1), not debug_prints.
+
+% functional fluents can be released between steps
+#show releasedAt_Func(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  releasedAtStep_Func(F, valueAtStep(F, S+1), S+1), step(S), step(S+1), not debug_prints.
+%#show -releasedAt_Func(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  not releasedAtStep_Func(F, _, S+1), fluent_Func(F), step(S), step(S+1), not debug_prints.
 
 
 % show all for debug
 #show happensAtStep(E,S) : happensAtStep(E,S), debug_prints.
 #show holdsAtStep(F,S) : holdsAtStep(F,S), debug_prints.
 #show releasedAtStep(F,S) : releasedAtStep(F,S), debug_prints.
-#show trajectoryAtStep(Fluent1, S1, Fluent2, S2) : trajectoryAtStep(Fluent1, S1, Fluent2, S2), debug_prints.
+#show holdsAtStep_Func(F,V,S) : holdsAtStep_Func(F,V,S), debug_prints.
+#show releasedAtStep_Func(F,V,S) : releasedAtStep_Func(F,V,S), debug_prints.
+#show trajectoryAtStep_Func(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2) : trajectoryAtStep_Func(Fluent1, S1, Fluent2, valueAtStep(Fluent2, S2), S2), debug_prints.
 
 #show  map(T, S) : map(T, S), debug_prints.
+
 
 
 %-------------------------------------------------------------------------------
@@ -397,6 +471,7 @@ comparison(timeAtStep(S), T) :- trigger_time(T), step(S).
 #defined initiallyP/1.
 #defined initiallyN/1.
 #defined initiallyP_Func/2.
+#defined initiallyN_Func/1.
 
 #defined fluent/1.
 #defined fluent_Func/1.
@@ -404,13 +479,13 @@ comparison(timeAtStep(S), T) :- trigger_time(T), step(S).
 #defined initiatesAtStep/3.
 #defined terminatesAtStep/3.
 #defined releasesAtStep/3.
-#defined initiatesValueAtStep/3.
+#defined initiatesAtStep_Func/4.
+#defined terminatesAtStep_Func/4.
+#defined releasesAtStep_Func/4.
 
-
-#defined trajectory/4.
+#defined trajectory_Func/5.
 
 #defined trigger_value/2.
 #defined trigger_time/1.
 
 #defined debug_prints/0.
-#defined negated_prints/0.

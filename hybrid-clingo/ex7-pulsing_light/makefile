@@ -3,8 +3,8 @@ TIME=/usr/bin/time -f "\n  real      %E\n  real [s]  %e\n  user [s]  %U\n  sys  
 
 #-----------------------------------------------------------------------------------------------------------------------
 # base
-LPX_CMD=clingo-lpx --strict -n0 ./model.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=$$MAXSTEP
-LPX_CMD_M=clingo-lpx --strict -n0 ./model-merged.lp ../axioms/bec_steps-clingo_lpx-merged.lp -c maxstep=$$MAXSTEP
+LPX_CMD=clingo-lpx --strict -n0 ./model.lp ../axioms/dbec_steps-clingo_lpx.lp -c maxstep=$$MAXSTEP
+LPX_CMD_M=clingo-lpx --strict -n0 ./model-merged.lp ../axioms/dbec_steps-clingo_lpx-merged.lp -c maxstep=$$MAXSTEP
 
 run-lpx:
 	MAXSTEP=5; ${TIME} ${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh

@@ -4,14 +4,16 @@ TIME=/usr/bin/time -f "\n  real      %E\n  real [s]  %e\n  user [s]  %U\n  sys  
 #-----------------------------------------------------------------------------------------------------------------------
 # base
 CON_CMD=clingcon -n0 ./model-con.lp ../axioms/bec_steps-clingcon.lp -c maxstep=$$MAXSTEP -c paramHeight=$$HEIGHT
-LPX_CMD=clingo-lpx --strict -n0 ./model-lpx.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=$$MAXSTEP -c paramHeight=$$HEIGHT
-LPX_CMD_M=clingo-lpx --strict -n0 ./model-lpx-merged.lp ../axioms/bec_steps-clingo_lpx-merged.lp -c maxstep=$$MAXSTEP -c paramHeight=$$HEIGHT
+LPX_CMD=clingo-lpx --strict -n0 ./model-lpx.lp ../axioms/dbec_steps-clingo_lpx.lp -c maxstep=$$MAXSTEP -c paramHeight=$$HEIGHT
+LPX_CMD_M=clingo-lpx --strict -n0 ./model-lpx-merged.lp ../axioms/dbec_steps-clingo_lpx-merged.lp -c maxstep=$$MAXSTEP -c paramHeight=$$HEIGHT
 run-clingcon:
 	MAXSTEP=2; HEIGHT=20; ${TIME} ${CON_CMD}
 
 run-lpx:
 	MAXSTEP=2; HEIGHT=20; ${TIME} ${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh
 
+run-lpx-orig:
+	clingo-lpx --strict  ./model-lpx-orig.lp ../axioms/clingo_lpx-efficient.lp -c maxstep=2 -n 0
 
 #-----------------------------------------------------------------------------------------------------------------------
 # alternatives (fixes / improvements)

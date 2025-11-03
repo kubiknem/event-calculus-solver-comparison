@@ -4,8 +4,8 @@ TIME=/usr/bin/time -f "\n  real      %E\n  real [s]  %e\n  user [s]  %U\n  sys  
 #-----------------------------------------------------------------------------------------------------------------------
 # base
 CON_CMD=clingcon -n0 ./model-con.lp ../axioms/bec_steps-clingcon.lp -c maxstep=$$MAXSTEP
-LPX_CMD=clingo-lpx --strict -n0 ./model-lpx.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=$$MAXSTEP
-LPX_CMD_M=clingo-lpx --strict -n0 ./model-lpx-merged.lp ../axioms/bec_steps-clingo_lpx-merged.lp -c maxstep=$$MAXSTEP
+LPX_CMD=clingo-lpx --strict -n0 ./model-lpx.lp ../axioms/dbec_steps-clingo_lpx.lp -c maxstep=$$MAXSTEP
+LPX_CMD_M=clingo-lpx --strict -n0 ./model-lpx-merged.lp ../axioms/dbec_steps-clingo_lpx-merged.lp -c maxstep=$$MAXSTEP
 run-clingcon:
 	MAXSTEP=2; ${TIME} ${CON_CMD}
 

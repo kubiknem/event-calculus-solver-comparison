@@ -1,3 +1,5 @@
+% TODO needs to be extended with: release from inertia, functional fluents being false/undefined (no value holds at S)
+
 % step(S): S is a step, ranges from 1 to maxstep                                                                               
 %          step 0 is handled separately                                                                                        
 step(1..maxstep).                                                                                                              
@@ -15,6 +17,10 @@ step(1..maxstep).
 
 % happens_state(E, S): event S happens at state S                                                                              
 happens_state(E, S) :-  happens(E, T), map(T, S).                            
+
+% TODO 
+% :- not happens_state(_, S), step(S), S > 0. 
+
 
 %
 % initial state
@@ -77,6 +83,7 @@ normal_atom(A, geq, B) :- normal_atom(A, gt, B).
 % Show
 %
 #show.
+#show  happens_state/2.
 #show  holdsAt(F,S) : holds(F, true,S).
 % #show -holdsAt(F,S) : holds(F,false,S).
 % #show  holdsAt(E,S) : happens_state(E,S). %holds(F, true,S).
