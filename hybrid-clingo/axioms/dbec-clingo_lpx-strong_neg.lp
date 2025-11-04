@@ -1,96 +1,9 @@
-% PREDICATES / NOTATION:
-%   input narrative:
-%     happens(E, T)
-%     initiallyP(F)
-%     initiallyN(F)
-%     initiallyP_Func(F, V)
-%
-%   input domain:
-%     fluent(F)
-%     fluent_Func(F)
-%
-%     initiatesAtStep(E, F, S)
-%     terminatesAtStep(E, F, S)
-%     releasesAtStep(E, F, S)
-%
-%     initiatesValueAtStep(E, F, S)
-%
-%     trajectory(F1, S1, F2, S2)
-%     trigger_value(F, Val)
-%     trigger_time(T)
-%
-%   general predicates:
-%     happensAtStep(E, S): event S happens at state S                                                                              
-%     holdsAtStep(F, S): fluent F holds (is true) at step S
-%
-%   utility predicates
-%     happensInitiatesAtStep(F, S)
-%     happensTerminatesAtStep(F, S)
-%     happensReleasesAtStep(F, S)
-%
-%   output predicates:
-%     happens(E, T)
-%     holdsAt(F, T)
-%     holdsAt_Func(F, V, T)
-%     holdsAt_Func_Cont(F, (V1 -> V2), T)
-%     releasedAt(F, T)
-
-% OVERVIEW OF HOW IT WORKS:
-%   there is a fixed number of discrete steps (grounded)
-%   these is an equal number of interpreted timepoints (non-ground)
-%   timepoints are mapped to steps via event occurrences
-%      event occurrences in the narrative are specified using happens(E,T)
-%      each T in happens(E,T) gets mapped to a step S in a ordered way (step S has a lower time than step S+1)
-%      when S is mapped to T then the interpreted timepoint of S will be equal to T (forces the value of the interpreted timepoint)
-%
-%   all event calculus predicates operate as normal on the discrete steps
-%
-%   things get a bit complicated for triggered events
-%      we can specify more steps than there are events in the narrative
-%      this results in free-floating steps that have no mapping
-%      a trigger rule then can imply that an event occurs at some state and imply its interpreted timepoint
-%      the free-floating then gets mapped to this triggered event occurrence
-%      such a step will not have a mapping to a ground timepoint, but will have an interpreted timepoint
-%      there is also a restriction that there must be an event occurrence at every timepoint
-%         this ensures binding of triggered events to the free floating timepoints
-%         and means that specifying more steps than needed will cause no models, while specifying less currently gives models where the triggered events do no happen
-%         TODO this might need adjustment but the workflow of running with more and more steps while getting bigger and bigger models until we get no model seems to work well
-%
-%   fluents are divided into discrete (grounded) and functional (interpreted / non-ground)
-%   discrete fluents are straight forward
-%      operate the same as normal
-%      have ground values at ground steps
-%   functional fluents are more complicated
-%      functional fluents are discrete fluents with an associate interpreted (non-ground) value 
-%      the value is only relevant when the fluent holds as a discrete fluent
-%      a initiatedAtStep(F, S) needs to also be paired with a "&sum{ ... } = valueAtStep(F, S+1) :- ..."
-%      there are 3 new predicates
-%         fluent_Func(F) -- designating fluents as functional
-%         initiallyP_Func(F, Value) -- for functional fluents that hold with a given value at time zero
-%         initiatesValueAtStep(E, F, S) -- sets a new value and also breaks inertia of the old one, to be used instead of initiates+terminates for cases where only the func. value changes
-%      valueAtStep(F, S) is the name of the symbol that will then be interpreted later
-%      these symbols can be compared using normal_atom(X, ..., Y), but their their comparison must also be defined using comparison(X,Y)
-%
-% TODO
-%  - functional value zero now represents no value
-%  - defining the number of steps currently works like this (assume a model with N narrative events and M triggered events)
-%     - steps = N + M   --> correct model
-%     - steps > N + M   --> no model
-%     - steps < N       --> no models 
-%     - steps = N       --> model with no triggered events
-%     - steps > N and
-%     - steps < N + M   --> model with some triggered events  (--> good for looking at zeno behavior, when there is no input event after it) 
-%     - an exception is the use of trigger_value/2 when there is not enough steps to see the trigger_value and there is already an input event at a later time,
-%       then there will be no models instead of seeing "some triggered events"
-%  - defining a query? (e.g. if I want to know the height of an object during its falling trajectory)
-%  - integrating assignments into the model in the output (currently using a post-processing script)
-%  - might also need functional events?
-%  - what if a fluent should have two functional values?
-%  - should we model -holdsAt explicitly? (instead of saying ":- holdsAt" or "not holdsAt")
+% very similar to dbec-clingo_lpx-choice.lp
+% the difference is that we use strong negation instead of negation as failure for holdsAtStep and releasedAtStep
 
 
 %-------------------------------------------------------------------------------
-% constants and other declarations
+% constants, declarations, initial stuff...
 %-------------------------------------------------------------------------------
 
 % maxstep -- number of distinct timepoints at which events occur
@@ -100,7 +13,11 @@
 
 % TODO this would usually be part of the domain encoding
 % nothing is initially released from inertia
-:- releasedAtStep(F,0), fluent(F).
+-releasedAtStep(F,0) :- fluent(F).
+
+% TODO maybe should also add this?
+% :- holdsAtStep(F, S), -holdsAtStep(F, S), fluent(F), step(S).
+% :- releasedAtStep(F, S), -releasedAtStep(F, S), fluent(F), step(S).
 
 
 %-------------------------------------------------------------------------------
@@ -126,9 +43,12 @@ step(0..maxstep).
 happensAtStep(E, S) :-  happens(E, T), map(T, S).                            
 
 % restrict free floating steps:
-% each step must either be mapped to an input time or it must have a triggered event
-:- not happensAtStep(_, S), step(S), S > 0. 
+% all steps must have an event or be a check step
+:- not happensAtStep(_, S), not checkStep(S), step(S), S > 0. 
+  % all steps must have an event
+  %:- not happensAtStep(_, S), step(S), S > 0. 
   % TODO the "not map" was causing problems in some examples... [in ex7 with 5 steps and no off event: would see a duplicate model which had both normal_atom(valueAtStep(brightness,1),geq,0) and normal_atom(valueAtStep(brightness,1),gt,0)]
+  % each step must either be mapped to an input time or it must have a triggered event
   %:- not map(_, S), not happensAtStep(_, S), step(S). 
 
 % TODO maybe could be allowed
@@ -147,7 +67,7 @@ comparison(timeAtStep(S), timeAtStep(S+1)) :- step(S), S < maxstep.
 %-------------------------------------------------------------------------------
 % axioms are almost one to one, except that
 %   - they use steps instead of time
-%   - there are a few additions for functional values of fluents (in the next section)
+%   - there are two new axioms for functional values of fluents (DBEC12 and DBEC13 in the next section)
 
 %% utility predicates for negations
 happensInitiatesAtStep(F, S) :- happensAtStep(E, S), initiatesAtStep(E, F, S).
@@ -194,7 +114,7 @@ holdsAtStep(F, 0) :- initiallyP(F).
 
 %% DBEC5* - not HoldsAt(f,t)
 % fluent F does not hold (is false) at step zero
-:- holdsAtStep(F, 0), initiallyN(F).
+-holdsAtStep(F, 0) :- initiallyN(F).
 
 %% DBEC6* - HoldsAt(f,t)
 % event effects: events can initiate discrete fluents
@@ -206,19 +126,19 @@ holdsAtStep(F, S+1) :-
 holdsAtStep(F, S+1) :-
   holdsAtStep(F, S),
   not happensTerminatesAtStep(F, S),
-  not releasedAtStep(F, S+1),
+  -releasedAtStep(F, S+1),
   step(S+1).
 
 %% DBEC7* - not HoldsAt(f,t)
 % event effects: events can terminate discrete fluents
-:- holdsAtStep(F, S+1),
+-holdsAtStep(F, S+1) :-
   terminatesAtStep(E, F, S),
   happensAtStep(E, S),
   step(S+1).
 % inertia: value of fluents persists unless changed
-:- holdsAtStep(F, S+1),
-  not holdsAtStep(F, S),
-  not releasedAtStep(F, S+1),
+-holdsAtStep(F, S+1) :- 
+  -holdsAtStep(F, S),
+  -releasedAtStep(F, S+1),
   not happensInitiatesAtStep(F, S),
   step(S), step(S+1).
 
@@ -232,8 +152,8 @@ releasedAtStep(F, S+1) :-
 
 %% DBEC9
 % negative inertia of release
-:- releasedAtStep(F, S+1),
-  not releasedAtStep(F, S),
+-releasedAtStep(F, S+1) :-
+  -releasedAtStep(F, S),
   not happensReleasesAtStep(F, S),
   step(S), step(S+1).
 
@@ -244,11 +164,11 @@ releasedAtStep(F, S+1) :-
   step(S+1).
 
 %% DBEC11
-:- releasedAtStep(F, S+1),
+-releasedAtStep(F, S+1) :- 
   happensAtStep(E, S),
   initiatesAtStep(E, F, S),
   step(S+1).
-:- releasedAtStep(F, S+1),
+-releasedAtStep(F, S+1) :-
   terminatesAtStep(E, F, S),
   happensAtStep(E, S),
   step(S+1).
@@ -260,14 +180,14 @@ releasedAtStep(F, S+1) :-
 
 % - designated using fluent_Func(X).
 % - a functional fluent is subject to the same axioms for holdsAtStep as normal fluent
-% - but when the func. fluent holds, then a valueAtStep(F,S) associated with it which is then interpreted to a non-ground value
+% - but when the func. fluent holds, then a valueAtStep(F,S) is associated with it which is then interpreted to a non-ground value
 % - when the effect of an event is to only change the value of the func. fluent then use initiatesValueAtStep/3 instead
 %   of a combination of initiatesAtStep/3 and terminatesAtStep/3 -- this will set the new value and break inertia of the old value
 % - the transformation from discrete to functional looks like this:
 %       discrete: height(X) ... holdsAtStep(height(X), S)
 %           e.g.: holdsAtStep(height(5), 2)
-%     functional: height    ... holdsAtStep(height, S) and  {valueAtStep(height, S) = X}
-%           e.g.: holdsAtStep(height, 2) and  {valueAtStep(height, 2) = 5}
+%     functional: height    ... holdsAtStep(height, S) and &sum{valueAtStep(height, S)} = X
+%           e.g.: holdsAtStep(height, 2) and &sum{valueAtStep(height, 2)} = 5
 
 %% functional fluents are also fluents
 fluent(F) :- fluent_Func(F).
@@ -292,7 +212,7 @@ happensInitiatesValueAtStep(F, S) :- happensAtStep(E, S), initiatesValueAtStep(E
 &sum{ valueAtStep(F,S+1) } = valueAtStep(F,S) :-
   holdsAtStep(F, S),
   not happensTerminatesAtStep(F, S),
-  not releasedAtStep(F, S+1),
+  -releasedAtStep(F, S+1),
   not happensInitiatesValueAtStep(F, S),  % additionally check that the value was not changed
   fluent_Func(F),
   step(S+1).
@@ -365,7 +285,7 @@ comparison(timeAtStep(S), T) :- trigger_time(T), step(S).
 
 %% discrete fluents have values between steps
 #show holdsAt(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  holdsAtStep(F, S+1), not fluent_Func(F), step(S), step(S+1), not debug_prints.
-#show -holdsAt(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  not holdsAtStep(F, S+1), step(S), step(S+1), fluent(F), not debug_prints, negated_prints.
+#show -holdsAt(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  -holdsAtStep(F, S+1), step(S), step(S+1), fluent(F), not debug_prints, negated_prints.
 
 %%% discrete fluents can be released between steps
 #show releasedAt(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  releasedAtStep(F, S+1), step(S), step(S+1), not debug_prints.

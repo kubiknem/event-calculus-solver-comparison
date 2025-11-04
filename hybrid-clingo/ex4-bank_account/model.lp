@@ -239,7 +239,6 @@ initiallyN(F) :- not initiallyP(F), not initiallyP_Func(F, _), fluent(F).
 
 happens(transfer(account1, account2, 2), 10).
 happens(transfer(account1, account2, 4), 20).
-happens(check, 100).
 
 % --> conclude that
 %   a service fee is charged to account1 "in response to transfer at time 20" due to the balance being 4
@@ -248,7 +247,10 @@ happens(check, 100).
 %   a service fee is again charged to account1 "in response to reset at time 50"
 %   the balance of account1 will be 2 after 
 
+% this forces the last step to have time 100 creating a new step so that we can check the values of fluents at time 100
+% the step will have no event and therefore must be declared as a checkStep
+checkStep(maxstep).
+&sum{ timeAtStep(maxstep) } = 100.
 
-% TODO cant use this to look at values at time 7 anymore because there needs to be an event
-% TODO the restriction that forces an event was the only way to avoid seeing duplicate models with "e" in timepoints
-% &sum{ timeAtStep(maxstep) } = 7.
+% TODO alternatively we could just introduce a new event just to check the values 
+%happens(check, 100).

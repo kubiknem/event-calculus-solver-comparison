@@ -37,6 +37,26 @@ fluent_Func(balance(A)) :- account(A).
 %    TransM12 > 0,
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
+*%
+&sum{valueAtStep(balance(A2),S); TransM12} = valueAtStep(balance(A2),S+1) :-
+    initiatedValueByAtStep(transfer(A1, A2, TransM12), balance(A2), S),
+    step(S+1).
+initiatesValueAtStep(transfer(A1, A2, TransM12), balance(A2), S) :-
+    TransM12 > 0,
+    % &sum{ (balance(A1),S-1) } >= TransM12, 
+    holdsAtStep(balance(A2), S),
+    holdsAtStep(balance(A1), S),
+    normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
+    account(A2),
+    step(S).
+
+% needed for normal_atom
+comparison(valueAtStep(balance(A1),S), TransM12) :- 
+    TransM12 > 0,
+    happensAtStep(transfer(A1, A2, TransM12), S),
+    step(S).
+
+%*
 %% terminate old balance of A2
 %terminates(transfer(A1, A2, TransM12), balance(A2, DstM2), T) :-
 %    holdsAt(balance(A2, DstM2), T),
@@ -45,17 +65,7 @@ fluent_Func(balance(A)) :- account(A).
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
 *%
-&sum{ (balance(A2),S-1); TransM12 } = (balance(A2),S) :- 
-    TransM12 > 0,
-    % &sum{ (balance(A1),S-1) } >= TransM12, 
-    normal_atom((balance(A1),S-1), geq, TransM12),
-    happens_state(transfer(A1, A2, TransM12), S).
-
-defined((balance(A2),S)) :- 
-    TransM12 > 0,
-    % &sum{ (balance(A1),S-1) } >= TransM12, 
-    normal_atom((balance(A1),S-1), geq, TransM12),
-    happens_state(transfer(A1, A2, TransM12), S).
+% TODO this is meant to terminate the old functional value (break its inertia), this is already done by initiatesValueAtStep
 
 %*
 %% new balance of A1 (sends payment)
@@ -65,6 +75,24 @@ defined((balance(A2),S)) :-
 %    TransM12 > 0,
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
+*%
+&sum{valueAtStep(balance(A1),S); -TransM12} = valueAtStep(balance(A1),S+1) :-
+    initiatedValueByAtStep(transfer(A1, A2, TransM12), balance(A1), S),
+    step(S+1).
+initiatesValueAtStep(transfer(A1, A2, TransM12), balance(A1), S) :-
+    TransM12 > 0,
+    % &sum{ (balance(A1),S-1) } >= TransM12, 
+    holdsAtStep(balance(A2), S),
+    holdsAtStep(balance(A1), S),
+    normal_atom(valueAtStep(balance(A1),S), geq, TransM12),
+    account(A2),
+    step(S).
+
+% already defined with the initiates above
+%comparison(valueAtStep(balance(A1),S), TransM12) :-  ...
+
+
+%*
 %% terminate old balance of A1
 %terminates(transfer(A1, A2, TransM12), balance(A1, SrcM1), T) :-
 %    holdsAt(balance(A2, DstM2), T),
@@ -73,22 +101,8 @@ defined((balance(A2),S)) :-
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
 *%
+% TODO this is meant to terminate the old functional value (break its inertia), this is already done by initiatesValueAtStep
 
-&sum{ (balance(A1),S-1); -TransM12 } = (balance(A1),S) :- 
-    TransM12 > 0,
-    % &sum{ (balance(A1),S-1) } >= TransM12, 
-    normal_atom((balance(A1),S-1), geq, TransM12),
-    happens_state(transfer(A1, A2, TransM12), S).
-
-defined((balance(A1),S)) :- 
-    TransM12 > 0,
-    % &sum{ (balance(A1),S-1) } >= TransM12, 
-    normal_atom((balance(A1),S-1), geq, TransM12),
-    happens_state(transfer(A1, A2, TransM12), S).
-    
-comparison((balance(A1),S-1), TransM12) :- 
-    TransM12 > 0,
-    happens_state(transfer(A1, A2, TransM12), S).
 
 %-------------------------------------------------------------------------------
 % state constraints
@@ -102,6 +116,7 @@ comparison((balance(A1),S-1), TransM12) :-
 %M1=M2 :- holdsAt(minimumBalance(A, M1), T), holdsAt(minimumBalance(A, M2), T),
 %    account(A), time(T), money(M1), money(M2).
 *%
+% TODO state constraint is not needed because functional fluents cannot have multiple values
 
 %-------------------------------------------------------------------------------
 % observations
@@ -109,26 +124,22 @@ comparison((balance(A1),S-1), TransM12) :-
 
 % initiallyP(balance(account1, 10)).      
 % initiallyP(balance(account2, 10)).      
-initially_Func(balance(account1), 100).      
-initially_Func(balance(account2), 100).      
+initiallyP_Func(balance(account1), 10).      
+initiallyP_Func(balance(account2), 10).      
 
 
 %-------------------------------------------------------------------------------
 % narrative 
 %-------------------------------------------------------------------------------
 
-happens(transfer(account1, account2, 2), 1).
-happens(transfer(account1, account2, 2), 2).
-happens(transfer(account1, account2, 2), 3).
-happens(transfer(account1, account2, 2), 4).
-happens(transfer(account1, account2, 2), 5).
-happens(transfer(account1, account2, 2), 6).    
-
-% happens(transfer(account1, account2, 2), 7).
-% happens(transfer(account1, account2, 2), 8).
-% happens(transfer(account1, account2, 2), 9).
-% happens(transfer(account1, account2, 2), 10).
+happens(transfer(account1, account2, 2), 10).
+happens(transfer(account1, account2, 4), 20).
 % initiallyN(F) :- not initiallyP(F), fluent(F).
 
 % --> conclude that
-%   the balance of account1 will be ...
+%   the balance of account1 will be 4 at time 30
+
+% this forces the last step to have time 30 creating a new step so that we can check the values of fluents at time 100
+% the step will have no event and therefore must be declared as a checkStep
+checkStep(maxstep).
+&sum{ timeAtStep(maxstep) } = 30.

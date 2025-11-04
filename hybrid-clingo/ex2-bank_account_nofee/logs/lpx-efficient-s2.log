@@ -1,0 +1,35 @@
+$ clingo-lpx --strict -n0 ./model-efficient.lp ../axioms/clingo_lpx-efficient.lp -c maxstep=2 | ../utils/make-readable.sh
+
+
+clingo-lpx version 1.3.0
+Reading from ./model-efficient.lp ...
+Solving...
+Answer: 1
+(Time: 0.017s)
+happens_state(transfer(account1,account2,2),1)
+happens_state(transfer(account1,account2,4),2)
+Assignment:
+time(0)=0
+time(1)=1
+time(2)=2
+(balance(account1),0)=10
+(balance(account1),1)=8
+(balance(account1),2)=4
+(balance(account2),0)=10
+(balance(account2),1)=12
+(balance(account2),2)=16
+SATISFIABLE
+
+Models       : 1
+Calls        : 1
+Time         : 0.017s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.007s
+
+Command exited with non-zero status 30
+
+  real      0:00.02
+  real [s]  0.02
+  user [s]  0.00
+  sys  [s]  0.01
+  mem  [KB] 8064
+  avgm [KB] 0

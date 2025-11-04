@@ -10,6 +10,9 @@ run-lpx:
 	MAXSTEP=2; ${TIME} ${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh
 
 
+run-lpx-orig:
+	clingo-lpx --strict  ./model-orig.lp ../axioms/clingo_lpx-efficient.lp -c maxstep=2 -n 0
+
 #-----------------------------------------------------------------------------------------------------------------------
 # alternatives (fixes / improvements)
 

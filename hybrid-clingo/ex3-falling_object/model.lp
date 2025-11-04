@@ -109,16 +109,45 @@ trajectory(falling(O), S1, height(O), S2) :- object(O), step(S1), step(S2).
 initiallyP_Func(height(apple), H) :- initHeight(H).  % apples height initially is something
 initiallyN(F) :- not initiallyP(F), not initiallyP_Func(F, _), fluent(F).  % apple is initially not falling
 
-happens(drop(nathan,apple), 10).                 % nathan drop the apple at time 10
-% happens(check, 15).                   % TODO can add this to see value of height at time 15
+happens(drop(nathan,apple), 10).        % nathan drop the apple at time 10
 % happens(catch(nathan,apple), 15).     % TODO could add this to prevent hitting the ground 
 
 % --> conclude that the apple will hit the ground at time (initHeight/2) + 10
-
+% &sum{ valueAtStep(height(O),S) }  = 0 :- object(O), S=maxstep.
 
 % TODO not sure what these were for --- probably a way to workaround the event trigger?
-%&sum{ valueAtStep(height(O),S) }  = 0 :- object(O), S=maxstep.
 % &sum{ (height(O),S) } != 0 :- object(O), S=0..maxstep-1. % comparison != is not allowed in clingo-lpx
 % comparison(valueAtStep(height(O),S), 0) :- object(O), S=0..maxstep-1.
 % :- object(O), S=0..maxstep-1, normal_atom(valueAtStep(height(O),S), eq, 0). 
 
+
+%-------------------------------------------------------------------------------
+% additional "queries"
+%-------------------------------------------------------------------------------
+
+% TODO if we wanted to check the height at time 15
+%% could add an event at time 15
+% happens(check, 15).                   
+%% or can use this (there is one checkStep such that its time is 15 -- check steps do not need to have an event)
+%{checkStep(S) : step(S)} = 1.
+%&sum{ timeAtStep(S) } = 15 :- checkStep(S).
+
+
+% TODO if we wanted to see the time at which the height is 2
+%% could add a triggered event
+%happensAtStep(check, S) :- normal_atom(valueAtStep(height(O), S), eq, 2), step(S).
+%trigger_value(height(O), 2) :- object(O).
+%% or can use this (there is one checkStep such that the height is 2)
+%{checkStep(S) : step(S)} = 1.
+%&sum{ valueAtStep(height(apple), S) } = 2 :- checkStep(S).
+
+
+% TODO if we wanted to see the time at which the object was falling for 2 time units
+%% could hard code this using ground time
+%happens(check, T + 2) :- happens(drop(nathan,apple), T).
+%% or could use non-ground time (should be more general)
+%{happensAtStep(check(S1), S2) : step(S2), S2 > S1} = 1 :- happensAtStep(drop(nathan,apple), S1), S1 < maxstep.
+%&sum{timeAtStep(S1) + 2} = timeAtStep(S2) :- happensAtStep(drop(nathan,apple), S1), S1 < maxstep, happensAtStep(check(S1), S2).
+%% or could use a checkStep instead
+%{checkStep(S) : step(S)} = 1.
+%&sum{timeAtStep(S1) + 2} = timeAtStep(S2) :- happensAtStep(drop(nathan,apple), S1), S1 < maxstep, checkStep(S2).
