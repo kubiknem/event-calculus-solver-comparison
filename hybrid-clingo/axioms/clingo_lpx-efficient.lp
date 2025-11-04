@@ -1,10 +1,10 @@
-% TODO modification needed:
-% - shift effects of events
+% TODO possible modifications to implement:
+% - shift effects of events?
 %   - current impl.: happens@S causes holds@S   based on holds@S-1 (or also based on S-2, S-3, ...)
 %   - should be:     happens@S causes holds@S+1 based on holds@S   (or also based on S-1, S-2, ...)
 % - add release from inertia
 % - add functional fluents being false/undefined (no value holds at S)
-% - maybe add the constraint that says to steps without events
+% - maybe add the constraint that says no steps without events?
 
 % step(S): S is a step, ranges from 1 to maxstep                                                                               
 %          step 0 is handled separately                                                                                        
