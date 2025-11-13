@@ -1,11 +1,11 @@
-$ clingo-lpx --strict -n0 ../axioms/bec_steps-clingo_lpx.lp -c maxstep=6 ./fix-flat_loss.lp ./narrative2.lp | ../utils/replace_assignments.sh | ../utils/make-readable.sh
+$ clingo-lpx --strict -n0 ../axioms/dbec-clingo_lpx-choice.lp -c maxstep=6 ./fix-flat_loss.lp ./narrative2.lp | ../utils/replace_assignments.sh | ../utils/make-readable.sh
 
 
 clingo-lpx version 1.3.0
-Reading from ../axioms/bec_steps-clingo_lpx.lp ...
+Reading from ../axioms/dbec-clingo_lpx-choice.lp ...
 Solving...
 Answer: 1
-(Time: 0.053s)
+(Time: 0.040s)
 happens(bounce_up,20)
 happens(bounce_up,49/2)
 happens(drop,10)
@@ -41,16 +41,16 @@ holdsAt(velocity_loss_portion("0.75"),(20,"< T =<",89/4))
 holdsAt(velocity_loss_portion("0.75"),(89/4,"< T =<",49/2))
 holdsAt(velocity_loss_portion("0.75"),(49/2,"< T =<",397/16))
 holdsAt(velocity_loss_portion("0.75"),(397/16,"< T =<",201/8))
-releasedAt_Func(height,(10,"< T =<",20))
-releasedAt_Func(height,(20,"< T =<",89/4))
-releasedAt_Func(height,(89/4,"< T =<",49/2))
-releasedAt_Func(height,(49/2,"< T =<",397/16))
-releasedAt_Func(height,(397/16,"< T =<",201/8))
-releasedAt_Func(velocity,(10,"< T =<",20))
-releasedAt_Func(velocity,(20,"< T =<",89/4))
-releasedAt_Func(velocity,(89/4,"< T =<",49/2))
-releasedAt_Func(velocity,(49/2,"< T =<",397/16))
-releasedAt_Func(velocity,(397/16,"< T =<",201/8))
+releasedAt(height,(10,"< T =<",20))
+releasedAt(height,(20,"< T =<",89/4))
+releasedAt(height,(89/4,"< T =<",49/2))
+releasedAt(height,(49/2,"< T =<",397/16))
+releasedAt(height,(397/16,"< T =<",201/8))
+releasedAt(velocity,(10,"< T =<",20))
+releasedAt(velocity,(20,"< T =<",89/4))
+releasedAt(velocity,(89/4,"< T =<",49/2))
+releasedAt(velocity,(49/2,"< T =<",397/16))
+releasedAt(velocity,(397/16,"< T =<",201/8))
 holdsAt_Func(height,10,(0,"< T =<",10))
 holdsAt_Func(velocity,0,(0,"< T =<",10))
 holdsAt_Func_Cont(height,(10,"->",0),(10,"< T =<",20))
@@ -67,14 +67,14 @@ SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.054s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.028s
+Time         : 0.040s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.024s
 
 Command exited with non-zero status 30
 
-  real      0:00.06
-  real [s]  0.06
-  user [s]  0.02
+  real      0:00.05
+  real [s]  0.05
+  user [s]  0.01
   sys  [s]  0.01
-  mem  [KB] 9728
+  mem  [KB] 9472
   avgm [KB] 0

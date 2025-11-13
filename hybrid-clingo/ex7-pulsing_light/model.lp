@@ -20,25 +20,25 @@ initiatesAtStep(fade_out_end, fading_in, S) :- step(S).
 initiatesAtStep(turn_light_on,  light_on, S) :- step(S).
 initiatesAtStep(turn_light_on, fading_in, S) :- step(S).
 
-releasesAtStep_Func(turn_light_on, brightness, valueAtStep(brightness, S+1), S) :- step(S), step(S+1).
+releasesAtStep(turn_light_on, brightness, S) :- step(S).
 
 terminatesAtStep(turn_light_off, light_on, S) :- step(S).
 terminatesAtStep(turn_light_off, fading_in, S) :- holdsAtStep(fading_in, S).
 terminatesAtStep(turn_light_off, fading_out, S) :- holdsAtStep(fading_out, S).
 
-initiatesAtStep_Func(turn_light_off, brightness, valueAtStep(brightness, S+1), S) :- step(S), step(S+1).
+initiatesValueAtStep(turn_light_off, brightness, S) :- step(S).
 &sum{valueAtStep(brightness,S+1)} = 0 :-
-    initiatedByAtStep_Func(turn_light_off, brightness, valueAtStep(brightness,S+1), S).
-terminatesAtStep_Func(turn_light_off, brightness, valueAtStep(brightness, S), S) :- step(S).
+    initiatedValueByAtStep(turn_light_off, brightness, S),
+    step(S+1).
 
-trajectory_Func(fading_in, S1, brightness, valueAtStep(brightness,S2), S2) :- step(S1), step(S2).
+trajectory(fading_in, S1, brightness, S2) :- step(S1), step(S2).
 &sum{ valueAtStep(brightness,S); -timeAtStep(S); timeAtStep(S+1) } = valueAtStep(brightness,S+1) :-
-    trajectoryAtStep_Func(fading_in, _, brightness, valueAtStep(brightness,S+1), S+1),
+    trajectoryAtStep(fading_in, _, brightness, S+1),
     step(S), step(S+1).
 
-trajectory_Func(fading_out, S1, brightness, valueAtStep(brightness,S2), S2) :- step(S1), step(S2).
+trajectory(fading_out, S1, brightness, S2) :- step(S1), step(S2).
 &sum{ valueAtStep(brightness,S); timeAtStep(S); -timeAtStep(S+1) } = valueAtStep(brightness,S+1) :-
-    trajectoryAtStep_Func(fading_out, _, brightness, valueAtStep(brightness,S+1), S+1),
+    trajectoryAtStep(fading_out, _, brightness, S+1),
     step(S), step(S+1).
 
 

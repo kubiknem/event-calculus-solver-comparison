@@ -1,51 +1,41 @@
-$ clingo-lpx --strict -n0 ./model.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=3 | ../utils/make-readable.sh
+$ clingo-lpx --strict -n0 ./model.lp ../axioms/dbec-clingo_lpx-choice.lp -c maxstep=3 | ../utils/replace_assignments.sh | ../utils/make-readable.sh
 
 
 clingo-lpx version 1.3.0
 Reading from ./model.lp ...
 Solving...
 Answer: 1
-(Time: 0.029s)
-happens(check,timeAtStep(3))
-happens(land,timeAtStep(2))
-happens(toss,timeAtStep(1))
-holdsAt(up(heads),(timeAtStep(0),"< T =<",timeAtStep(1)))
-holdsAt(up(heads),(timeAtStep(1),"< T =<",timeAtStep(2)))
-holdsAt(up(heads),(timeAtStep(2),"< T =<",timeAtStep(3)))
-releasedAt(up(heads),(timeAtStep(1),"< T =<",timeAtStep(2)))
-releasedAt(up(tails),(timeAtStep(1),"< T =<",timeAtStep(2)))
-Assignment:
-timeAtStep(0)=0
-timeAtStep(1)=10
-timeAtStep(2)=20
-timeAtStep(3)=30
+(Time: 0.023s)
+happens(check,30)
+happens(land,20)
+happens(toss,10)
+holdsAt(up(heads),(0,"< T =<",10))
+holdsAt(up(heads),(10,"< T =<",20))
+holdsAt(up(heads),(20,"< T =<",30))
+releasedAt(up(heads),(10,"< T =<",20))
+releasedAt(up(tails),(10,"< T =<",20))
 Answer: 2
-(Time: 0.030s)
-happens(check,timeAtStep(3))
-happens(land,timeAtStep(2))
-happens(toss,timeAtStep(1))
-holdsAt(up(heads),(timeAtStep(0),"< T =<",timeAtStep(1)))
-holdsAt(up(tails),(timeAtStep(1),"< T =<",timeAtStep(2)))
-holdsAt(up(tails),(timeAtStep(2),"< T =<",timeAtStep(3)))
-releasedAt(up(heads),(timeAtStep(1),"< T =<",timeAtStep(2)))
-releasedAt(up(tails),(timeAtStep(1),"< T =<",timeAtStep(2)))
-Assignment:
-timeAtStep(0)=0
-timeAtStep(1)=10
-timeAtStep(2)=20
-timeAtStep(3)=30
+(Time: 0.023s)
+happens(check,30)
+happens(land,20)
+happens(toss,10)
+holdsAt(up(heads),(0,"< T =<",10))
+holdsAt(up(tails),(10,"< T =<",20))
+holdsAt(up(tails),(20,"< T =<",30))
+releasedAt(up(heads),(10,"< T =<",20))
+releasedAt(up(tails),(10,"< T =<",20))
 SATISFIABLE
 
 Models       : 2
 Calls        : 1
-Time         : 0.030s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.013s
+Time         : 0.023s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.011s
 
 Command exited with non-zero status 30
 
   real      0:00.03
   real [s]  0.03
   user [s]  0.00
-  sys  [s]  0.00
-  mem  [KB] 8576
+  sys  [s]  0.01
+  mem  [KB] 8448
   avgm [KB] 0
