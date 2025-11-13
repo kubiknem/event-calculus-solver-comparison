@@ -5,7 +5,7 @@ clingo-lpx version 1.3.0
 Reading from ./model.lp ...
 Solving...
 Answer: 1
-(Time: 0.023s)
+(Time: 0.035s)
 happens(check,30)
 happens(land,20)
 happens(toss,10)
@@ -15,7 +15,7 @@ holdsAt(up(heads),(20,"< T =<",30))
 releasedAt(up(heads),(10,"< T =<",20))
 releasedAt(up(tails),(10,"< T =<",20))
 Answer: 2
-(Time: 0.023s)
+(Time: 0.036s)
 happens(check,30)
 happens(land,20)
 happens(toss,10)
@@ -28,14 +28,14 @@ SATISFIABLE
 
 Models       : 2
 Calls        : 1
-Time         : 0.023s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.011s
+Time         : 0.036s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.016s
 
 Command exited with non-zero status 30
 
-  real      0:00.03
-  real [s]  0.03
-  user [s]  0.00
-  sys  [s]  0.01
-  mem  [KB] 8448
+  real      0:00.04
+  real [s]  0.04
+  user [s]  0.01
+  sys  [s]  0.00
+  mem  [KB] 8064
   avgm [KB] 0

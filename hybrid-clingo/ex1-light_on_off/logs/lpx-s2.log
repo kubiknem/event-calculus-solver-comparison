@@ -5,22 +5,24 @@ clingo-lpx version 1.3.0
 Reading from ./model.lp ...
 Solving...
 Answer: 1
-(Time: 0.020s)
+(Time: 0.050s)
 happens(turn_light_off,20)
 happens(turn_light_on,10)
 holdsAt(light_on,(10,"< T =<",20))
+Assignment: [leftovers]
+timeAtStep(0)=0
 SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.020s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.010s
+Time         : 0.050s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.014s
 
 Command exited with non-zero status 30
 
-  real      0:00.02
-  real [s]  0.02
+  real      0:00.06
+  real [s]  0.06
   user [s]  0.01
   sys  [s]  0.00
-  mem  [KB] 8320
+  mem  [KB] 7808
   avgm [KB] 0

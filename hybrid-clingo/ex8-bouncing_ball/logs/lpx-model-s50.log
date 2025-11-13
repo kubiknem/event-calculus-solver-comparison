@@ -5,7 +5,7 @@ clingo-lpx version 1.3.0
 Reading from ../axioms/dbec-clingo_lpx-choice.lp ...
 Solving...
 Answer: 1
-(Time: 5.012s)
+(Time: 5.646s)
 happens(bounce_up,20)
 happens(bounce_up,25)
 happens(bounce_up,105/4)
@@ -503,18 +503,21 @@ holdsAt_Func_Cont(velocity,(5/8796093022208,"->",0),(117281240296105/43980465111
 holdsAt_Func_Cont(velocity,(0,"->",5/35184372088832),(938249922368845/35184372088832,"< T =<",469124961184425/17592186044416))
 holdsAt_Func_Cont(velocity,(5/35184372088832,"->",0),(469124961184425/17592186044416,"< T =<",3752999689475405/140737488355328))
 holdsAt_Func_Cont(velocity,(0,"->",5/140737488355328),(3752999689475405/140737488355328,"< T =<",1876499844737705/70368744177664))
+Assignment: [leftovers]
+valueAtStep(height,0)=10
+valueAtStep(velocity,0)=0
 SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 5.016s (Solving: 4.09s 1st Model: 4.08s Unsat: 0.00s)
-CPU Time     : 4.997s
+Time         : 5.650s (Solving: 4.42s 1st Model: 4.42s Unsat: 0.00s)
+CPU Time     : 5.615s
 
 Command exited with non-zero status 30
 
-  real      0:05.05
-  real [s]  5.05
-  user [s]  4.90
-  sys  [s]  0.12
+  real      0:05.69
+  real [s]  5.69
+  user [s]  5.48
+  sys  [s]  0.16
   mem  [KB] 68976
   avgm [KB] 0

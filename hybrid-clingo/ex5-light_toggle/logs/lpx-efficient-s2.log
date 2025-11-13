@@ -5,7 +5,7 @@ clingo-lpx version 1.3.0
 Reading from ./model-efficient.lp ...
 Solving...
 Answer: 1
-(Time: 0.017s)
+(Time: 0.035s)
 happens_state(toggle_light,1)
 happens_state(toggle_light,2)
 holdsAt(light_on,1)
@@ -17,17 +17,17 @@ SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.017s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.005s
+Time         : 0.035s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.008s
 
 ../axioms/clingo_lpx-efficient.lp:40:27-48: info: atom does not occur in any rule head:
   initiallyF(Fluent,V)
 
 Command exited with non-zero status 30
 
-  real      0:00.02
-  real [s]  0.02
+  real      0:00.04
+  real [s]  0.04
   user [s]  0.00
-  sys  [s]  0.01
-  mem  [KB] 8064
+  sys  [s]  0.00
+  mem  [KB] 7552
   avgm [KB] 0

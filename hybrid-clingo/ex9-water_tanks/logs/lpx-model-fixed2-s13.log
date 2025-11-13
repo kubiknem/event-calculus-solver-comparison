@@ -5,7 +5,7 @@ clingo-lpx version 1.3.0
 Reading from ../axioms/dbec-clingo_lpx-choice.lp ...
 Solving...
 Answer: 1
-(Time: 0.120s)
+(Time: 0.124s)
 happens(aux__no_switch_left,157/8)
 happens(aux__no_switch_right,305/16)
 happens(aux__no_switch_right,329/16)
@@ -91,14 +91,14 @@ SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.120s (Solving: 0.05s 1st Model: 0.05s Unsat: 0.00s)
-CPU Time     : 0.107s
+Time         : 0.124s (Solving: 0.05s 1st Model: 0.05s Unsat: 0.00s)
+CPU Time     : 0.106s
 
 Command exited with non-zero status 30
 
   real      0:00.13
   real [s]  0.13
-  user [s]  0.10
-  sys  [s]  0.00
-  mem  [KB] 11776
+  user [s]  0.09
+  sys  [s]  0.01
+  mem  [KB] 11392
   avgm [KB] 0
