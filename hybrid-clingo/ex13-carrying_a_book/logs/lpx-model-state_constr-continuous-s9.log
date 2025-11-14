@@ -1,0 +1,95 @@
+$ clingo-lpx --strict -n0 ../axioms/dbec-clingo_lpx-choice.lp -c maxstep=9 ./model-state_constr-continuous.lp | ../utils/replace_assignments.sh | ../utils/make-readable.sh
+
+
+clingo-lpx version 1.3.0
+Reading from ../axioms/dbec-clingo_lpx-choice.lp ...
+Solving...
+Answer: 1
+(Time: 0.072s)
+happens(check,25)
+happens(check,55)
+happens(check,100)
+happens(arrive(nathan),30)
+happens(arrive(nathan),60)
+happens(walk(nathan),20)
+happens(walk(nathan),50)
+happens(letGoOf(nathan,book),40)
+happens(pickUp(nathan,book),10)
+holdsAt(holding(nathan,book),(10,"< T =<",20))
+holdsAt(holding(nathan,book),(20,"< T =<",25))
+holdsAt(holding(nathan,book),(25,"< T =<",30))
+holdsAt(holding(nathan,book),(30,"< T =<",40))
+releasedAt(location(book),(10,"< T =<",20))
+releasedAt(location(book),(20,"< T =<",25))
+releasedAt(location(book),(25,"< T =<",30))
+releasedAt(location(book),(30,"< T =<",40))
+releasedAt(location(nathan),(20,"< T =<",25))
+releasedAt(location(nathan),(25,"< T =<",30))
+releasedAt(location(nathan),(50,"< T =<",55))
+releasedAt(location(nathan),(55,"< T =<",60))
+holdsAt_Func(location(book),0,(0,"< T =<",10))
+holdsAt_Func(location(book),0,(10,"< T =<",20))
+holdsAt_Func(location(book),50,(20,"< T =<",25))
+holdsAt_Func(location(book),100,(25,"< T =<",30))
+holdsAt_Func(location(book),100,(30,"< T =<",40))
+holdsAt_Func(location(book),100,(40,"< T =<",50))
+holdsAt_Func(location(book),100,(50,"< T =<",55))
+holdsAt_Func(location(book),100,(55,"< T =<",60))
+holdsAt_Func(location(book),100,(60,"< T =<",100))
+holdsAt_Func(location(nathan),0,(0,"< T =<",10))
+holdsAt_Func(location(nathan),0,(10,"< T =<",20))
+holdsAt_Func(location(nathan),100,(30,"< T =<",40))
+holdsAt_Func(location(nathan),100,(40,"< T =<",50))
+holdsAt_Func(location(nathan),200,(60,"< T =<",100))
+holdsAt_Func(walkingTo(nathan),100,(20,"< T =<",25))
+holdsAt_Func(walkingTo(nathan),100,(25,"< T =<",30))
+holdsAt_Func(walkingTo(nathan),200,(50,"< T =<",55))
+holdsAt_Func(walkingTo(nathan),200,(55,"< T =<",60))
+holdsAt_Func_Cont(location(nathan),(0,"->",50),(20,"< T =<",25))
+holdsAt_Func_Cont(location(nathan),(50,"->",100),(25,"< T =<",30))
+holdsAt_Func_Cont(location(nathan),(100,"->",150),(50,"< T =<",55))
+holdsAt_Func_Cont(location(nathan),(150,"->",200),(55,"< T =<",60))
+Assignment: [leftovers]
+eventValueAtStep(walk(nathan),0)=0
+eventValueAtStep(walk(nathan),1)=0
+eventValueAtStep(walk(nathan),2)=100
+eventValueAtStep(walk(nathan),3)=0
+eventValueAtStep(walk(nathan),4)=0
+eventValueAtStep(walk(nathan),5)=0
+eventValueAtStep(walk(nathan),6)=200
+eventValueAtStep(walk(nathan),7)=0
+eventValueAtStep(walk(nathan),8)=0
+eventValueAtStep(walk(nathan),9)=0
+valueAtStep(location(book),0)=0
+valueAtStep(location(nathan),0)=0
+valueAtStep(walkingTo(nathan),0)=0
+valueAtStep(walkingTo(nathan),1)=0
+valueAtStep(walkingTo(nathan),2)=0
+valueAtStep(walkingTo(nathan),5)=0
+valueAtStep(walkingTo(nathan),6)=0
+valueAtStep(walkingTo(nathan),9)=0
+valueAtStep(holding(nathan,book),0)=0
+valueAtStep(holding(nathan,book),1)=0
+valueAtStep(holding(nathan,book),2)=0
+valueAtStep(holding(nathan,book),3)=0
+valueAtStep(holding(nathan,book),4)=0
+valueAtStep(holding(nathan,book),5)=0
+valueAtStep(holding(nathan,book),6)=0
+valueAtStep(holding(nathan,book),7)=0
+valueAtStep(holding(nathan,book),8)=0
+valueAtStep(holding(nathan,book),9)=0
+SATISFIABLE
+
+Models       : 1
+Calls        : 1
+Time         : 0.073s (Solving: 0.03s 1st Model: 0.03s Unsat: 0.00s)
+CPU Time     : 0.059s
+
+Command exited with non-zero status 30
+
+  real      0:00.08
+  real [s]  0.08
+  user [s]  0.05
+  sys  [s]  0.01
+  mem  [KB] 9728
+  avgm [KB] 0

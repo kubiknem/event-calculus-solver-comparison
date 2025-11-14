@@ -1,0 +1,54 @@
+$ clingo-lpx --strict -n0 ../axioms/dbec-clingo_lpx-choice.lp -c maxstep=5 ./model-effect_constr.lp | ../utils/replace_assignments.sh | ../utils/make-readable.sh
+
+
+clingo-lpx version 1.3.0
+Reading from ../axioms/dbec-clingo_lpx-choice.lp ...
+Solving...
+Answer: 1
+(Time: 0.029s)
+happens(walk(nathan),20)
+happens(walk(nathan),40)
+happens(letGoOf(nathan,book),30)
+happens(pickUp(nathan,book),10)
+holdsAt(holding(nathan,book),(10,"< T =<",20))
+holdsAt(holding(nathan,book),(20,"< T =<",30))
+holdsAt_Func(location(book),0,(0,"< T =<",10))
+holdsAt_Func(location(book),0,(10,"< T =<",20))
+holdsAt_Func(location(book),100,(20,"< T =<",30))
+holdsAt_Func(location(book),100,(30,"< T =<",40))
+holdsAt_Func(location(book),100,(40,"< T =<",100))
+holdsAt_Func(location(nathan),0,(0,"< T =<",10))
+holdsAt_Func(location(nathan),0,(10,"< T =<",20))
+holdsAt_Func(location(nathan),100,(20,"< T =<",30))
+holdsAt_Func(location(nathan),100,(30,"< T =<",40))
+holdsAt_Func(location(nathan),200,(40,"< T =<",100))
+Assignment: [leftovers]
+eventValueAtStep(walk(nathan),0)=0
+eventValueAtStep(walk(nathan),1)=0
+eventValueAtStep(walk(nathan),2)=100
+eventValueAtStep(walk(nathan),3)=0
+eventValueAtStep(walk(nathan),4)=200
+eventValueAtStep(walk(nathan),5)=0
+valueAtStep(location(book),0)=0
+valueAtStep(location(nathan),0)=0
+valueAtStep(holding(nathan,book),0)=0
+valueAtStep(holding(nathan,book),1)=0
+valueAtStep(holding(nathan,book),2)=0
+valueAtStep(holding(nathan,book),3)=0
+valueAtStep(holding(nathan,book),4)=0
+valueAtStep(holding(nathan,book),5)=0
+SATISFIABLE
+
+Models       : 1
+Calls        : 1
+Time         : 0.029s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.017s
+
+Command exited with non-zero status 30
+
+  real      0:00.03
+  real [s]  0.03
+  user [s]  0.01
+  sys  [s]  0.01
+  mem  [KB] 8832
+  avgm [KB] 0
