@@ -1,5 +1,9 @@
 % light can be turned on and off
 
+#const maxstep=3.
+#const maxtime=1000.
+
+
 %-------------------------------------------------------------------------------
 % sorts
 %-------------------------------------------------------------------------------
@@ -34,3 +38,6 @@ in_happens(turn_light_on,   10).
 in_happens(turn_light_off,  20).
 
 % conclude that the light is on between 10 and 20
+
+% enables showing of -holdsAt and -releasedAt
+negated_prints.

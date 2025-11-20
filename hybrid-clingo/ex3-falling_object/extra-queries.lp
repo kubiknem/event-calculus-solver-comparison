@@ -1,5 +1,8 @@
 % exploring ways to query fluents values
 
+#const maxstep=6.
+#const maxtime=1000.
+
 
 %-------------------------------------------------------------------------------
 % additional "queries"

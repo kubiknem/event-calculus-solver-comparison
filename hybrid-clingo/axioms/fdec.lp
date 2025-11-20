@@ -148,13 +148,14 @@ releasedAt(F,T+1) :- happens(E,T), releases(E,F,T), event(E),
 timeStep(0..maxstep).
 
 % ftimeAtStep(FT): the time of step FT
-&sum{ ftimeAtStep(0) } = 0.                                       % step 0 is at time 0
+&sum{ ftimeAtStep(0) } = 0.                                           % step 0 is at time 0
 &sum{ ftimeAtStep(FT) } > ftimeAtStep(FT-1) :- FT > 0, timeStep(FT).  % consecutive steps must have greater time                                             
-&sum{ ftimeAtStep(FT) } >= 0 :- timeStep(FT).                       % there can be no negative time
+&sum{ ftimeAtStep(FT) } >= 0 :- timeStep(FT).                         % there can be no negative time
 
 % map(GT, FT): Map ground time point GT to time step FT                                                                                      
   map(0, 0).                                                      % step 0 maps to time 0
-{ map(GT, FT) : timeStep(FT) } = 1 :- in_happens(_, GT), GT > 0.       % steps map to occurrence times of input events (facts from the narrative)
+{ map(GT, FT) : timeStep(FT) } = 1 :- in_happens(_, GT), GT > 0.  % steps map to occurrence times of input events (facts from the narrative)
+  map(maxtime, maxstep) :- not disable_laststep.                  % maxstep maps to maxtime (unless disabled)
 
 % if GT is mapped to FT, then FT is at time GT                                                                                     
 &sum{ ftimeAtStep(FT) } = GT :- map(GT, FT), timeStep(FT).                                                                                              
@@ -164,12 +165,11 @@ happens(E, FT) :-  in_happens(E, GT), map(GT, FT).
 
 % restrict free floating steps:
 % all steps must have an event or be a check step
-:- not happens(_, FT), not checkStep(FT), timeStep(FT), FT > 0. 
-  % all steps must have an event
-  %:- not happens(_, FT), timeStep(FT), FT > 0. 
-  % TODO the "not map" was causing problems in some examples... [in ex7 with 5 steps and no off event: would see a duplicate model which had both normal_atom((brightness,1),geq,0) and normal_atom((brightness,1),gt,0)]
-  % each step must either be mapped to an input time or it must have a triggered event
-  %:- not map(_, FT), not happens(_, FT), timeStep(FT). 
+%   except step 0
+%   and step maxstep (optionally)
+:- not anyHappens(FT), not checkStep(FT), timeStep(FT), FT > 0, FT < maxstep. % all steps between zero and max must always have an event or be a checkstep
+:- disable_laststep, not anyHappens(maxstep), not checkStep(maxstep).         % maxstep must have an event only if its disabled (i.e, when maxstep is a normal step)
+anyHappens(T) :- happens(E,T).
 
 % TODO maybe could be allowed
 % no event can happen at the first step (at time zero)
@@ -273,6 +273,8 @@ anyTrajectory(F2, T2) :- not debug_prints,
 %-------------------------------------------------------------------------------
 
 % define #const maxstep
+% define #const maxtime
+
 #defined in_happens/2.
 
 #defined time/1.
@@ -300,5 +302,6 @@ anyTrajectory(F2, T2) :- not debug_prints,
 #defined trigger_value/2.
 #defined trigger_time/1.
 
+#defined disable_laststep/0.
 #defined debug_prints/0.
 #defined negated_prints/0.

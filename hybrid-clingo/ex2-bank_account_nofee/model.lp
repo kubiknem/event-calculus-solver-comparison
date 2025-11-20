@@ -5,6 +5,9 @@
 
 % There are multiple bank accounts and money can be transferred between them.
 
+#const maxstep=3.
+#const maxtime=1000.
+
 %-------------------------------------------------------------------------------
 % sorts
 %-------------------------------------------------------------------------------
@@ -125,9 +128,4 @@ in_happens(transfer(account1, account2, 4), 20).
 initiallyN(F) :- not initiallyP(F), fluent(F).
 
 % --> conclude that
-%   the balance of account1 will be 4 at time 30
-
-% this forces the last step to have time 30 creating a new step so that we can check the values of fluents at time 100
-% the step will have no event and therefore must be declared as a checkStep
-checkStep(maxstep).
-&sum{ ftimeAtStep(maxstep) } = 30.
+%   the balance of account1 will be 4 after time 20

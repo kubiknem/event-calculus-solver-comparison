@@ -4,6 +4,9 @@
 %
 % An object is dropped, falls down via a constant speed, and then stops falling when it hits the floor.
 
+#const maxstep=3.
+#const maxtime=1000.
+
 
 %-------------------------------------------------------------------------------
 % sorts

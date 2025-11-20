@@ -187,16 +187,6 @@ happens(chargeServiceFee(A), T) :-
 comparison(fholdsAt(balance(A),T), fholdsAt(minimumBalance(A),T)) :- 
     account(A), time(T).
 
-% time epsilon to trigger chargeServiceFee(A)
-% TODO what if some other event happened in between T and T+1? --- probably need to ensure that epsilon is "small enough"?
-epsilon("1.1"). % valid with clingo-lpx
-&sum{ ftimeAtStep(T+1); -ftimeAtStep(T) } = E :- epsilon(E),
-    % &sum{ (balance(A),T-1) } < (minimumBalance(A),T-1), 
-    normal_atom(fholdsAt(balance(A),T+1), lt, fholdsAt(minimumBalance(A),T+1)), 
-    not holdsAt(serviceFeeCharged(A), T+1),
-    happens(chargeServiceFee(A), T+1),
-    account(A), time(T), time(T+1).
-
 
 %-------------------------------------------------------------------------------
 % observations

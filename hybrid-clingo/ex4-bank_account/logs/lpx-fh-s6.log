@@ -1,4 +1,4 @@
-$ clingo-lpx --strict -n0 ./model.lp ../axioms/fdec-ffholds.lp -c maxstep=6 	| ../utils/replace_assignments.sh | ../utils/make-readable.sh
+$ clingo-lpx --strict -n0 ./model.lp ../axioms/fdec-ffholds.lp -c maxstep=6 -c maxtime=1000 	| ../utils/replace_assignments.sh | ../utils/make-readable.sh
 
 
 clingo-lpx version 1.3.0
@@ -13,43 +13,43 @@ happens(monthlyReset(account2),50)
 happens(transfer(account1,account2,2),10)
 happens(transfer(account1,account2,4),20)
 holdsAt(serviceFeeCharged(account1),(211/10,"< T =<",50))
-holdsAt(serviceFeeCharged(account1),(511/10,"< T =<",100))
+holdsAt(serviceFeeCharged(account1),(511/10,"< T =<",1000))
 fholdsAt(balance(account1),10,(0,"< T =<",10))
 fholdsAt(balance(account1),8,(10,"< T =<",20))
 fholdsAt(balance(account1),4,(20,"< T =<",211/10))
 fholdsAt(balance(account1),3,(211/10,"< T =<",50))
 fholdsAt(balance(account1),3,(50,"< T =<",511/10))
-fholdsAt(balance(account1),2,(511/10,"< T =<",100))
+fholdsAt(balance(account1),2,(511/10,"< T =<",1000))
 fholdsAt(balance(account2),10,(0,"< T =<",10))
 fholdsAt(balance(account2),12,(10,"< T =<",20))
 fholdsAt(balance(account2),16,(20,"< T =<",211/10))
 fholdsAt(balance(account2),16,(211/10,"< T =<",50))
 fholdsAt(balance(account2),16,(50,"< T =<",511/10))
-fholdsAt(balance(account2),16,(511/10,"< T =<",100))
+fholdsAt(balance(account2),16,(511/10,"< T =<",1000))
 fholdsAt(minimumBalance(account1),5,(0,"< T =<",10))
 fholdsAt(minimumBalance(account1),5,(10,"< T =<",20))
 fholdsAt(minimumBalance(account1),5,(20,"< T =<",211/10))
 fholdsAt(minimumBalance(account1),5,(211/10,"< T =<",50))
 fholdsAt(minimumBalance(account1),5,(50,"< T =<",511/10))
-fholdsAt(minimumBalance(account1),5,(511/10,"< T =<",100))
+fholdsAt(minimumBalance(account1),5,(511/10,"< T =<",1000))
 fholdsAt(minimumBalance(account2),5,(0,"< T =<",10))
 fholdsAt(minimumBalance(account2),5,(10,"< T =<",20))
 fholdsAt(minimumBalance(account2),5,(20,"< T =<",211/10))
 fholdsAt(minimumBalance(account2),5,(211/10,"< T =<",50))
 fholdsAt(minimumBalance(account2),5,(50,"< T =<",511/10))
-fholdsAt(minimumBalance(account2),5,(511/10,"< T =<",100))
+fholdsAt(minimumBalance(account2),5,(511/10,"< T =<",1000))
 fholdsAt(serviceFee(account1),1,(0,"< T =<",10))
 fholdsAt(serviceFee(account1),1,(10,"< T =<",20))
 fholdsAt(serviceFee(account1),1,(20,"< T =<",211/10))
 fholdsAt(serviceFee(account1),1,(211/10,"< T =<",50))
 fholdsAt(serviceFee(account1),1,(50,"< T =<",511/10))
-fholdsAt(serviceFee(account1),1,(511/10,"< T =<",100))
+fholdsAt(serviceFee(account1),1,(511/10,"< T =<",1000))
 fholdsAt(serviceFee(account2),1,(0,"< T =<",10))
 fholdsAt(serviceFee(account2),1,(10,"< T =<",20))
 fholdsAt(serviceFee(account2),1,(20,"< T =<",211/10))
 fholdsAt(serviceFee(account2),1,(211/10,"< T =<",50))
 fholdsAt(serviceFee(account2),1,(50,"< T =<",511/10))
-fholdsAt(serviceFee(account2),1,(511/10,"< T =<",100))
+fholdsAt(serviceFee(account2),1,(511/10,"< T =<",1000))
 Assignment: [leftovers]
 fholdsAt(balance(account1),0)=10
 fholdsAt(balance(account2),0)=10
@@ -68,7 +68,7 @@ Command exited with non-zero status 30
 
   real      0:00.05
   real [s]  0.05
-  user [s]  0.02
+  user [s]  0.03
   sys  [s]  0.00
   mem  [KB] 9728
   avgm [KB] 0

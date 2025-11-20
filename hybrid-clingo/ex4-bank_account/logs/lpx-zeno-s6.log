@@ -1,0 +1,74 @@
+$ clingo-lpx --strict -n0 ./model-zeno.lp ../axioms/fdec.lp -c maxstep=6 -c maxtime=1000 	| ../utils/replace_assignments.sh | ../utils/make-readable.sh
+
+
+clingo-lpx version 1.3.0
+Reading from ./model-zeno.lp ...
+Solving...
+Answer: 1
+(Time: 0.039s)
+happens(chargeServiceFee(account1),50+-1*e)
+happens(chargeServiceFee(account1),50+e)
+happens(monthlyReset(account1),50)
+happens(monthlyReset(account2),50)
+happens(transfer(account1,account2,2),10)
+happens(transfer(account1,account2,4),20)
+holdsAt(serviceFeeCharged(account1),(50+-1*e,"< T =<",50))
+holdsAt(serviceFeeCharged(account1),(50+e,"< T =<",1000))
+fholdsAt(balance(account1),10,(0,"< T =<",10))
+fholdsAt(balance(account1),8,(10,"< T =<",20))
+fholdsAt(balance(account1),4,(20,"< T =<",50+-1*e))
+fholdsAt(balance(account1),3,(50+-1*e,"< T =<",50))
+fholdsAt(balance(account1),3,(50,"< T =<",50+e))
+fholdsAt(balance(account1),2,(50+e,"< T =<",1000))
+fholdsAt(balance(account2),10,(0,"< T =<",10))
+fholdsAt(balance(account2),12,(10,"< T =<",20))
+fholdsAt(balance(account2),16,(20,"< T =<",50+-1*e))
+fholdsAt(balance(account2),16,(50+-1*e,"< T =<",50))
+fholdsAt(balance(account2),16,(50,"< T =<",50+e))
+fholdsAt(balance(account2),16,(50+e,"< T =<",1000))
+fholdsAt(minimumBalance(account1),5,(0,"< T =<",10))
+fholdsAt(minimumBalance(account1),5,(10,"< T =<",20))
+fholdsAt(minimumBalance(account1),5,(20,"< T =<",50+-1*e))
+fholdsAt(minimumBalance(account1),5,(50+-1*e,"< T =<",50))
+fholdsAt(minimumBalance(account1),5,(50,"< T =<",50+e))
+fholdsAt(minimumBalance(account1),5,(50+e,"< T =<",1000))
+fholdsAt(minimumBalance(account2),5,(0,"< T =<",10))
+fholdsAt(minimumBalance(account2),5,(10,"< T =<",20))
+fholdsAt(minimumBalance(account2),5,(20,"< T =<",50+-1*e))
+fholdsAt(minimumBalance(account2),5,(50+-1*e,"< T =<",50))
+fholdsAt(minimumBalance(account2),5,(50,"< T =<",50+e))
+fholdsAt(minimumBalance(account2),5,(50+e,"< T =<",1000))
+fholdsAt(serviceFee(account1),1,(0,"< T =<",10))
+fholdsAt(serviceFee(account1),1,(10,"< T =<",20))
+fholdsAt(serviceFee(account1),1,(20,"< T =<",50+-1*e))
+fholdsAt(serviceFee(account1),1,(50+-1*e,"< T =<",50))
+fholdsAt(serviceFee(account1),1,(50,"< T =<",50+e))
+fholdsAt(serviceFee(account1),1,(50+e,"< T =<",1000))
+fholdsAt(serviceFee(account2),1,(0,"< T =<",10))
+fholdsAt(serviceFee(account2),1,(10,"< T =<",20))
+fholdsAt(serviceFee(account2),1,(20,"< T =<",50+-1*e))
+fholdsAt(serviceFee(account2),1,(50+-1*e,"< T =<",50))
+fholdsAt(serviceFee(account2),1,(50,"< T =<",50+e))
+fholdsAt(serviceFee(account2),1,(50+e,"< T =<",1000))
+Assignment: [leftovers]
+fholdsAt(balance(account1),0)=10
+fholdsAt(balance(account2),0)=10
+fholdsAt(minimumBalance(account1),0)=5
+fholdsAt(minimumBalance(account2),0)=5
+fholdsAt(serviceFee(account1),0)=1
+fholdsAt(serviceFee(account2),0)=1
+SATISFIABLE
+
+Models       : 1
+Calls        : 1
+Time         : 0.040s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.027s
+
+Command exited with non-zero status 30
+
+  real      0:00.04
+  real [s]  0.04
+  user [s]  0.01
+  sys  [s]  0.01
+  mem  [KB] 9600
+  avgm [KB] 0

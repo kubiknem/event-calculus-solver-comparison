@@ -16,13 +16,13 @@ SATISFIABLE
 Models       : 1
 Calls        : 1
 Time         : 0.022s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.010s
+CPU Time     : 0.009s
 
 Command exited with non-zero status 30
 
   real      0:00.03
   real [s]  0.03
-  user [s]  0.00
+  user [s]  0.01
   sys  [s]  0.00
   mem  [KB] 8448
   avgm [KB] 0
