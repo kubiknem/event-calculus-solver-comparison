@@ -28,7 +28,7 @@ holdsAt(F, 0) :- initiallyP(F), dfluent(F).
 %%%% end
 
 %%% OV: to make it easier to transform DEC examples into FDEC
-timeStep(T) :- time(T).
+time(T) :- timeStep(T).
 
 % JR: added 3 rules
 initiates(E,F,T) :- initiates(E,F,EQ,T).
@@ -211,9 +211,9 @@ comparison(fholdsAt(F,T), Val) :- trigger_value(F, Val), timeStep(T).
 :- trigger_value(F, Val), normal_atom(fholdsAt(F, T), gt, Val), normal_atom(fholdsAt(F, T+1), lt, Val), timeStep(T), timeStep(T+1).
 :- trigger_value(F, Val), normal_atom(fholdsAt(F, T), lt, Val), normal_atom(fholdsAt(F, T+1), gt, Val), timeStep(T), timeStep(T+1).
 % same for timepoints 
-comparison(ftimeAtStep(T), T) :- trigger_time(T), timeStep(T).
-% :- trigger_time(T), normal_atom(ftimeAtStep(T), gt, T), normal_atom(ftimeAtStep(T+1), lt, T), timeStep(T), timeStep(T+1). %% time never goes backwards
-:- trigger_time(T), normal_atom(ftimeAtStep(T), lt, T), normal_atom(ftimeAtStep(T+1), gt, T), timeStep(T), timeStep(T+1).
+comparison(ftimeAtStep(T), TriggT) :- trigger_time(TriggT), timeStep(T).
+% :- trigger_time(TriggT), normal_atom(ftimeAtStep(T), gt, TriggT), normal_atom(ftimeAtStep(T+1), lt, TriggT), timeStep(T), timeStep(T+1). %% time never goes backwards
+:- trigger_time(TriggT), normal_atom(ftimeAtStep(T), lt, TriggT), normal_atom(ftimeAtStep(T+1), gt, TriggT), timeStep(T), timeStep(T+1).
 
 
 %-------------------------------------------------------------------------------
@@ -231,17 +231,17 @@ comparison(ftimeAtStep(T), T) :- trigger_time(T), timeStep(T).
 #show happens(E,ftimeAtStep(T)) : happens(E,T), not debug_prints.
 
 %% discrete fluents have values between steps
-#show holdsAt(F, (ftimeAtStep(T), "< T =<", ftimeAtStep(T+1))) :  holdsAt(F, T+1), not ffluent(F), timeStep(T), timeStep(T+1), not debug_prints.
-#show -holdsAt(F, (ftimeAtStep(T), "< T =<", ftimeAtStep(T+1))) :  not holdsAt(F, T+1), timeStep(T), timeStep(T+1), fluent(F), not debug_prints, negated_prints.
+#show holdsAt(F, (ftimeAtStep(T), "< T =<", ftimeAtStep(T+1))) :  holdsAt(F, T+1), timeStep(T), timeStep(T+1), dfluent(F), not debug_prints.
+#show -holdsAt(F, (ftimeAtStep(T), "< T =<", ftimeAtStep(T+1))) :  not holdsAt(F, T+1), timeStep(T), timeStep(T+1), dfluent(F), not debug_prints, negated_prints.
 
 %%% discrete fluents can be released between steps
-#show releasedAt(F, (ftimeAtStep(T), "< T =<", ftimeAtStep(T+1))) :  releasedAt(F, T+1), timeStep(T), timeStep(T+1), not debug_prints.
+#show releasedAt(F, (ftimeAtStep(T), "< T =<", ftimeAtStep(T+1))) :  releasedAt(F, T+1), timeStep(T), timeStep(T+1), fluent(F), not debug_prints.
 #show -releasedAt(F, (ftimeAtStep(T), "< T =<", ftimeAtStep(T+1))) :  not releasedAt(F, T+1), timeStep(T), timeStep(T+1), fluent(F), not debug_prints, negated_prints.
  
 %% functional fluents have values between steps
 #show fholdsAt(F, fholdsAt(F,T+1), (ftimeAtStep(T), "< T =<", ftimeAtStep(T+1))) :
   % holdsAt(F, T+1),  % functional fluents always hold
-  not anyTrajectory(F, T+1), ffluent(F), timeStep(T), timeStep(T+1), not debug_prints.
+  not anyTrajectory(F, T+1), timeStep(T), timeStep(T+1), ffluent(F), not debug_prints.
 anyTrajectory(F2, T2) :- not debug_prints,
   T1 < T2,
   initiates(E, F1, T1),
