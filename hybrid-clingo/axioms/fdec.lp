@@ -1,0 +1,304 @@
+% JR: the encoding accepts only simple linear equations
+%     with a fixed small number of arguments, 
+%     this can be made more general
+
+% OV: added the mapping of steps to time and some other auxiliary stuff (show, initially, constraints, ...)
+
+% HOW TO CHANGE AN EXAMPLE FROM DEC TO FDEC
+% - use in_happens(E,T) to define occurrences of input events (with T being a ground time point)
+% - (optionally) use timeStep(T) instead of time(T)
+% - define the constant maxstep instead of maxtime
+% - divide fluents into discrete and functional
+%   - discrete   --->   functional:
+%     dfluent           ffluent
+%     holdsAt/2         normal_atom(fholdsAt/2, op, V)
+%     initiates/3       initiates/4
+%     trajectory/4      trajectory/5
+%     terminates/3      (nothing)
+%     releases/3        releases/3 ??
+%     initiallyP/1      initiallyP/2
+%     initiallyN/1      (nothing)
+% - use normal_atom/2 to refer to values of ffluents and define comparison/2 accordingly
+
+%%%% OV: below was added to make these axioms compatible with the BEC/DBEC examples without a need to modify the examples
+:- releasedAt(F,0), fluent(F). % nothing is initially released from CLoI
+:- holdsAt(F, 0), initiallyN(F), dfluent(F).
+holdsAt(F, 0) :- initiallyP(F), dfluent(F).
+&sum{ fholdsAt(F,0) } = V :- initiallyP(F, V), ffluent(F).
+%%%% end
+
+%%% OV: to make it easier to transform DEC examples into FDEC
+timeStep(T) :- time(T).
+
+% JR: added 3 rules
+initiates(E,F,T) :- initiates(E,F,EQ,T).
+fluent(F) :- dfluent(F). %   discrete fluents are fluents
+fluent(F) :- ffluent(F). % functional fluents are fluents
+
+%time(0..maxtime). % OV: time replaced with timeStep (mapping after the axioms)
+{holdsAt(F,T)} :- dfluent(F), timeStep(T). % JR: replaced fluent by dfluent 
+{releasedAt(F,T)} :- fluent(F), timeStep(T).
+
+% JR: normal rule heads of predicates holdsAt/2 or releasedAt/2 
+%     can be shifted to the body
+
+% JR: for ffluents there is no terminates
+
+% DEC1
+stoppedIn(T1,F,T2) :- happens(E,T), T1<T, T<T2,
+  terminates(E,F,T), event(E), fluent(F), timeStep(T),
+  timeStep(T1), timeStep(T2).
+
+% DEC2
+startedIn(T1,F,T2) :- happens(E,T), T1<T, T<T2,
+  initiates(E,F,T), event(E), fluent(F), timeStep(T),
+  timeStep(T1), timeStep(T2).
+
+% JR: add trajectories where F1 is boolean and F2 is functional
+
+% DEC3
+holdsAt(F2,T1+T2) :- happens(E,T1), initiates(E,F1,T1), 0<T2,
+  trajectory(F1,T1,F2,T2), not stoppedIn(T1,F1,T1+T2),
+  event(E), fluent(F1), fluent(F2), timeStep(T1), timeStep(T2).
+  %T1+T2<maxtime.  % TODO
+
+% FDEC3
+% JR: added
+&sum{ A; B*fholdsAt(F,T1); INC*(ftimeAtStep(T2) - ftimeAtStep(T1)) } = fholdsAt(F2,T2) :-
+  happens(E,T1), initiates(E,F1,T1), 0<T2,
+  trajectory(F1,T1,F2,(A,B,F,INC),T2),
+  not stoppedIn(T1,F1,T2),
+  event(E), dfluent(F1), ffluent(F2), timeStep(T1), timeStep(T2).
+  %T1+T2<maxtime.  % TODO
+
+% DEC4
+holdsAt(F2,T1+T2) :- happens(E,T1), terminates(E,F1,T1), 0<T2,
+  antiTrajectory(F1,T1,F2,T2), not startedIn(T1,F1,T1+T2),
+  event(E), fluent(F1), fluent(F2), timeStep(T1), timeStep(T2).
+  %T1+T2<maxtime.  % TODO
+
+% FDEC4
+% JR: added
+&sum{ A; B*fholdsAt(F,T1); INC*(ftimeAtStep(T2) - ftimeAtStep(T1)) } = fholdsAt(F2,T2) :-
+  happens(E,T1), terminates(E,F1,T1), 0<T2,
+  antiTrajectory(F1,T1,F2,(A,B,F,INC),T2),
+  not startedIn(T1,F1,T2),
+  event(E), dfluent(F1), ffluent(F2), timeStep(T1), timeStep(T2).
+  %T1+T2<maxtime.  % TODO
+
+initiated1(F,T) :- happens(E,T), initiates(E,F,T), event(E),
+  fluent(F), timeStep(T).
+terminated1(F,T) :- happens(E,T), terminates(E,F,T), event(E),
+  fluent(F), timeStep(T).
+released1(F,T) :- happens(E,T), releases(E,F,T), event(E),
+  fluent(F), timeStep(T).
+
+% DEC5
+holdsAt(F,T+1) :- holdsAt(F,T), not releasedAt(F,T+1),
+  not terminated1(F,T), fluent(F), timeStep(T), T<maxstep.
+
+% FDEC5
+% JR: added for ffluents
+&sum{ fholdsAt(F,T) } = fholdsAt(F,T+1) :- not releasedAt(F,T+1),
+  not initiated1(F,T), ffluent(F), timeStep(T), T<maxstep.
+
+% DEC6
+:- holdsAt(F,T+1), not holdsAt(F,T), not releasedAt(F,T+1),
+  not initiated1(F,T), fluent(F), timeStep(T), T<maxstep.
+
+% DEC7
+releasedAt(F,T+1) :- releasedAt(F,T), not initiated1(F,T),
+  not terminated1(F,T), fluent(F), timeStep(T), T<maxstep.
+
+% DEC8
+:- releasedAt(F,T+1), not releasedAt(F,T), not released1(F,T),
+  fluent(F), timeStep(T), T<maxstep.
+
+% DEC9
+% JR: replaced fluent by dfluent
+holdsAt(F,T+1) :- happens(E,T), initiates(E,F,T), event(E),
+  dfluent(F), timeStep(T), T<maxstep.
+
+% FDEC9
+% JR: added for ffluents
+&sum{ A; B*fholdsAt(F,T) } = fholdsAt(F,T+1) :-
+   happens(E,T), initiates(E,F,(A,B,F),T), event(E),
+   ffluent(F), timeStep(T), T<maxstep.
+
+% DEC10
+:- holdsAt(F,T+1), happens(E,T), terminates(E,F,T), event(E),
+  fluent(F), timeStep(T), T<maxstep.
+
+% DEC11
+releasedAt(F,T+1) :- happens(E,T), releases(E,F,T), event(E),
+  fluent(F), timeStep(T), T<maxstep.
+
+% DEC12
+:- releasedAt(F,T+1), happens(E,T), initiates(E,F,T),
+  event(E), fluent(F), timeStep(T), T<maxstep.
+:- releasedAt(F,T+1), happens(E,T), terminates(E,F,T),
+  event(E), fluent(F), timeStep(T), T<maxstep.
+
+
+%-------------------------------------------------------------------------------
+% mapping time to steps
+%-------------------------------------------------------------------------------
+
+% timeStep(FT): FT is a time step, ranges from 0 to maxstep
+timeStep(0..maxstep).
+
+% ftimeAtStep(FT): the time of step FT
+&sum{ ftimeAtStep(0) } = 0.                                       % step 0 is at time 0
+&sum{ ftimeAtStep(FT) } > ftimeAtStep(FT-1) :- FT > 0, timeStep(FT).  % consecutive steps must have greater time                                             
+&sum{ ftimeAtStep(FT) } >= 0 :- timeStep(FT).                       % there can be no negative time
+
+% map(GT, FT): Map ground time point GT to time step FT                                                                                      
+  map(0, 0).                                                      % step 0 maps to time 0
+{ map(GT, FT) : timeStep(FT) } = 1 :- in_happens(_, GT), GT > 0.       % steps map to occurrence times of input events (facts from the narrative)
+
+% if GT is mapped to FT, then FT is at time GT                                                                                     
+&sum{ ftimeAtStep(FT) } = GT :- map(GT, FT), timeStep(FT).                                                                                              
+
+% mapping "happens at time" to "happens at step"
+happens(E, FT) :-  in_happens(E, GT), map(GT, FT).                            
+
+% restrict free floating steps:
+% all steps must have an event or be a check step
+:- not happens(_, FT), not checkStep(FT), timeStep(FT), FT > 0. 
+  % all steps must have an event
+  %:- not happens(_, FT), timeStep(FT), FT > 0. 
+  % TODO the "not map" was causing problems in some examples... [in ex7 with 5 steps and no off event: would see a duplicate model which had both normal_atom((brightness,1),geq,0) and normal_atom((brightness,1),gt,0)]
+  % each step must either be mapped to an input time or it must have a triggered event
+  %:- not map(_, FT), not happens(_, FT), timeStep(FT). 
+
+% TODO maybe could be allowed
+% no event can happen at the first step (at time zero)
+:- happens(E, 0).
+
+% there can be no neighboring time steps such that the later one has a smaller time
+% TODO had to add this for some examples -- not sure if this is still needed...
+:- normal_atom(ftimeAtStep(FT), gt, ftimeAtStep(FT+1)), timeStep(FT), FT < maxstep.
+comparison(ftimeAtStep(FT), ftimeAtStep(FT+1)) :- timeStep(FT), FT < maxstep.
+:- map(T1, S1), map(T2, S2), S1 < S2, T1 > T2. 
+
+
+
+%-------------------------------------------------------------------------------
+% comparing functional values
+%-------------------------------------------------------------------------------
+
+% TODO the comparison(...) is done manually in the model of each domain --- why would we need this here in the axioms?
+% This generates a comparison(A,B) for each interpreted value of fluents at adjacent steps
+% and the choice rule for normal_atom below then says that each comparison leads to exactly one interpreted result of the comparison
+%%%comparison(fholdsAt(F,T+1), fholdsAt(F,T)) :- ffluent(F), timeStep(T).
+
+% predicates for comparing values of functional fluents
+% theory_atom(A,COMPARISON,B)
+{ normal_atom(A, (lt;eq;gt), B) } = 1 :- comparison(A, B).
+%
+&sum{ A } < B :- normal_atom(A, lt, B).
+&sum{ A } = B :- normal_atom(A, eq, B).
+&sum{ A } > B :- normal_atom(A, gt, B).
+%
+normal_atom(A, leq, B) :- normal_atom(A, lt, B).
+normal_atom(A, leq, B) :- normal_atom(A, eq, B).
+normal_atom(A, geq, B) :- normal_atom(A, eq, B).
+normal_atom(A, geq, B) :- normal_atom(A, gt, B).
+
+% TODO can we not just say that there must be a step at which it equals the trigger value?
+% designating significant values of continuous fluents so that we do not miss them during trajectories
+comparison(fholdsAt(F,T), Val) :- trigger_value(F, Val), timeStep(T).
+:- trigger_value(F, Val), normal_atom(fholdsAt(F, T), gt, Val), normal_atom(fholdsAt(F, T+1), lt, Val), timeStep(T), timeStep(T+1).
+:- trigger_value(F, Val), normal_atom(fholdsAt(F, T), lt, Val), normal_atom(fholdsAt(F, T+1), gt, Val), timeStep(T), timeStep(T+1).
+% same for timepoints 
+comparison(ftimeAtStep(T), T) :- trigger_time(T), timeStep(T).
+% :- trigger_time(T), normal_atom(ftimeAtStep(T), gt, T), normal_atom(ftimeAtStep(T+1), lt, T), timeStep(T), timeStep(T+1). %% time never goes backwards
+:- trigger_time(T), normal_atom(ftimeAtStep(T), lt, T), normal_atom(ftimeAtStep(T+1), gt, T), timeStep(T), timeStep(T+1).
+
+
+%-------------------------------------------------------------------------------
+% Show
+%-------------------------------------------------------------------------------
+
+%% define a fact "debug_prints." to switch to debug prints instead of fancy prints
+%debug_prints.
+
+%% define a fact "negated_prints." to show negated versions of fluent values
+%negated_prints.
+
+#show.
+
+#show happens(E,ftimeAtStep(T)) : happens(E,T), not debug_prints.
+
+%% discrete fluents have values between steps
+#show holdsAt(F, (ftimeAtStep(T), "< T =<", ftimeAtStep(T+1))) :  holdsAt(F, T+1), not ffluent(F), timeStep(T), timeStep(T+1), not debug_prints.
+#show -holdsAt(F, (ftimeAtStep(T), "< T =<", ftimeAtStep(T+1))) :  not holdsAt(F, T+1), timeStep(T), timeStep(T+1), fluent(F), not debug_prints, negated_prints.
+
+%%% discrete fluents can be released between steps
+#show releasedAt(F, (ftimeAtStep(T), "< T =<", ftimeAtStep(T+1))) :  releasedAt(F, T+1), timeStep(T), timeStep(T+1), not debug_prints.
+#show -releasedAt(F, (ftimeAtStep(T), "< T =<", ftimeAtStep(T+1))) :  not releasedAt(F, T+1), timeStep(T), timeStep(T+1), fluent(F), not debug_prints, negated_prints.
+ 
+%% functional fluents have values between steps
+#show fholdsAt(F, fholdsAt(F,T+1), (ftimeAtStep(T), "< T =<", ftimeAtStep(T+1))) :
+  % holdsAt(F, T+1),  % functional fluents always hold
+  not anyTrajectory(F, T+1), ffluent(F), timeStep(T), timeStep(T+1), not debug_prints.
+anyTrajectory(F2, T2) :- not debug_prints,
+  T1 < T2,
+  initiates(E, F1, T1),
+  happens(E, T1),
+  trajectory(F1, T1, F2, _, T2),
+  not stoppedIn(T1, F1, T2),
+  timeStep(T1), timeStep(T2).
+
+%% functional fluents can be continuous with their value defined by a trajectory (continuous value between steps)
+#show fholdsAtC(F2, (fholdsAt(F2, T), "->", fholdsAt(F2, T+1)), (ftimeAtStep(T), "< T =<", ftimeAtStep(T+1)), eq(off(A), "+", koef(B), "*", base(fholdsAt(F2,SStart)), "+", inc(INC), "*", dur(ftimeAtStep(T+1), "-", ftimeAtStep(SStart)))) :
+  SStart < T+1,
+  initiates(E, F1, SStart),
+  happens(E, SStart),
+  trajectory(F1, SStart, F2, (A,B,F2,INC), T+1),
+  not stoppedIn(SStart, F1, T+1),
+  timeStep(T), timeStep(T+1), timeStep(SStart),
+  not debug_prints.
+
+% show all for debug
+#show happens(E,T) : happens(E,T), debug_prints.
+#show holdsAt(F,T) : holdsAt(F,T), debug_prints.
+#show releasedAt(F,T) : releasedAt(F,T), debug_prints.
+
+#show map(GT, FT) : map(GT, FT), debug_prints.
+
+
+%-------------------------------------------------------------------------------
+% Defined
+%-------------------------------------------------------------------------------
+
+% define #const maxstep
+#defined in_happens/2.
+
+#defined time/1.
+
+#defined initiallyP/1.
+#defined initiallyN/1.
+#defined initiallyP/2.
+
+#defined fluent/1.
+#defined ffluent/1.
+#defined dfluent/1.
+
+#defined initiates/3.
+#defined terminates/3.
+#defined releases/3.
+#defined trajectory/4.
+#defined antiTrajectory/4.
+
+#defined initiates/4.
+#defined trajectory/5.
+#defined antiTrajectory/5.
+
+#defined checkStep/1.
+
+#defined trigger_value/2.
+#defined trigger_time/1.
+
+#defined debug_prints/0.
+#defined negated_prints/0.

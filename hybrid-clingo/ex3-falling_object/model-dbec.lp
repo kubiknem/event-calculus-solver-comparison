@@ -14,11 +14,11 @@ object(apple).
 % fHeight(-paramHeight..paramHeight).
 
 % fluent(height(O, H)) :- object(O), fHeight(H).
-ffluent(height(O)) :- object(O).
-dfluent(falling(O)) :- object(O).
+fluent_Func(height(O)) :- object(O).
+fluent(falling(O)) :- object(O).
 
-event(drop(A, O)) :- agent(A), object(O).
-event(hitGround(O)) :- object(O).
+% event(drop(A, O)) :- agent(A), object(O).
+% event(hitGround(O)) :- object(O).
 
 #const paramHeight=100.
 initHeight(paramHeight).
@@ -32,18 +32,18 @@ fGravity(2).
 % [effect]
 % if an agent drops an object, then the object will start falling and its height
 % will be released from CLoI
-initiates(drop(A,O), falling(O), T) :- agent(A), object(O), time(T).
+initiatesAtStep(drop(A,O), falling(O), S) :- agent(A), object(O), step(S).
 
 % [effect + CLoI]
-releases(drop(A,O), height(O), T) :- agent(A), object(O), time(T).
+releasesAtStep(drop(A,O), height(O), S) :- agent(A), object(O), step(S).
 
 % [triggered event]
 % an object hits the ground when its falling and its height becomes zero
-happens(hitGround(O), T) :-
-    holdsAt(falling(O), T),
-    % &sum{ (height(O), T) } = 0,
-    normal_atom(fholdsAt(height(O), T), eq, 0), 
-    time(T).
+happensAtStep(hitGround(O), S) :-
+    holdsAtStep(falling(O), S),
+    % &sum{ (height(O), S) } = 0,
+    normal_atom(valueAtStep(height(O), S), eq, 0), 
+    step(S).
 
 
 % TODO this is not needed for this particular example, but is needed in general
@@ -51,32 +51,32 @@ happens(hitGround(O), T) :-
 % restrict that there must exist a state where height is exactly equal to zero
 % (by saying that there cannot be two subsequent states in which one is lt/gt and the next gt/lt, i.e. there is no state with exactly eq)
 trigger_value(height(O), 0) :- object(O).
-    %:- normal_atom(fholdsAt(height(O), T), gt, 0), normal_atom(fholdsAt(height(O), T+1), lt, 0), 
-    %   time(T), time(T+1).
-    %:- normal_atom(fholdsAt(height(O), T), lt, 0), normal_atom(fholdsAt(height(O), T+1), gt, 0), 
-    %   time(T), time(T+1).
-    %
-    %comparison(fholdsAt(height(O),T  ), 0) :- object(O), time(T). 
+    % :- normal_atom(valueAtStep(height(O), S), gt, 0), normal_atom(valueAtStep(height(O), S+1), lt, 0), 
+    %    step(S), step(S+1).
+    % :- normal_atom(valueAtStep(height(O), S), lt, 0), normal_atom(valueAtStep(height(O), S+1), gt, 0), 
+    %    step(S), step(S+1).
+    % 
+    % comparison(valueAtStep(height(O),S  ), 0) :- object(O), step(S). 
 
 
 % [effect]
 % if an object hits the ground, then it will stop falling
-terminates(hitGround(O), falling(O), T) :- object(O), time(T).
+terminatesAtStep(hitGround(O), falling(O), S) :- object(O), step(S).
 
 % [effect + CLoI]
 % if an object hits the ground then its height will no longer be released from CLoI
-initiates(hitGround(O), height(O), (0, 1, height(O)), T) :- time(T), object(O).
+&sum{valueAtStep(height(O),S)} = valueAtStep(height(O),S+1) :-
+    initiatedValueByAtStep(hitGround(O), height(O), S),
+    step(S+1).
+initiatesValueAtStep(hitGround(O), height(O), S) :- step(S), object(O).
 
 
-% TODO % terminates(catch(A, O), falling(O), T) :- agent(A), object(O), time(T).
-% TODO % 
-% TODO % &sum{ fholdsAt(height(O),T) } = fholdsAt(height(O),T+1) :- 
-% TODO %     happens(catch(A, O), T),
-% TODO %     agent(A), time(T).
-% TODO % 
-% TODO % defined(fholdsAt(height(O),T+1)) :- 
-% TODO %     happens(catch(A, O), T),
-% TODO %     agent(A), time(T).
+terminatesAtStep(catch(A, O), falling(O), S) :- agent(A), object(O), step(S).
+&sum{valueAtStep(height(O),S)} = valueAtStep(height(O),S+1) :-
+    initiatedValueByAtStep(catch(A, O), height(O), S),
+    step(S+1).
+initiatesValueAtStep(catch(A, O), height(O), S) :- step(S), object(O), agent(A).
+
 
 
 % [state constraint]
@@ -92,7 +92,10 @@ initiates(hitGround(O), height(O), (0, 1, height(O)), T) :- time(T), object(O).
 %    holdsAt(height(O,H), T1),
 %    fGravity(G), object(O), fHeight(H), time(T1), time(T2).
 *%
-trajectory(falling(O), T1, height(O), (0, 1, height(O), -2), T2) :- object(O), time(T1), time(T2).
+&sum{ valueAtStep(height(O),S); G*timeAtStep(S); -G*timeAtStep(S+1) } = valueAtStep(height(O),S+1) :-
+    trajectoryAtStep(falling(O), _, height(O), S+1),
+    fGravity(G), step(S), step(S+1).
+trajectory(falling(O), S1, height(O), S2) :- object(O), step(S1), step(S2).
 
 
 %-------------------------------------------------------------------------------
@@ -100,19 +103,18 @@ trajectory(falling(O), T1, height(O), (0, 1, height(O), -2), T2) :- object(O), t
 %-------------------------------------------------------------------------------
 
 % initiallyP(height(apple, H)) :- initHeight(H).  % apples height initially is something
-initiallyP(height(apple), H) :- initHeight(H).  % apples height initially is something
-initiallyN(falling(apple)).
-%initiallyN(F) :- not initiallyP(F), not initiallyP(F, _), fluent(F).  % apple is initially not falling
+initiallyP_Func(height(apple), H) :- initHeight(H).  % apples height initially is something
+initiallyN(F) :- not initiallyP(F), not initiallyP_Func(F, _), fluent(F).  % apple is initially not falling
 
-in_happens(drop(nathan,apple), 10).        % nathan drop the apple at time 10
-% in_happens(catch(nathan,apple), 15).     % TODO could add this to prevent hitting the ground 
+happens(drop(nathan,apple), 10).        % nathan drop the apple at time 10
+%happens(catch(nathan,apple), 15).      % TODO could add this to prevent hitting the ground 
 
 % --> conclude that the apple will hit the ground at time (initHeight/2) + 10
-% &sum{ fholdsAt(height(O),T) }  = 0 :- object(O), T=maxstep.
+% &sum{ valueAtStep(height(O),S) }  = 0 :- object(O), S=maxstep.
+
+happens(checkEnd, 100).                 % TODO this helps enforcing "unsat / no models" when we dont have enough steps
 
 % TODO not sure what these were for --- probably a way to workaround the event trigger?
-% &sum{ (height(O),T) } != 0 :- object(O), T=0..maxstep-1. % comparison != is not allowed in clingo-lpx
-% comparison(fholdsAt(height(O),T), 0) :- object(O), T=0..maxstep-1.
-% :- object(O), T=0..maxstep-1, normal_atom(fholdsAt(height(O),T), eq, 0). 
-
- 
+% &sum{ (height(O),S) } != 0 :- object(O), S=0..maxstep-1. % comparison != is not allowed in clingo-lpx
+% comparison(valueAtStep(height(O),S), 0) :- object(O), S=0..maxstep-1.
+% :- object(O), S=0..maxstep-1, normal_atom(valueAtStep(height(O),S), eq, 0). 

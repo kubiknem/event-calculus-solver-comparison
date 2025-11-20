@@ -4,19 +4,19 @@
 % sorts
 %-------------------------------------------------------------------------------
 
-event(turn_light_on).
-event(turn_light_off).
+% event(turn_light_on).
+% event(turn_light_off).
 
-dfluent(light_on).
+fluent(light_on).
 
 
 %-------------------------------------------------------------------------------
 % effects 
 %-------------------------------------------------------------------------------
 
-initiates(turn_light_on,  light_on, T) :- time(T).
+initiatesAtStep(turn_light_on,  light_on, S) :- step(S).
 
-terminates(turn_light_off, light_on, T) :- time(T).
+terminatesAtStep(turn_light_off, light_on, S) :- step(S).
 
 
 %-------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ initiallyN(light_on).
 % narrative 
 %-------------------------------------------------------------------------------
 
-in_happens(turn_light_on,   10).
-in_happens(turn_light_off,  20).
+happens(turn_light_on,      10).
+happens(turn_light_off,     20).
 
 % conclude that the light is on between 10 and 20

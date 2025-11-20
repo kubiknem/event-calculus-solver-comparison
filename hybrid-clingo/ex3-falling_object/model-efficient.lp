@@ -125,6 +125,8 @@ happens(drop(nathan,apple), 10).                 % nathan drop the apple at time
 &sum{ (height(O),S) }  = 0 :- object(O), S=maxstep.
 % TODO no need for the above when using the below constraint
 % :- not happens_state(_, S), step(S), S > 0. 
+% TODO maybe or alternatively no need for the above when adding a maxtime event
+%happens(check, 100).
 
 % &sum{ (height(O),S) } != 0 :- object(O), S=0..maxstep-1. % comparison != is not allowed in clingo-lpx
 comparison((height(O),S), 0) :- object(O), S=0..maxstep-1.

@@ -1,11 +1,11 @@
-$ clingo-lpx --strict -n0 ./model.lp ../axioms/fdec.lp -c maxstep=2 -c paramHeight=80 | ../utils/replace_assignments.sh | ../utils/make-readable.sh
+$ clingo-lpx --strict -n0 ./model.lp ../axioms/fdec-ffholds.lp -c maxstep=2 -c paramHeight=80 | ../utils/replace_assignments.sh | ../utils/make-readable.sh
 
 
 clingo-lpx version 1.3.0
 Reading from ./model.lp ...
 Solving...
 Answer: 1
-(Time: 0.029s)
+(Time: 0.026s)
 happens(hitGround(apple),50)
 happens(drop(nathan,apple),10)
 holdsAt(falling(apple),(10,"< T =<",50))
@@ -18,14 +18,14 @@ SATISFIABLE
 
 Models       : 1
 Calls        : 1
-Time         : 0.029s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-CPU Time     : 0.014s
+Time         : 0.027s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.015s
 
 Command exited with non-zero status 30
 
   real      0:00.03
   real [s]  0.03
-  user [s]  0.01
-  sys  [s]  0.00
-  mem  [KB] 8832
+  user [s]  0.00
+  sys  [s]  0.01
+  mem  [KB] 8960
   avgm [KB] 0
