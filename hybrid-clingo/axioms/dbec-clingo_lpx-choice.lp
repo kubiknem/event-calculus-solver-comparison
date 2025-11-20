@@ -306,7 +306,7 @@ happensInitiatesValueAtStep(F, S) :- happensAtStep(E, S), initiatesValueAtStep(E
 % when a functional fluent is false, then its value is zero
 % NOTE: when released from inertia the fluent might either not hold and then have value zero, or it might hold as a derived/non-deterministic fluent with some other value (unaffected by this zero)
 % TODO this is a trick to avoid listing of all possible values
-%&sum{ valueAtStep(F,S) } = 0 :- not holdsAtStep(F, S), step(S).
+&sum{ valueAtStep(F,S) } = 0 :- not holdsAtStep(F, S), fluent_Func(F), step(S).
 
 %% shorthand predicate
 initiatedValueByAtStep(E, F, S) :-
@@ -350,8 +350,8 @@ comparison(valueAtStep(F,S), Val) :- trigger_value(F, Val), step(S).
 :- trigger_value(F, Val), normal_atom(valueAtStep(F, S), lt, Val), normal_atom(valueAtStep(F, S+1), gt, Val), step(S), step(S+1).
 % same for timepoints 
 comparison(timeAtStep(S), T) :- trigger_time(T), step(S).
-:- trigger_time(T), normal_atom(timeAtStep(S), gt, T), normal_atom(timeAtStep(F, S+1), lt, T), step(S), step(S+1).
-:- trigger_time(T), normal_atom(timeAtStep(S), lt, T), normal_atom(timeAtStep(F, S+1), gt, T), step(S), step(S+1).
+%:- trigger_time(T), normal_atom(timeAtStep(S), gt, T), normal_atom(timeAtStep(S+1), lt, T), step(S), step(S+1). %% time never goes backwards
+:- trigger_time(T), normal_atom(timeAtStep(S), lt, T), normal_atom(timeAtStep(S+1), gt, T), step(S), step(S+1).
 
 
 %-------------------------------------------------------------------------------
@@ -377,7 +377,8 @@ comparison(timeAtStep(S), T) :- trigger_time(T), step(S).
 #show -releasedAt(F, (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  not releasedAtStep(F, S+1), step(S), step(S+1), fluent(F), not debug_prints, negated_prints.
 
 %% functional fluents have values between steps
-#show holdsAt_Func(F, valueAtStep(F,S+1), (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  holdsAtStep(F, S+1), not trajectoryAtStep(_, _, F, S+1), fluent_Func(F), step(S), step(S+1), not debug_prints.
+#show holdsAt_Func(F, valueAtStep(F,S+1), (timeAtStep(S), "< T =<", timeAtStep(S+1))) :  holdsAtStep(F, S+1), not anyTrajectoryAtStep(F, S+1), fluent_Func(F), step(S), step(S+1), not debug_prints.
+anyTrajectoryAtStep(F, S) :- trajectoryAtStep(X, Y, F, S), not debug_prints.
 
 %% functional fluents can be continuous with their value defined by a trajectory (continuous value between steps)
 #show holdsAt_Func_Cont(F, (valueAtStep(F, S), "->", valueAtStep(F, S+1)), (timeAtStep(S), "< T =<", timeAtStep(S+1))) : trajectoryAtStep(_, _, F, S+1), step(S), step(S+1), not debug_prints.
@@ -390,6 +391,7 @@ comparison(timeAtStep(S), T) :- trigger_time(T), step(S).
 #show trajectoryAtStep(Fluent1, S1, Fluent2, S2) : trajectoryAtStep(Fluent1, S1, Fluent2, S2), debug_prints.
 
 #show  map(T, S) : map(T, S), debug_prints.
+#show  checkStep(S) : checkStep(S), debug_prints.
 
 
 %-------------------------------------------------------------------------------
