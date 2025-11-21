@@ -1,0 +1,48 @@
+$ clingo-lpx --strict -n0 ./model.lp ../axioms/fdec-ffholds.lp -c maxstep=6 -c maxtime=1000 	| ../utils/replace_assignments.sh | ../utils/make-readable.sh
+
+
+clingo-lpx version 1.3.0
+Reading from ./model.lp ...
+Solving...
+Answer: 1
+(Time: 0.058s)
+happens(fade_in_end,20)
+happens(fade_in_end,40)
+happens(fade_out_end,30)
+happens(turn_light_off,45)
+happens(turn_light_on,10)
+holdsAt(fading_in,(10,"< T =<",20))
+holdsAt(fading_in,(30,"< T =<",40))
+holdsAt(fading_out,(20,"< T =<",30))
+holdsAt(fading_out,(40,"< T =<",45))
+holdsAt(light_on,(10,"< T =<",20))
+holdsAt(light_on,(20,"< T =<",30))
+holdsAt(light_on,(30,"< T =<",40))
+holdsAt(light_on,(40,"< T =<",45))
+releasedAt(brightness,(10,"< T =<",20))
+releasedAt(brightness,(20,"< T =<",30))
+releasedAt(brightness,(30,"< T =<",40))
+releasedAt(brightness,(40,"< T =<",45))
+fholdsAt(brightness,0,(0,"< T =<",10))
+fholdsAt(brightness,0,(45,"< T =<",1000))
+fholdsAtC(brightness,(0,"->",10),(10,"< T =<",20),eq(off2(0),"+",koef(1),"*",(base(0),"+",off1(0)),"+",inc(1),"*",dur(20,"-",10)))
+fholdsAtC(brightness,(10,"->",0),(20,"< T =<",30),eq(off2(0),"+",koef(1),"*",(base(10),"+",off1(0)),"+",inc(-1),"*",dur(30,"-",20)))
+fholdsAtC(brightness,(0,"->",10),(30,"< T =<",40),eq(off2(0),"+",koef(1),"*",(base(0),"+",off1(0)),"+",inc(1),"*",dur(40,"-",30)))
+fholdsAtC(brightness,(10,"->",5),(40,"< T =<",45),eq(off2(0),"+",koef(1),"*",(base(10),"+",off1(0)),"+",inc(-1),"*",dur(45,"-",40)))
+Assignment: [leftovers]
+fholdsAt(brightness,0)=0
+SATISFIABLE
+
+Models       : 1
+Calls        : 1
+Time         : 0.058s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.037s
+
+Command exited with non-zero status 30
+
+  real      0:00.07
+  real [s]  0.07
+  user [s]  0.02
+  sys  [s]  0.01
+  mem  [KB] 9216
+  avgm [KB] 0

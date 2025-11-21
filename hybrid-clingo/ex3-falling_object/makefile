@@ -33,23 +33,23 @@ run-lpx-eff:
 # log the execution
 
 log:
-	NAME=; 		MAXSTEP=2;	MAXTIME=1000;	HEIGHT=20;	../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
-	NAME=; 		MAXSTEP=2;	MAXTIME=1000;	HEIGHT=40;	../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
-	NAME=; 		MAXSTEP=2;	MAXTIME=1000;	HEIGHT=80;	../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
-	NAME=; 		MAXSTEP=2;	MAXTIME=1000;	HEIGHT=160; ../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
-	NAME=; 		MAXSTEP=2;	MAXTIME=1000;	HEIGHT=320; ../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
-	NAME=-hit; 	MAXSTEP=2;	MAXTIME=1000; 	HEIGHT=4;   ../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
-	NAME=-miss;	MAXSTEP=2;	MAXTIME=1000; 	HEIGHT=3;   ../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+	NAME=; 		MAXSTEP=3;	MAXTIME=1000;	HEIGHT=20;	../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+	NAME=; 		MAXSTEP=3;	MAXTIME=1000;	HEIGHT=40;	../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+	NAME=; 		MAXSTEP=3;	MAXTIME=1000;	HEIGHT=80;	../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+	NAME=; 		MAXSTEP=3;	MAXTIME=1000;	HEIGHT=160; ../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+	NAME=; 		MAXSTEP=3;	MAXTIME=1000;	HEIGHT=320; ../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+	NAME=-hit; 	MAXSTEP=3;	MAXTIME=1000; 	HEIGHT=4;   ../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+	NAME=-miss;	MAXSTEP=3;	MAXTIME=1000; 	HEIGHT=3;   ../../scripts/maketrace.sh "${LPX_CMD} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
 	
-	NAME=-fh; 		MAXSTEP=2;	MAXTIME=1000;	HEIGHT=20;	../../scripts/maketrace.sh "${LPX_CMD_FH} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
-	NAME=-fh; 		MAXSTEP=2;	MAXTIME=1000;	HEIGHT=40;	../../scripts/maketrace.sh "${LPX_CMD_FH} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
-	NAME=-fh; 		MAXSTEP=2;	MAXTIME=1000;	HEIGHT=80;	../../scripts/maketrace.sh "${LPX_CMD_FH} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
-	NAME=-fh; 		MAXSTEP=2;	MAXTIME=1000;	HEIGHT=160; ../../scripts/maketrace.sh "${LPX_CMD_FH} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
-	NAME=-fh; 		MAXSTEP=2;	MAXTIME=1000;	HEIGHT=320; ../../scripts/maketrace.sh "${LPX_CMD_FH} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
-	NAME=-fh-hit; 	MAXSTEP=2;	MAXTIME=1000;	HEIGHT=4;   ../../scripts/maketrace.sh "${LPX_CMD_FH} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
-	NAME=-fh-miss;	MAXSTEP=2;	MAXTIME=1000;	HEIGHT=3;   ../../scripts/maketrace.sh "${LPX_CMD_FH} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+	NAME=-fh; 		MAXSTEP=3;	MAXTIME=1000;	HEIGHT=20;	../../scripts/maketrace.sh "${LPX_CMD_FH} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+	NAME=-fh; 		MAXSTEP=3;	MAXTIME=1000;	HEIGHT=40;	../../scripts/maketrace.sh "${LPX_CMD_FH} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+	NAME=-fh; 		MAXSTEP=3;	MAXTIME=1000;	HEIGHT=80;	../../scripts/maketrace.sh "${LPX_CMD_FH} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+	NAME=-fh; 		MAXSTEP=3;	MAXTIME=1000;	HEIGHT=160; ../../scripts/maketrace.sh "${LPX_CMD_FH} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+	NAME=-fh; 		MAXSTEP=3;	MAXTIME=1000;	HEIGHT=320; ../../scripts/maketrace.sh "${LPX_CMD_FH} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+	NAME=-fh-hit; 	MAXSTEP=3;	MAXTIME=1000;	HEIGHT=4;   ../../scripts/maketrace.sh "${LPX_CMD_FH} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+	NAME=-fh-miss;	MAXSTEP=3;	MAXTIME=1000;	HEIGHT=3;   ../../scripts/maketrace.sh "${LPX_CMD_FH} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
 
-	NAME=-queries;	MAXSTEP=5;	HEIGHT=20;	../../scripts/maketrace.sh "${LPX_CMD} ./extra-queries.lp | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+	NAME=-queries;	MAXSTEP=6;	MAXTIME=1000;	HEIGHT=20;	../../scripts/maketrace.sh "${LPX_CMD} ./extra-queries.lp | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
 
-	NAME=-dbec;	MAXSTEP=2;	HEIGHT=20;	../../scripts/maketrace.sh "${LPX_CMD_DBEC} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
+	NAME=-dbec;	MAXSTEP=3;	HEIGHT=20;	../../scripts/maketrace.sh "${LPX_CMD_DBEC} | ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0
 	NAME=-eff;	MAXSTEP=2;	HEIGHT=20;	../../scripts/maketrace.sh "${LPX_CMD_EFF} 	| ../utils/replace_assignments.sh | ../utils/make-readable.sh" ./logs/lpx$$NAME-s$$MAXSTEP-h$$HEIGHT.log ; exit 0

@@ -49,17 +49,10 @@ happens(hitGround(O), T) :-
     time(T).
 
 
-% TODO this is not needed for this particular example, but is needed in general
 % capture when height(O) = 0
 % restrict that there must exist a state where height is exactly equal to zero
 % (by saying that there cannot be two subsequent states in which one is lt/gt and the next gt/lt, i.e. there is no state with exactly eq)
-trigger_value(height(O), 0) :- object(O).
-    %:- normal_atom(fholdsAt(height(O), T), gt, 0), normal_atom(fholdsAt(height(O), T+1), lt, 0), 
-    %   time(T), time(T+1).
-    %:- normal_atom(fholdsAt(height(O), T), lt, 0), normal_atom(fholdsAt(height(O), T+1), gt, 0), 
-    %   time(T), time(T+1).
-    %
-    %comparison(fholdsAt(height(O),T  ), 0) :- object(O), time(T). 
+trigger_value(height(O), falling(O), 0) :- object(O).
 
 
 % [effect]
@@ -68,7 +61,7 @@ terminates(hitGround(O), falling(O), T) :- object(O), time(T).
 
 % [effect + CLoI]
 % if an object hits the ground then its height will no longer be released from CLoI
-initiates(hitGround(O), height(O), (0, 1, height(O)), T) :- time(T), object(O).
+initiates(hitGround(O), height(O), (0, 1, 0, height(O)), T) :- time(T), object(O).
 
 
 % TODO % terminates(catch(A, O), falling(O), T) :- agent(A), object(O), time(T).
@@ -95,7 +88,7 @@ initiates(hitGround(O), height(O), (0, 1, height(O)), T) :- time(T), object(O).
 %    holdsAt(height(O,H), T1),
 %    fGravity(G), object(O), fHeight(H), time(T1), time(T2).
 *%
-trajectory(falling(O), T1, height(O), (0, 1, height(O), -2), T2) :- object(O), time(T1), time(T2).
+trajectory(falling(O), T1, height(O), (0, 1, 0, height(O), -2), T2) :- object(O), time(T1), time(T2).
 
 
 %-------------------------------------------------------------------------------

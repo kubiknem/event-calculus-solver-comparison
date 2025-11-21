@@ -1,15 +1,18 @@
 
+#const maxstep=7.
+#const maxtime=1000.
+
 % ----- narrative & queries  -----
 
-initiallyP_Func(height, 10).
-initiallyP_Func(velocity, 0).
+initiallyP(height, 10).
+initiallyP(velocity, 0).
 initiallyP(constant_fall_rate(1)).
 initiallyP(velocity_loss_portion("0.75")).
 initiallyP(constant_velocity_loss_bounce(1)).   % relevant for the fixzeno version
 
 initiallyN(F) :- not initiallyP(F), fluent(F).
 
-happens(drop,                           10).
+in_happens(drop,                           10).
 
 % with zeno behavior
 %?- happens(hit_ground,                  T).     % 20, 25, 26.25 (105/4), 26,5625 (425/16),...

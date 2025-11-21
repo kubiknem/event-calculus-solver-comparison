@@ -42,7 +42,7 @@ event(transfer(A1, A2, M)) :- happens(transfer(A1, A2, M), T), account(A1), acco
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
 *%
-initiates(transfer(A1, A2, TransM12), balance(A2), (TransM12, 1, balance(A2)), T) :-
+initiates(transfer(A1, A2, TransM12), balance(A2), (TransM12, 1, 0, balance(A2)), T) :-
     TransM12 > 0,
     % &sum{ (balance(A1),T-1) } >= TransM12, 
     normal_atom(fholdsAt(balance(A1),T), geq, TransM12),
@@ -74,7 +74,7 @@ comparison(fholdsAt(balance(A1),T), TransM12) :-
 %    SrcM1 >= TransM12,
 %    account(A1), account(A2), time(T), money(TransM12), money(DstM2), money(SrcM1).
 *%
-initiates(transfer(A1, A2, TransM12), balance(A1), (-TransM12, 1, balance(A1)), T) :-
+initiates(transfer(A1, A2, TransM12), balance(A1), (-TransM12, 1, 0, balance(A1)), T) :-
     TransM12 > 0,
     % &sum{ (balance(A1),T-1) } >= TransM12, 
     normal_atom(fholdsAt(balance(A1),T), geq, TransM12),

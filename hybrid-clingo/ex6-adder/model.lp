@@ -6,6 +6,9 @@
 %
 % --> example meant to test the encoding of functional fluents in clingo-lpx
 
+#const maxstep=5.
+#const maxtime=1000.
+
 %-------------------------------------------------------------------------------
 % sorts
 %-------------------------------------------------------------------------------
@@ -13,52 +16,52 @@
 % TODO this is grounded (but only to as many values as there are input events...)
 addDomain(X) :- happens(add(X), _).
 
-% event(add(X)).
-% event(turn_on).
-% event(turn_off).
+event(add(X)) :- addDomain(X).
+event(turn_on).
+event(turn_off).
 
-fluent_Func(result).
-fluent(powered_on).
+ffluent(result).
+dfluent(powered_on).
 
 %-------------------------------------------------------------------------------
 % effects 
 %-------------------------------------------------------------------------------
 
 % initiates(add(Add),  result(Res2), T) :- Add .>. 0, holdsAt(result(Res1), T), Res2 = Res1 + Add, time(T).
-&sum{valueAtStep(result, S); Add} = valueAtStep(result, S+1) :-
-    initiatedValueByAtStep(add(Add), result, S),
-    step(S+1).
-initiatesValueAtStep(add(Add), result, S) :-
+initiates(add(Add), result, (Add, 1, 0, result), T) :-
     Add > 0,
-    holdsAtStep(result, S),
-    addDomain(Add), step(S).
+    holdsAt(powered_on, T),
+    % holdsAt(result, T),
+    addDomain(Add), time(T).
 
 % terminates(add(Add), result(OldRes), T) :- Add .>. 0, holdsAt(OldRes, T), time(T).
-% TODO this is meant to terminate the old functional value (break its inertia), this is already done by initiatesValueAtStep
+% TODO this is meant to terminate the old functional value (break its inertia), this is already done by initiates/4
 
 
 % initiates(turn_on, powered_on, T) :- -holdsAt(powered_on, T), time(T).
-initiatesAtStep(turn_on, powered_on, S) :-
-    not holdsAtStep(powered_on, S),
-    step(S).
+initiates(turn_on, powered_on, T) :-
+    not holdsAt(powered_on, T),
+    time(T).
 
 % terminates(turn_off, powered_on, T) :- holdsAt(powered_on, T), time(T).
-terminatesAtStep(turn_off, powered_on, S) :-
-    holdsAtStep(powered_on, S).
+terminates(turn_off, powered_on, T) :-
+    holdsAt(powered_on, T).
 
 
 % initiates(turn_on, result(0), T) :- time(T).
-&sum{valueAtStep(result, S+1)} = 0 :-
-    initiatedValueByAtStep(turn_on, result, S),
-    step(S+1).
-initiatesValueAtStep(turn_on, result, S) :-
-    not holdsAtStep(powered_on, S),
-    step(S).
+initiates(turn_on, result, (0, 0, 0, result), T) :-
+    Add > 0,
+    not holdsAt(powered_on, T),
+    %not holdsAt(result, T),
+    addDomain(Add), time(T).
 
 % terminates(turn_off, result(_), T) :- holdsAt(powered_on, T), time(T).
-terminatesAtStep(turn_off, result, S) :-
-    holdsAtStep(powered_on, S),
-    step(S).
+% TODO default FDEC cannot terminate ffluents, instead initiate zero
+initiates(turn_off, result, (0, 0, 0, result), T) :-
+    Add > 0,
+    holdsAt(powered_on, T),
+    %holdsAt(result, T),
+    addDomain(Add), time(T).
 
 
 %-------------------------------------------------------------------------------
@@ -66,19 +69,17 @@ terminatesAtStep(turn_off, result, S) :-
 %-------------------------------------------------------------------------------
 
 initiallyN(powered_on).
-initiallyN(result).
+initiallyP(result, 0).  % TODO default FDEC needs a value for ffluents at all times
 
 
 %-------------------------------------------------------------------------------
 % narrative 
 %-------------------------------------------------------------------------------
 
-happens(check,          1).
-happens(turn_on,        5).
-happens(add(5),         10).
-happens(add(1000000),   20).
-happens(turn_off,       25).
-happens(check,          30).
+in_happens(turn_on,        5).
+in_happens(add(5),         10).
+in_happens(add(1000000),   20).
+in_happens(turn_off,       25).
 
 % conclude that result will be 1000005 after time 20
 

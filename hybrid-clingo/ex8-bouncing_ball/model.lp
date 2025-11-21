@@ -2,121 +2,90 @@
 % ----- domain model -----
 
 % fluents
-fluent_Func(height).
-fluent_Func(velocity).
+ffluent(height).
+ffluent(velocity).
 
-fluent(falling).
-fluent(rising).
+dfluent(falling).
+dfluent(rising).
 
-fluent(constant_fall_rate(X)) :- initiallyP(constant_fall_rate(X)).         % simplified to a constant fall rate instead of accelerating over time
-fluent(velocity_loss_portion(X)) :- initiallyP(velocity_loss_portion(X)).   % ball looses a portion of velocity on each bounce
+dfluent(constant_fall_rate(X)) :- initiallyP(constant_fall_rate(X)).         % simplified to a constant fall rate instead of accelerating over time
+dfluent(velocity_loss_portion(X)) :- initiallyP(velocity_loss_portion(X)).   % ball looses a portion of velocity on each bounce
 
 % input events
-% event(drop).
-% event(catch).
+event(drop).
+event(catch).
 
 % triggered events
-% event(fall_down).
-% event(hit_ground).
-% event(bounce_up).
-% event(reach_apex).
-% event(stop_bouncing).
+event(fall_down).
+event(hit_ground).
+event(bounce_up).
+event(reach_apex).
+event(stop_bouncing).
 
 
 % start by dropping the ball
-releasesAtStep(drop, height, S) :- step(S).
-releasesAtStep(drop, velocity, S) :- step(S).
+releases(drop, height, T) :- time(T).
+releases(drop, velocity, T) :- time(T).
 
 
 % start by dropping the ball
-initiatesAtStep(fall_down, falling, S) :- step(S).
+initiates(fall_down, falling, T) :- time(T).
 
 % stop falling when hitting the ground
-terminatesAtStep(hit_ground, falling, S) :- step(S).
+terminates(hit_ground, falling, T) :- time(T).
 
 % bounce back up
-initiatesAtStep(bounce_up, rising, S) :- step(S).
+initiates(bounce_up, rising, T) :- time(T).
 
 % stop rising when reaching the apex
-terminatesAtStep(reach_apex, rising, S) :- step(S).
+terminates(reach_apex, rising, T) :- time(T).
 
 % stop everything by catching the ball
-terminatesAtStep(catch, falling, S) :- step(S).
-terminatesAtStep(catch, rising, S) :- step(S).
-
-initiatesValueAtStep(catch, height, S) :- step(S).
-&sum{valueAtStep(height,S+1)} = valueAtStep(height,S) :-
-    initiatedValueByAtStep(catch, height, S),
-    step(S+1).
-
-initiatesValueAtStep(catch, velocity, S) :- step(S).
-&sum{valueAtStep(velocity,S+1)} = 0 :-
-    initiatedValueByAtStep(catch, velocity, S),
-    step(S+1).
+terminates(catch, falling, T) :- time(T).
+terminates(catch, rising, T) :- time(T).
+initiates(catch, height, (0, 1, 0, height), T) :- time(T).
+initiates(catch, velocity, (0, 0, 0, velocity), T) :- time(T).
 
 % stop everything if the ball stops bouncing
-initiatesValueAtStep(stop_bouncing, height, S) :- step(S).
-&sum{valueAtStep(height,S+1)} = 0 :-
-    initiatedValueByAtStep(stop_bouncing, height, S),
-    step(S+1).
-
-initiatesValueAtStep(stop_bouncing, velocity, S) :- step(S).
-&sum{valueAtStep(velocity,S+1)} = 0 :-
-    initiatedValueByAtStep(stop_bouncing, velocity, S),
-    step(S+1).
-
+initiates(stop_bouncing, height, (0, 0, 0, height), T) :- time(T).
+initiates(stop_bouncing, velocity, (0, 0, 0, velocity), T) :- time(T).
 
 % falling 
-trajectory(falling, S1, height, S2) :- step(S1), step(S2).
-&sum{ valueAtStep(height,S); Rate*timeAtStep(S); -Rate*timeAtStep(S+1) } = valueAtStep(height,S+1) :-
-    trajectoryAtStep(falling, _, height, S+1),
+trajectory(falling, T1, height, (0, 1, 0, height, -Rate), T2) :-
     initiallyP(constant_fall_rate(Rate)),
-    step(S), step(S+1).
-
-trajectory(falling, S1, velocity, S2) :- step(S1), step(S2).
-&sum{ valueAtStep(velocity,S); -Rate*timeAtStep(S); Rate*timeAtStep(S+1) } = valueAtStep(velocity,S+1) :-
-    trajectoryAtStep(falling, _, velocity, S+1),
+    time(T1), time(T2).
+trajectory(falling, T1, velocity, (0, 1, 0, velocity, Rate), T2) :-
     initiallyP(constant_fall_rate(Rate)),
-    step(S), step(S+1).
-
+    time(T1), time(T2).
 
 % rising
-trajectory(rising, S1, height, S2) :- step(S1), step(S2).
-&sum{ valueAtStep(height,S); -Rate*timeAtStep(S); Rate*timeAtStep(S+1) } = valueAtStep(height,S+1) :-
-    trajectoryAtStep(rising, _, height, S+1),
+trajectory(rising, T1, height, (0, 1, 0, height, Rate), T2) :-
     initiallyP(constant_fall_rate(Rate)),
-    step(S), step(S+1).
-
-trajectory(rising, S1, velocity, S2) :- step(S1), step(S2).
-&sum{ (1-LossPortion)*valueAtStep(velocity,S); Rate*timeAtStep(S); -Rate*timeAtStep(S+1) } = valueAtStep(velocity,S+1) :-
-    trajectoryAtStep(rising, _, velocity, S+1),
+    time(T1), time(T2).
+trajectory(rising, T1, velocity, (0, "0.25", 0, velocity, -Rate), T2) :-
     initiallyP(constant_fall_rate(Rate)),
-    initiallyP(velocity_loss_portion(LossPortion)),
-    step(S), step(S+1).
-
+    %initiallyP(velocity_loss_portion(LossPortion)), % ... 1 - LossPortion
+    time(T1), time(T2).
 
 happens(fall_down, T) :- happens(drop, T).
 
-happensAtStep(hit_ground, S) :- 
-    holdsAtStep(falling, S),
-    normal_atom(valueAtStep(height, S), eq, 0).
-%comparison(valueAtStep(height, S), 0) :- step(S).
+happens(hit_ground, T) :- 
+    holdsAt(falling, T),
+    normal_atom(fholdsAt(height, T), eq, 0).
 
-happensAtStep(bounce_up, S) :- happensAtStep(hit_ground, S),
-    holdsAtStep(falling, S),
-    normal_atom(valueAtStep(velocity, S), gt, 0).
-%comparison(valueAtStep(velocity, S), 0) :- step(S).
+happens(bounce_up, T) :- happens(hit_ground, T),
+    holdsAt(falling, T),
+    normal_atom(fholdsAt(velocity, T), gt, 0).
 
-happensAtStep(stop_bouncing, S) :- happensAtStep(hit_ground, S),
-    holdsAtStep(falling, S),
-    normal_atom(valueAtStep(velocity, S), eq, 0).
+happens(stop_bouncing, T) :- happens(hit_ground, T),
+    holdsAt(falling, T),
+    normal_atom(fholdsAt(velocity, T), eq, 0).
 
-happensAtStep(reach_apex, S) :-
-    holdsAtStep(rising, S),
-    normal_atom(valueAtStep(velocity, S), eq, 0).
+happens(reach_apex, T) :-
+    holdsAt(rising, T),
+    normal_atom(fholdsAt(velocity, T), eq, 0).
 
-happensAtStep(fall_down, S) :- happensAtStep(reach_apex, S).
+happens(fall_down, T) :- happens(reach_apex, T).
 
-% TODO not needed for this example but is needed in general
-trigger_value(height, 0).
-trigger_value(velocity, 0).
+trigger_value(height, falling, 0).
+trigger_value(velocity, rising, 0).

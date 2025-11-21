@@ -60,31 +60,31 @@ startedIn(T1,F,T2) :- happens(E,T), T1<T, T<T2,
 % JR: add trajectories where F1 is boolean and F2 is functional
 
 % DEC3
-holdsAt(F2,T1+T2) :- happens(E,T1), initiates(E,F1,T1), 0<T2,
-  trajectory(F1,T1,F2,T2), not stoppedIn(T1,F1,T1+T2),
+holdsAt(F2,T2) :- happens(E,T1), initiates(E,F1,T1), T1<T2,
+  trajectory(F1,T1,F2,T2), not stoppedIn(T1,F1,T2),
   event(E), fluent(F1), fluent(F2), timeStep(T1), timeStep(T2).
   %T1+T2<maxtime.  % TODO
 
 % FDEC3
 % JR: added
-&sum{ A; B*fholdsAt(F,T1); INC*(ftimeAtStep(T2) - ftimeAtStep(T1)) } = fholdsAt(F2,T2) :-
-  happens(E,T1), initiates(E,F1,T1), 0<T2,
-  trajectory(F1,T1,F2,(A,B,F,INC),T2),
+&sum{ A; B*(fholdsAt(F,T1) + C); INC*(ftimeAtStep(T2) - ftimeAtStep(T1)) } = fholdsAt(F2,T2) :-
+  happens(E,T1), initiates(E,F1,T1), T1<T2,
+  trajectory(F1,T1,F2,(A,B,C,F,INC),T2),
   not stoppedIn(T1,F1,T2),
   event(E), fluent(F1), ffluent(F2), timeStep(T1), timeStep(T2).  % TODO OV: changed to fluent(F1)
   %T1+T2<maxtime.  % TODO
 
 % DEC4
-holdsAt(F2,T1+T2) :- happens(E,T1), terminates(E,F1,T1), 0<T2,
+holdsAt(F2,T2) :- happens(E,T1), terminates(E,F1,T1), T1<T2,
   antiTrajectory(F1,T1,F2,T2), not startedIn(T1,F1,T1+T2),
   event(E), fluent(F1), fluent(F2), timeStep(T1), timeStep(T2).
   %T1+T2<maxtime.  % TODO
 
 % FDEC4
 % JR: added
-&sum{ A; B*fholdsAt(F,T1); INC*(ftimeAtStep(T2) - ftimeAtStep(T1)) } = fholdsAt(F2,T2) :-
-  happens(E,T1), terminates(E,F1,T1), 0<T2,
-  antiTrajectory(F1,T1,F2,(A,B,F,INC),T2),
+&sum{ A; B*(fholdsAt(F,T1) + C); INC*(ftimeAtStep(T2) - ftimeAtStep(T1)) } = fholdsAt(F2,T2) :-
+  happens(E,T1), terminates(E,F1,T1), T1<T2,
+  antiTrajectory(F1,T1,F2,(A,B,C,F,INC),T2),
   not startedIn(T1,F1,T2),
   event(E), fluent(F1), ffluent(F2), timeStep(T1), timeStep(T2).  % TODO OV: changed to fluent(F1)
   %T1+T2<maxtime.  % TODO
@@ -124,8 +124,8 @@ holdsAt(F,T+1) :- happens(E,T), initiates(E,F,T), event(E),
 
 % FDEC9
 % JR: added for ffluents
-&sum{ A; B*fholdsAt(F,T) } = fholdsAt(F,T+1) :-
-   happens(E,T), initiates(E,F,(A,B,F),T), event(E),
+&sum{ A; B*(fholdsAt(F,T) + C) } = fholdsAt(F,T+1) :-
+   happens(E,T), initiates(E,F,(A,B,C,F),T), event(E),
    ffluent(F), timeStep(T), T<maxstep.
 
 % DEC10
@@ -218,6 +218,9 @@ normal_atom(A, geq, B) :- normal_atom(A, gt, B).
 comparison(fholdsAt(F,T), Val) :- trigger_value(F, Val), timeStep(T).
 :- trigger_value(F, Val), normal_atom(fholdsAt(F, T), gt, Val), normal_atom(fholdsAt(F, T+1), lt, Val), timeStep(T), timeStep(T+1).
 :- trigger_value(F, Val), normal_atom(fholdsAt(F, T), lt, Val), normal_atom(fholdsAt(F, T+1), gt, Val), timeStep(T), timeStep(T+1).
+comparison(fholdsAt(F,T), Val) :- trigger_value(F, _, Val), timeStep(T).
+:- trigger_value(F, CF, Val), holdsAt(CF, T+1), normal_atom(fholdsAt(F, T), gt, Val), normal_atom(fholdsAt(F, T+1), lt, Val), timeStep(T), timeStep(T+1).
+:- trigger_value(F, CF, Val), holdsAt(CF, T+1), normal_atom(fholdsAt(F, T), lt, Val), normal_atom(fholdsAt(F, T+1), gt, Val), timeStep(T), timeStep(T+1).
 % same for timepoints 
 comparison(ftimeAtStep(T), TriggT) :- trigger_time(TriggT), timeStep(T).
 % :- trigger_time(TriggT), normal_atom(ftimeAtStep(T), gt, TriggT), normal_atom(ftimeAtStep(T+1), lt, TriggT), timeStep(T), timeStep(T+1). %% time never goes backwards
@@ -257,15 +260,30 @@ anyTrajectory(F2, T2) :- not debug_prints,
   trajectory(F1, T1, F2, _, T2),
   not stoppedIn(T1, F1, T2),
   timeStep(T1), timeStep(T2).
-#show -fholdsAt(F, (timeAtStep(T), "< T =<", timeAtStep(T+1))) :
+anyTrajectory(F2, T2) :- not debug_prints,
+  T1 < T2,
+  initiates(E, F1, T1),
+  happens(E, T1),
+  antiTrajectory(F1, T1, F2, _, T2),
+  not stoppedIn(T1, F1, T2),
+  timeStep(T1), timeStep(T2).
+#show -fholdsAt(F, (ftimeAtStep(T), "< T =<", ftimeAtStep(T+1))) :
   not holdsAt(F, T+1), timeStep(T), timeStep(T+1), ffluent(F), not debug_prints, negated_prints.
 
 %% functional fluents can be continuous with their value defined by a trajectory (continuous value between steps)
-#show fholdsAtC(F2, (fholdsAt(F2, T), "->", fholdsAt(F2, T+1)), (ftimeAtStep(T), "< T =<", ftimeAtStep(T+1)), eq(off(A), "+", koef(B), "*", base(fholdsAt(F2,SStart)), "+", inc(INC), "*", dur(ftimeAtStep(T+1), "-", ftimeAtStep(SStart)))) :
+#show fholdsAtC(F2, (fholdsAt(F2, T), "->", fholdsAt(F2, T+1)), (ftimeAtStep(T), "< T =<", ftimeAtStep(T+1)), eq(off2(A), "+", koef(B), "*", (base(fholdsAt(F2,SStart)), "+", off1(C)), "+", inc(INC), "*", dur(ftimeAtStep(T+1), "-", ftimeAtStep(SStart)))) :
   SStart < T+1,
   initiates(E, F1, SStart),
   happens(E, SStart),
-  trajectory(F1, SStart, F2, (A,B,F2,INC), T+1),
+  trajectory(F1, SStart, F2, (A,B,C,F2,INC), T+1),
+  not stoppedIn(SStart, F1, T+1),
+  timeStep(T), timeStep(T+1), timeStep(SStart),
+  not debug_prints.
+#show fholdsAtC(F2, (fholdsAt(F2, T), "->", fholdsAt(F2, T+1)), (ftimeAtStep(T), "< T =<", ftimeAtStep(T+1)), eq(off2(A), "+", koef(B), "*", (base(fholdsAt(F2,SStart)), "+", off1(C)), "+", inc(INC), "*", dur(ftimeAtStep(T+1), "-", ftimeAtStep(SStart)))) :
+  SStart < T+1,
+  initiates(E, F1, SStart),
+  happens(E, SStart),
+  antiTrajectory(F1, SStart, F2, (A,B,C,F2,INC), T+1),
   not stoppedIn(SStart, F1, T+1),
   timeStep(T), timeStep(T+1), timeStep(SStart),
   not debug_prints.
@@ -310,8 +328,16 @@ anyTrajectory(F2, T2) :- not debug_prints,
 #defined checkStep/1.
 
 #defined trigger_value/2.
+#defined trigger_value/3.
 #defined trigger_time/1.
 
 #defined disable_laststep/0.
 #defined debug_prints/0.
 #defined negated_prints/0.
+
+#const disablelaststep=0.
+disable_laststep :- disablelaststep = 1.
+#const debugprints=0.
+debug_prints :- debugprints = 1.
+#const negprints=0.
+negated_prints :- negprints = 1.

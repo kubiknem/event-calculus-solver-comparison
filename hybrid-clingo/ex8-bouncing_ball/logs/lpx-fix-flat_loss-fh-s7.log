@@ -1,0 +1,88 @@
+$ clingo-lpx --strict -n0 ../axioms/fdec-ffholds.lp -c maxstep=7 -c maxtime=1000 ./fix-flat_loss.lp ./narrative2.lp | ../utils/replace_assignments.sh | ../utils/make-readable.sh
+
+
+clingo-lpx version 1.3.0
+Reading from ../axioms/fdec-ffholds.lp ...
+Solving...
+Answer: 1
+(Time: 0.049s)
+happens(bounce_up,20)
+happens(bounce_up,49/2)
+happens(drop,10)
+happens(fall_down,10)
+happens(fall_down,89/4)
+happens(fall_down,397/16)
+happens(hit_ground,20)
+happens(hit_ground,49/2)
+happens(hit_ground,201/8)
+happens(reach_apex,89/4)
+happens(reach_apex,397/16)
+happens(stop_bouncing,201/8)
+holdsAt(falling,(10,"< T =<",20))
+holdsAt(falling,(89/4,"< T =<",49/2))
+holdsAt(falling,(397/16,"< T =<",201/8))
+holdsAt(rising,(20,"< T =<",89/4))
+holdsAt(rising,(49/2,"< T =<",397/16))
+holdsAt(constant_fall_rate(1),(0,"< T =<",10))
+holdsAt(constant_fall_rate(1),(10,"< T =<",20))
+holdsAt(constant_fall_rate(1),(20,"< T =<",89/4))
+holdsAt(constant_fall_rate(1),(89/4,"< T =<",49/2))
+holdsAt(constant_fall_rate(1),(49/2,"< T =<",397/16))
+holdsAt(constant_fall_rate(1),(397/16,"< T =<",201/8))
+holdsAt(constant_fall_rate(1),(201/8,"< T =<",1000))
+holdsAt(constant_velocity_loss_bounce(1),(0,"< T =<",10))
+holdsAt(constant_velocity_loss_bounce(1),(10,"< T =<",20))
+holdsAt(constant_velocity_loss_bounce(1),(20,"< T =<",89/4))
+holdsAt(constant_velocity_loss_bounce(1),(89/4,"< T =<",49/2))
+holdsAt(constant_velocity_loss_bounce(1),(49/2,"< T =<",397/16))
+holdsAt(constant_velocity_loss_bounce(1),(397/16,"< T =<",201/8))
+holdsAt(constant_velocity_loss_bounce(1),(201/8,"< T =<",1000))
+holdsAt(velocity_loss_portion("0.75"),(0,"< T =<",10))
+holdsAt(velocity_loss_portion("0.75"),(10,"< T =<",20))
+holdsAt(velocity_loss_portion("0.75"),(20,"< T =<",89/4))
+holdsAt(velocity_loss_portion("0.75"),(89/4,"< T =<",49/2))
+holdsAt(velocity_loss_portion("0.75"),(49/2,"< T =<",397/16))
+holdsAt(velocity_loss_portion("0.75"),(397/16,"< T =<",201/8))
+holdsAt(velocity_loss_portion("0.75"),(201/8,"< T =<",1000))
+releasedAt(height,(10,"< T =<",20))
+releasedAt(height,(20,"< T =<",89/4))
+releasedAt(height,(89/4,"< T =<",49/2))
+releasedAt(height,(49/2,"< T =<",397/16))
+releasedAt(height,(397/16,"< T =<",201/8))
+releasedAt(velocity,(10,"< T =<",20))
+releasedAt(velocity,(20,"< T =<",89/4))
+releasedAt(velocity,(89/4,"< T =<",49/2))
+releasedAt(velocity,(49/2,"< T =<",397/16))
+releasedAt(velocity,(397/16,"< T =<",201/8))
+fholdsAt(height,10,(0,"< T =<",10))
+fholdsAt(height,0,(201/8,"< T =<",1000))
+fholdsAt(velocity,0,(0,"< T =<",10))
+fholdsAt(velocity,0,(201/8,"< T =<",1000))
+fholdsAtC(height,(10,"->",0),(10,"< T =<",20),eq(off2(0),"+",koef(1),"*",(base(10),"+",off1(0)),"+",inc(-1),"*",dur(20,"-",10)))
+fholdsAtC(height,(0,"->",9/4),(20,"< T =<",89/4),eq(off2(0),"+",koef(1),"*",(base(0),"+",off1(0)),"+",inc(1),"*",dur(89/4,"-",20)))
+fholdsAtC(height,(9/4,"->",0),(89/4,"< T =<",49/2),eq(off2(0),"+",koef(1),"*",(base(9/4),"+",off1(0)),"+",inc(-1),"*",dur(49/2,"-",89/4)))
+fholdsAtC(height,(0,"->",5/16),(49/2,"< T =<",397/16),eq(off2(0),"+",koef(1),"*",(base(0),"+",off1(0)),"+",inc(1),"*",dur(397/16,"-",49/2)))
+fholdsAtC(height,(5/16,"->",0),(397/16,"< T =<",201/8),eq(off2(0),"+",koef(1),"*",(base(5/16),"+",off1(0)),"+",inc(-1),"*",dur(201/8,"-",397/16)))
+fholdsAtC(velocity,(0,"->",10),(10,"< T =<",20),eq(off2(0),"+",koef(1),"*",(base(0),"+",off1(0)),"+",inc(1),"*",dur(20,"-",10)))
+fholdsAtC(velocity,(10,"->",0),(20,"< T =<",89/4),eq(off2(0),"+",koef("0.25"),"*",(base(10),"+",off1(-1)),"+",inc(-1),"*",dur(89/4,"-",20)))
+fholdsAtC(velocity,(0,"->",9/4),(89/4,"< T =<",49/2),eq(off2(0),"+",koef(1),"*",(base(0),"+",off1(0)),"+",inc(1),"*",dur(49/2,"-",89/4)))
+fholdsAtC(velocity,(9/4,"->",0),(49/2,"< T =<",397/16),eq(off2(0),"+",koef("0.25"),"*",(base(9/4),"+",off1(-1)),"+",inc(-1),"*",dur(397/16,"-",49/2)))
+fholdsAtC(velocity,(0,"->",5/16),(397/16,"< T =<",201/8),eq(off2(0),"+",koef(1),"*",(base(0),"+",off1(0)),"+",inc(1),"*",dur(201/8,"-",397/16)))
+Assignment: [leftovers]
+fholdsAt(height,0)=10
+fholdsAt(velocity,0)=0
+SATISFIABLE
+
+Models       : 1
+Calls        : 1
+Time         : 0.049s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.034s
+
+Command exited with non-zero status 30
+
+  real      0:00.06
+  real [s]  0.06
+  user [s]  0.02
+  sys  [s]  0.01
+  mem  [KB] 9856
+  avgm [KB] 0
