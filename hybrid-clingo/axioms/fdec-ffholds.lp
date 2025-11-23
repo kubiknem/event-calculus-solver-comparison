@@ -262,7 +262,7 @@ anyTrajectory(F2, T2) :- not debug_prints,
   timeStep(T1), timeStep(T2).
 anyTrajectory(F2, T2) :- not debug_prints,
   T1 < T2,
-  initiates(E, F1, T1),
+  terminates(E, F1, T1),
   happens(E, T1),
   antiTrajectory(F1, T1, F2, _, T2),
   not stoppedIn(T1, F1, T2),
@@ -281,7 +281,7 @@ anyTrajectory(F2, T2) :- not debug_prints,
   not debug_prints.
 #show fholdsAtC(F2, (fholdsAt(F2, T), "->", fholdsAt(F2, T+1)), (ftimeAtStep(T), "< T =<", ftimeAtStep(T+1)), eq(off2(A), "+", koef(B), "*", (base(fholdsAt(F2,SStart)), "+", off1(C)), "+", inc(INC), "*", dur(ftimeAtStep(T+1), "-", ftimeAtStep(SStart)))) :
   SStart < T+1,
-  initiates(E, F1, SStart),
+  terminates(E, F1, SStart),
   happens(E, SStart),
   antiTrajectory(F1, SStart, F2, (A,B,C,F2,INC), T+1),
   not stoppedIn(SStart, F1, T+1),

@@ -26,7 +26,7 @@ event(turnOffHeater(A, O)) :- agent(A), object(O).
 event(hitGround(O)) :- object(O).
 
 #const paramHeight=100.
-initHeight(0).
+initHeight(10).
 fGravity(2).
 
 
@@ -55,13 +55,14 @@ happens(hitGround(O), T) :-
 % capture when height(O) = 0
 % restrict that there must exist a state where height is exactly equal to zero
 % (by saying that there cannot be two subsequent states in which one is lt/gt and the next gt/lt, i.e. there is no state with exactly eq)
-trigger_value(height(O), heaterOn(O), 0) :- object(O). % not holdsAt(heaterOn(O)).
+trigger_value(height(O), heaterOn(O), 0) :- object(O), not holdsAt(heaterOn(O)).
 
 
 % [effect]
 % if an object hits the ground, then it will stop falling
 % terminates(hitGround(O), falling(O), T) :- object(O), time(T).
 releases(turnOnHeater(A,O), height(O), T) :- agent(A), object(O), time(T).
+releases(turnOffHeater(A,O), height(O), T) :- agent(A), object(O), time(T).
 
 % [effect + CLoI]
 % if an object hits the ground then its height will no longer be released from CLoI
@@ -106,12 +107,13 @@ antiTrajectory(heaterOn(O), T1, height(O), (0, 1, 0, height(O), -2), T2) :- obje
 % initiallyP(height(apple, H)) :- initHeight(H).  % apples height initially is something
 initiallyP(height(balloon), H) :- initHeight(H).  % apples height initially is something
 initiallyN(heaterOn(balloon)).
-initiallyP(onGround(balloon)).
+initiallyN(onGround(balloon)).
 %initiallyN(F) :- not initiallyP(F), not initiallyP(F, _), fluent(F).  % apple is initially not falling
 
 in_happens(turnOnHeater(nathan,balloon), 10).        % nathan drop the apple at time 10
-% in_happens(turnOffHeater(nathan,balloon), 15).     % TODO could add this to prevent hitting the ground 
+in_happens(turnOffHeater(nathan,balloon), 600).     % TODO could add this to prevent hitting the ground 
 
+% debug_prints.
 % --> conclude that the apple will hit the ground at time (initHeight/2) + 10
 % &sum{ fholdsAt(height(O),T) }  = 0 :- object(O), T=maxstep.
 
