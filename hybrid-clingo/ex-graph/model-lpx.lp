@@ -8,12 +8,24 @@ fluent(edge(X,Y)) :- node(X), node(Y).
 fluent(light_on).
 event(send_on(X,Y)) :- node(X), node(Y).
 
+#const maxstep=6.
 
-% happensAtStep(send_on(X,Y), S) :-
-%     holdsAtStep(edge(X,Y), S),
-%     step(S),
-%     S > 0,
-%     node(X), node(Y).
+%--------- classic reachable---------
+
+happensAtStep(send_on(X,Y), S) :-
+    holdsAtStep(edge(X,Y), S),
+    step(S),
+    S > 0,
+    node(X), node(Y).
+
+happensAtStep(send_on(X,Z), S) :-
+    holdsAtStep(edge(X,Y), S),
+    holdsAtStep(reach(Y,Z), S),
+    step(S),
+    S > 0,
+    node(X), node(Y).
+
+%-----------------------------------
 
 % happensAtStep(send_on(X,Y), S) :-
 %     holdsAtStep(edge(X,Z), S),
@@ -25,17 +37,17 @@ event(send_on(X,Y)) :- node(X), node(Y).
 
 initiatesAtStep(send_on(X,Y), reach(X,Y), S) :- node(X), node(Y), step(S).
 
-not happensAtStep(send_on(X,Y), S) :-
-    not holdsAtStep(edge(X,Y), S),
-    initiatesAtStep(send_on(X,Y), reach(X,Y), S),
-    step(S),
-    S > 0,
-    node(X), node(Y).
+% not happensAtStep(send_on(X,Y), S) :-
+%     not holdsAtStep(edge(X,Y), S),
+%     initiatesAtStep(send_on(X,Y), reach(X,Y), S),
+%     step(S),
+%     S > 0,
+%     node(X), node(Y).
 
-not happensAtStep(send_on(X,Y), S) :-
-    not holdsAtStep(edge(X,Z), S),
-    holdsAtStep(reach(Z,Y), S),
-    step(S).
+not happensAtStep(send_on(X,Z), S) :-
+    not holdsAtStep(reach(X,Z), S),
+    holdsAtStep(reach(X,Y), S),
+    step(S),
     node(X), node(Y), node(Z).
 
 initiatesAtStep(turn_light_on,  light_on, S) :- step(S).

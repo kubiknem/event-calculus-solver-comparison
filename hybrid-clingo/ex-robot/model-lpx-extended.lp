@@ -238,10 +238,10 @@ cost_movelen( MoveLen, S ) :- happensAtStep(move_right(my_robot, MoveLen), S), s
 cost_movelen( MoveLen, S ) :- happensAtStep(move_left(my_robot, MoveLen), S), step(S).
 #show cost_movelen/2.
 
-% minimalizace "ujetych km"
-% #minimize { -MoveLen,S : cost_movelen( MoveLen, S) }.
-
 % maximalizace "ujetych km"
+#minimize { -MoveLen,S : cost_movelen( MoveLen, S) }.
+
+% minimalizace "ujetych km"
 % #minimize { MoveLen,S : cost_movelen( MoveLen, S) }.
 
 % % total_cost(Cost) :- Cost = #sum { MoveLen,S : cost_movelen( MoveLen, S) }.
@@ -252,7 +252,7 @@ cost_movelen( MoveLen, S ) :- happensAtStep(move_left(my_robot, MoveLen), S), st
 comparison(valueAtStep(position(box), maxstep), goal_place).
 
 % run by:
-% clingo-lpx --strict -n1 ./model-lpx-extended.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=6 | ../utils/replace_assignments.sh | ../utils/make-readable.sh
+% clingo-lpx --strict -n0 ./model-lpx-extended.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=6 | ../utils/replace_assignments.sh | ../utils/make-readable.sh
 
 %-----------------------------
 

@@ -173,14 +173,14 @@ happens(move_right(my_robot, 6), 60).
 
 % &minimize {valueAtStep(position(my_robot),4)}.
 
-&dom{ 0..100 } = valueAtStep(position(O), S):- object(O), step(S).
-&dom{ 0..100 } = valueAtStep(position(A), S):- agent(A), step(S).
+&dom{ 0..grid_param } = valueAtStep(position(O), S):- object(O), step(S).
+&dom{ 0..grid_param } = valueAtStep(position(A), S):- agent(A), step(S).
 
-&dom{ 0..100 }=curr_move1. % doesnt work
-&dom{ 0..100 }=curr_move2.
-&dom{ 0..100 }=curr_move3.
+&dom{ 0..grid_param }=curr_move1.
+&dom{ 0..grid_param }=curr_move2.
+&dom{ 0..grid_param }=curr_move3.
 
-% &dom{ 0..100 }=curr_move4.
+% &dom{ 0..grid_param }=curr_move4.
 &minimize {-curr_move2; -curr_move1; -curr_move3}.
 
 cost_movelen( MoveLen, S ) :- happensAtStep(move_right(my_robot, MoveLen), S), step(S).
@@ -192,7 +192,7 @@ cost_movelen( MoveLen, S ) :- happensAtStep(move_left(my_robot, MoveLen), S), st
 comparison(valueAtStep(position(box), maxstep), goal_place).
 
 % run by:
-% clingo-lpx --strict -n1 ./model-lpx-minimaze.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=6 | ../utils/replace_assignments.sh | ../utils/make-readable.sh
+% clingo-lpx --strict -n0 ./model-lpx-minimaze.lp ../axioms/bec_steps-clingo_lpx.lp -c maxstep=6 | ../utils/replace_assignments.sh | ../utils/make-readable.sh
 
 %-------------------------
 
