@@ -4,7 +4,7 @@
 %
 % An object is dropped, falls down via a constant speed, and then stops falling when it hits the floor.
 
-#const maxstep=4.
+#const maxstep=5.
 #const maxtime=1000.
 
 
@@ -26,7 +26,7 @@ event(turnOffHeater(A, O)) :- agent(A), object(O).
 event(hitGround(O)) :- object(O).
 
 #const paramHeight=100.
-initHeight(10).
+initHeight(0).
 fGravity(2).
 
 
@@ -111,11 +111,12 @@ antiTrajectory(heaterOn(O), T1, height(O), (0, 1, 0, height(O), -4), T2) :- obje
 % initiallyP(height(apple, H)) :- initHeight(H).  % apples height initially is something
 initiallyP(height(balloon), H) :- initHeight(H).  % apples height initially is something
 initiallyN(heaterOn(balloon)).
-initiallyN(onGround(balloon)).
+initiallyP(onGround(balloon)).
 %initiallyN(F) :- not initiallyP(F), not initiallyP(F, _), fluent(F).  % apple is initially not falling
 
 in_happens(turnOnHeater(nathan,balloon), 10).        % nathan drop the apple at time 10
 in_happens(turnOffHeater(nathan,balloon), 600).     % TODO could add this to prevent hitting the ground 
+in_happens(turnOnHeater(nathan,balloon), 900).  
 
 % run-by:
 % clingo-lpx --strict -n0 ./model.lp ../axioms/fdec-ffholds.lp | ../utils/replace_assignments.sh | ../utils/make-readable.sh
